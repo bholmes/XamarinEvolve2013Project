@@ -27,9 +27,11 @@ namespace XamarinEvolveIOS
 				Title = "CEO",
 				EMail = "bill@mobillholmes.com",
 				Phone = "(555)-555-5555",
-				AvatarURL = "https://en.gravatar.com/userimage/30235138/760d503e5b649db9d982246bcd493dab.jpg?size=80",
+				AvatarURL = GravatarHelper.GetGravatarURL ("billholmes54@gmail.com", 80),
 			});
 			TableView.Delegate = new LocalUserProfileDelegate ();
+
+
 		}
 	}
 

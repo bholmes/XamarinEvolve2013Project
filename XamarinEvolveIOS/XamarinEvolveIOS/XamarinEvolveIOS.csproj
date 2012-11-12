@@ -100,6 +100,7 @@
     <Compile Include="CustomUITableViewCell.designer.cs">
       <DependentUpon>CustomUITableViewCell.cs</DependentUpon>
     </Compile>
+    <Compile Include="GravatarHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
@@ -107,4 +108,7 @@
     <InterfaceDefinition Include="CustomUITableViewCell.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Content Include="blankavatar.png" />
+  </ItemGroup>
 </Project>

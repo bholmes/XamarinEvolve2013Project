@@ -80,6 +80,8 @@ namespace XamarinEvolveIOS
 
 			if (image != null)
 				ImageView.Image = image;
+			else 
+				ImageView.Image = UIImage.FromFile ("blankavatar.png");
 		}
 
 		public CustomUITableViewCell LoadCell (UITableView tableView)
