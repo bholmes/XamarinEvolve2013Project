@@ -27,7 +27,7 @@ namespace XamarinEvolveIOS
 				Title = "CEO",
 				EMail = "bill@mobillholmes.com",
 				Phone = "(555)-555-5555",
-				AvatarURL = GravatarHelper.GetGravatarURL ("billholmes54@gmail.com", 80),
+				AvatarURL = GravatarHelper.GetGravatarURL ("bill@mobillholmes.com", 80),
 			});
 			TableView.Delegate = new LocalUserProfileDelegate ();
 

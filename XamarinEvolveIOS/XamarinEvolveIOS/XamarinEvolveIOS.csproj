@@ -47,6 +47,7 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>True</MtouchDebug>
     <MtouchProfiling>True</MtouchProfiling>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -101,6 +102,8 @@
       <DependentUpon>CustomUITableViewCell.cs</DependentUpon>
     </Compile>
     <Compile Include="GravatarHelper.cs" />
+    <Compile Include="UIImageCache.cs" />
+    <Compile Include="UserProfileHeaderCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
@@ -109,6 +112,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Content Include="blankavatar.png" />
+    <Content Include="blankavatar.jpg" />
   </ItemGroup>
 </Project>
