@@ -24,6 +24,7 @@
     <MtouchDebug>True</MtouchDebug>
     <MtouchProfiling>True</MtouchProfiling>
     <MtouchLink>None</MtouchLink>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -90,6 +91,10 @@
     <Compile Include="WelcomeTableViewController.cs" />
     <Compile Include="WelcomeTableViewController.designer.cs">
       <DependentUpon>WelcomeTableViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProfileViewController.cs" />
+    <Compile Include="ProfileViewController.designer.cs">
+      <DependentUpon>ProfileViewController.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
