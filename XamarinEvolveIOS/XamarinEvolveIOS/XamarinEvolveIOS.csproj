@@ -96,10 +96,15 @@
     <Compile Include="ProfileViewController.designer.cs">
       <DependentUpon>ProfileViewController.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomUITableViewCell.cs" />
+    <Compile Include="CustomUITableViewCell.designer.cs">
+      <DependentUpon>CustomUITableViewCell.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
     <InterfaceDefinition Include="MainStoryboard_iPad.storyboard" />
+    <InterfaceDefinition Include="CustomUITableViewCell.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
