@@ -4,6 +4,7 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using System.Drawing;
 
 namespace XamarinEvolveIOS
 {
@@ -25,8 +26,46 @@ namespace XamarinEvolveIOS
 				Company = "Slap Holmes Productions",
 				Title = "CEO",
 				EMail = "bill@mobillholmes.com",
-				Phone = "(555)-555-5555"
+				Phone = "(555)-555-5555",
+				AvatarURL = "https://en.gravatar.com/userimage/30235138/760d503e5b649db9d982246bcd493dab.jpg?size=80",
 			});
+			TableView.Delegate = new LocalUserProfileDelegate ();
+		}
+	}
+
+	public class LocalUserProfileDelegate : UITableViewDelegate
+	{
+		public override float GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
+		{
+			if (indexPath.Section == 0 && indexPath.Row == 0)
+				return 100;
+
+			return 44;
+		}
+
+		public override float GetHeightForFooter (UITableView tableView, int section)
+		{
+			if (section == 2)
+				return 60;
+
+			return 0;
+		}
+
+		public override UIView GetViewForFooter (UITableView tableView, int section)
+		{
+//			if (section == 2)
+//			{
+//				UIButton button = UIButton.FromType (UIButtonType.RoundedRect);
+//				button.SetTitle ("click", UIControlState.Normal);
+//				button.Frame = new RectangleF (10, 15, 140, 44);
+//
+//				UIView newView = new UIView (new RectangleF (0, 0, 1000, 60));
+//				newView.Add (button);
+//
+//				return newView;
+//			}
+
+			return null;
 		}
 	}
 
@@ -49,7 +88,7 @@ namespace XamarinEvolveIOS
 		public override int RowsInSection (UITableView tableView, int section)
 		{
 			if (section == 0)
-				return 2;
+				return 1;
 
 			if (section == 1)
 				return 2;
@@ -105,19 +144,10 @@ namespace XamarinEvolveIOS
 		{
 			UITableViewCell cell;
 			
-			switch (indexPath.Row)
-			{
-			case 0:
-				cell = GetStringOnlyCell (tableView, UserProfile.FullName);
-				break;
-			case 1:
-				cell = GetStringOnlyCell (tableView, UserProfile.City);
-				break;
-
-			default:
-				throw new IndexOutOfRangeException ("indexPath.Row out of range.");
-			}
-			
+			cell = new UserProfileHeaderCell (UserProfile.FullName,
+			                                  UserProfile.City,
+			                                  UserProfile.AvatarURL
+			                                  ).LoadCell (tableView);
 			return cell;
 		}
 
@@ -171,8 +201,9 @@ namespace XamarinEvolveIOS
 		public string Company {get; set;}
 		public string Title {get; set;}
 		public string Phone {get;set;}
+		public string AvatarURL {get;set;}
 	}
-	
+
 	public class LocalUserProfile : UserProfile
 	{
 		
