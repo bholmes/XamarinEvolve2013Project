@@ -18,6 +18,7 @@ namespace XamarinEvolveIOS
 			public UIImageCacheItem (string url, OnImageLoadedDelegate OnImageLoaded, OnImageLoadedDelegate finalOnImageLoaded, UIImage defaultImage)
 			{
 				URL = url;
+				_defaultImage = defaultImage;
 				
 				if (OnImageLoaded != null)
 					_delList.Add (OnImageLoaded);
@@ -62,11 +63,12 @@ namespace XamarinEvolveIOS
 					_delList.Add (OnImageLoaded);
 				}
 				
-				return null;
+				return _defaultImage;
 			}
 			
 			public string URL {get;private set;}
 			private UIImage _image;
+			private UIImage _defaultImage;
 			private List<OnImageLoadedDelegate> _delList = new List<OnImageLoadedDelegate> ();
 			private OnImageLoadedDelegate _finalOnImageLoaded;
 			object _lock = new object();
@@ -74,6 +76,9 @@ namespace XamarinEvolveIOS
 		
 		private UIImage internalGetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
 		{
+			if (string.IsNullOrEmpty (url))
+				return defaultImage;
+
 			lock (_lock)
 			{
 				UIImageCacheItem foundItem = _list.Find (e=>e.URL.Equals (url));

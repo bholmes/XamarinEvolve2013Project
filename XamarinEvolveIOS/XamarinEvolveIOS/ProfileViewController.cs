@@ -19,7 +19,7 @@ namespace XamarinEvolveIOS
 		{
 			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
-				new LocalUserProfile () {
+				this, new LocalUserProfile () {
 				UserName = "billholmes54",
 				FullName = "Bill Holmes",
 				City = "Pittsburgh, PA",
@@ -27,7 +27,6 @@ namespace XamarinEvolveIOS
 				Title = "CEO",
 				EMail = "bill@mobillholmes.com",
 				Phone = "(555)-555-5555",
-				AvatarURL = GravatarHelper.GetGravatarURL ("bill@mobillholmes.com", 80),
 			});
 			TableView.Delegate = new LocalUserProfileDelegate ();
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
@@ -38,15 +37,31 @@ namespace XamarinEvolveIOS
 				{
 					this.NavigationItem.RightBarButtonItem.Title = "Done";
 					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Done;
-					
 				}
 				else
 				{
 					this.NavigationItem.RightBarButtonItem.Title = "Edit";
 					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
+
+					RefreshHeaderCell ();
 				}
 			});
 			this.NavigationItem.RightBarButtonItem = editButton;
+		}
+
+		void RefreshHeaderCell ()
+		{
+			CustomUITableViewCell headerCell = 
+				this.TableView.CellAt (NSIndexPath.FromRowSection (0, 0)) as CustomUITableViewCell;
+
+			if (headerCell != null) {
+				UserProfileHeaderCell headerInnerCell = headerCell.CustomView as UserProfileHeaderCell;
+				if (headerInnerCell != null) {
+					MonoTouch.UIKit.UIApplication.SharedApplication.BeginInvokeOnMainThread (delegate {
+						headerInnerCell.RefreshImageFromData ();
+					});
+				}
+			}
 		}
 	}
 
@@ -98,9 +113,12 @@ namespace XamarinEvolveIOS
 
 	public class LocalUserProfileDataSource : UITableViewDataSource
 	{
-		public LocalUserProfileDataSource (LocalUserProfile profile)
+		UITableViewController _controller;
+
+		public LocalUserProfileDataSource (UITableViewController controller, LocalUserProfile profile)
 		{
 			UserProfile = profile;
+			_controller = controller;
 		}
 		
 		public LocalUserProfile UserProfile {get; private set;}
@@ -158,13 +176,13 @@ namespace XamarinEvolveIOS
 
 		private UITableViewCell GetCellSectionOne (UITableView tableView, NSIndexPath indexPath)
 		{
-			UITableViewCell cell;
-			
-			cell = new UserProfileHeaderCell (UserProfile.FullName,
-			                                  UserProfile.City,
-			                                  UserProfile.AvatarURL
-			                                  ).LoadCell (tableView);
-			return cell;
+			UserProfileHeaderCell headerCell = new UserProfileHeaderCell (UserProfile);
+
+			headerCell.OnImageChangeRequest += delegate {
+				this._controller.NavigationController.PushViewController (new UIViewController (), true);
+			};
+
+			return headerCell.LoadCell (tableView);
 		}
 
 		private UITableViewCell GetCellSectionTwo (UITableView tableView, NSIndexPath indexPath)
@@ -176,10 +194,12 @@ namespace XamarinEvolveIOS
 			case 0:
 				cell = new NameValueCell ("company", () => UserProfile.Company, v => UserProfile.Company= v);
 				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.Words;
+				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				break;
 			case 1:
 				cell = new NameValueCell ("title", () => UserProfile.Title, v => UserProfile.Title= v);
 				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.Words;
+				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				break;
 				
 			default:
@@ -198,10 +218,12 @@ namespace XamarinEvolveIOS
 			case 0:
 				cell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
 				cell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
+				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				break;
 			case 1:
-				cell = cell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
+				cell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
 				cell.ValueTextField.KeyboardType = UIKeyboardType.PhonePad;
+				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				break;
 				
 			default:

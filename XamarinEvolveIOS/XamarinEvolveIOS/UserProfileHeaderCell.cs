@@ -29,15 +29,38 @@ namespace XamarinEvolveIOS
 	public class UserProfileHeaderCell : CustomUITableViewCellSubView
 	{
 		public UIImageView ImageView {get; private set;}
+		public UILabel ImageEditTip {get;private set;}
+
 		public UILabel FullNameLabel {get;private set;}
 		public UILabel CityLabel {get;private set;}
+
+		public UITextField FullNameTextView {get;private set;}
+		public UITextField CityTextView {get;private set;}
+
+		public event Action<NSObject> OnImageChangeRequest;
+
+		private UserProfile _userProfile;
+		private bool _editing = false;
 		
-		public UserProfileHeaderCell (string fullName, string cityName, string imageURL)
+		public UserProfileHeaderCell (UserProfile userProfile)
 		{
+			_userProfile = userProfile;
+
 			this.BackgroundColor = UIColor.Clear;
 			this.Frame = new RectangleF (0, 0, 200, 100);
 			
 			ImageView = new UIImageView (new RectangleF (10, 10, 80, 80));
+			UITapGestureRecognizer imageTap = 
+				new UITapGestureRecognizer (() => {
+					if (_editing && OnImageChangeRequest != null)
+					{
+						OnImageChangeRequest(ImageView);
+					}
+			});
+
+			ImageView.AddGestureRecognizer (imageTap);
+			ImageView.UserInteractionEnabled = true;
+
 			this.Add (ImageView);
 			
 			int labelXPos = 100;
@@ -47,8 +70,23 @@ namespace XamarinEvolveIOS
 			FullNameLabel.BackgroundColor = UIColor.Clear;
 			FullNameLabel.Font = UIFont.BoldSystemFontOfSize (22);
 			FullNameLabel.AdjustsFontSizeToFitWidth = true;
-			FullNameLabel.Text = fullName;
+			FullNameLabel.Text = _userProfile.FullName;
 			this.Add (FullNameLabel);
+
+			FullNameTextView = new UITextField (new RectangleF (
+				labelXPos, 17,  this.Frame.Width-(labelXPos+10), 40));
+			FullNameTextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+			FullNameTextView.BackgroundColor = UIColor.Clear;
+			FullNameTextView.Font = UIFont.BoldSystemFontOfSize (22);
+			FullNameTextView.AdjustsFontSizeToFitWidth = true;
+			FullNameTextView.Text = _userProfile.FullName;
+			FullNameTextView.Placeholder = "Full Name";
+			FullNameTextView.ReturnKeyType = UIReturnKeyType.Done;
+			FullNameTextView.ShouldReturn = delegate {
+				FullNameTextView.ResignFirstResponder ();
+				return true;
+			};
+			this.Add (FullNameTextView);
 			
 			CityLabel = new UILabel (new RectangleF (
 				labelXPos, 50,  this.Frame.Width-(labelXPos+10), 40));
@@ -56,16 +94,97 @@ namespace XamarinEvolveIOS
 			CityLabel.BackgroundColor = UIColor.Clear;
 			CityLabel.Font = UIFont.BoldSystemFontOfSize (17);
 			CityLabel.AdjustsFontSizeToFitWidth = true;
-			CityLabel.Text = cityName;
+			CityLabel.Text = _userProfile.City;
 			this.Add (CityLabel);
-			
-			UIImage image = UIImageCache.GetOrLoadImage (imageURL, (imagearg) => {
-				MonoTouch.UIKit.UIApplication.SharedApplication.BeginInvokeOnMainThread (()=>{
+
+			CityTextView = new UITextField (new RectangleF (
+				labelXPos, 60,  this.Frame.Width-(labelXPos+10), 40));
+			CityTextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
+			CityTextView.BackgroundColor = UIColor.Clear;
+			CityTextView.Font = UIFont.BoldSystemFontOfSize (17);
+			CityTextView.AdjustsFontSizeToFitWidth = true;
+			CityTextView.Text = _userProfile.City;
+			CityTextView.Placeholder = "City";
+			CityTextView.ReturnKeyType = UIReturnKeyType.Done;
+			CityTextView.ShouldReturn = delegate {
+				CityTextView.ResignFirstResponder ();
+				return true;
+			};
+			this.Add (CityTextView);
+
+			ImageEditTip = new UILabel (new RectangleF (
+				10, 75,  80, 15));
+			ImageEditTip.AutoresizingMask = UIViewAutoresizing.None;
+			ImageEditTip.BackgroundColor = UIColor.Clear;
+			ImageEditTip.Font = UIFont.SystemFontOfSize (13);
+			ImageEditTip.AdjustsFontSizeToFitWidth = true;
+			ImageEditTip.Text = "Tap to edit";
+			ImageEditTip.Hidden = true;
+			ImageEditTip.TextAlignment = UITextAlignment.Center;
+			this.Add (ImageEditTip);
+
+
+			RefreshImageFromData ();
+		}
+
+		public void RefreshImageFromData ()
+		{
+			string imageURL = _userProfile.AvatarURL;
+			if (string.IsNullOrEmpty (imageURL) && !string.IsNullOrEmpty (_userProfile.EMail))
+				imageURL = GravatarHelper.GetGravatarURL (_userProfile.EMail, 80);
+
+			UIImage image = UIImageCache.GetOrLoadImage (imageURL, imagearg =>  {
+				MonoTouch.UIKit.UIApplication.SharedApplication.BeginInvokeOnMainThread (() =>  {
 					ImageView.Image = imagearg;
 				});
 			}, DefaultImage);
-			
 			ImageView.Image = image;
+		}
+
+		protected override void EditStyleChanged (bool editing, bool animated)
+		{
+			base.EditStyleChanged (editing, animated);
+			_editing = editing;
+			
+			if (editing)
+			{
+				RectangleF rect = ImageView.Frame;
+				if (rect.Width == 80)
+				{
+					rect.X += 10; rect.Width -= 20; rect.Height -= 20;
+					ImageView.Frame = rect;
+				}
+
+				ImageEditTip.Hidden = false;
+
+				FullNameTextView.Hidden = false;
+				FullNameLabel.Hidden = true;
+
+				CityTextView.Hidden = false;
+				CityLabel.Hidden = true;
+			}
+			else
+			{
+				RectangleF rect = ImageView.Frame;
+				if (rect.Width == 60)
+				{
+					rect.X -= 10; rect.Width += 20; rect.Height += 20;
+					ImageView.Frame = rect;
+				}
+
+				ImageEditTip.Hidden = true;
+
+				FullNameLabel.Text = _userProfile.FullName = FullNameTextView.Text;
+				CityLabel.Text = _userProfile.City = CityTextView.Text;
+
+				FullNameTextView.ResignFirstResponder ();
+				FullNameLabel.Hidden = false;
+				FullNameTextView.Hidden = true;
+
+				CityTextView.ResignFirstResponder ();
+				CityLabel.Hidden = false;
+				CityTextView.Hidden = true;
+			}
 		}
 
 		static UIImage _defaultImage;

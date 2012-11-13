@@ -7,14 +7,14 @@ namespace XamarinEvolveIOS
 	[Register("CustomUITableViewCell")]
 	public partial class CustomUITableViewCell : UITableViewCell
 	{
-		public UIView CustomView {get;private set;}
+		public CustomUITableViewCellSubView CustomView {get;private set;}
 
 		public CustomUITableViewCell (IntPtr ptr) : base (ptr)
 		{
 			this.SelectionStyle = UITableViewCellSelectionStyle.None;
 		}
 
-		public void SetInnerView (UIView view)
+		public void SetInnerView (CustomUITableViewCellSubView view)
 		{
 			if (CustomView != null)
 				throw new Exception ("This should not happen");
