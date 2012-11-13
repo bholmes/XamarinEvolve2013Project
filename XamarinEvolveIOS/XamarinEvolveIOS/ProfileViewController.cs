@@ -30,8 +30,23 @@ namespace XamarinEvolveIOS
 				AvatarURL = GravatarHelper.GetGravatarURL ("bill@mobillholmes.com", 80),
 			});
 			TableView.Delegate = new LocalUserProfileDelegate ();
+			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
 
+				this.SetEditing (!this.Editing, true);
 
+				if (this.Editing)
+				{
+					this.NavigationItem.RightBarButtonItem.Title = "Done";
+					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Done;
+					
+				}
+				else
+				{
+					this.NavigationItem.RightBarButtonItem.Title = "Edit";
+					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
+				}
+			});
+			this.NavigationItem.RightBarButtonItem = editButton;
 		}
 	}
 
@@ -69,6 +84,16 @@ namespace XamarinEvolveIOS
 
 			return null;
 		}
+
+		public override UITableViewCellEditingStyle EditingStyleForRow (UITableView tableView, NSIndexPath indexPath)
+		{
+			return UITableViewCellEditingStyle.None;
+		}
+
+		public override bool ShouldIndentWhileEditing (UITableView tableView, NSIndexPath indexPath)
+		{
+			return false;
+		}
 	}
 
 	public class LocalUserProfileDataSource : UITableViewDataSource
@@ -81,7 +106,12 @@ namespace XamarinEvolveIOS
 		public LocalUserProfile UserProfile {get; private set;}
 		
 		#region UITableViewDataSource	
-		
+
+		public override bool CanEditRow (UITableView tableView, NSIndexPath indexPath)
+		{
+			return true;
+		}
+
 		public override int NumberOfSections (UITableView tableView)
 		{
 			return 3;
@@ -126,22 +156,6 @@ namespace XamarinEvolveIOS
 		
 		#endregion
 
-		const string StringOnlyName = "UserProfile_StringOnly";
-
-		static UITableViewCell GetStringOnlyCell (UITableView tableView, string value)
-		{
-			UITableViewCell cell = tableView.DequeueReusableCell (StringOnlyName);
-
-			if (cell == null)
-				cell = new UITableViewCell (UITableViewCellStyle.Default, StringOnlyName);
-
-			cell.SelectionStyle = UITableViewCellSelectionStyle.None;
-
-			cell.TextLabel.Text = value;
-
-			return cell;
-		}
-
 		private UITableViewCell GetCellSectionOne (UITableView tableView, NSIndexPath indexPath)
 		{
 			UITableViewCell cell;
@@ -155,42 +169,46 @@ namespace XamarinEvolveIOS
 
 		private UITableViewCell GetCellSectionTwo (UITableView tableView, NSIndexPath indexPath)
 		{
-			UITableViewCell cell;
+			NameValueCell cell;
 			
 			switch (indexPath.Row)
 			{
 			case 0:
-				cell = GetStringOnlyCell (tableView, UserProfile.Company);
+				cell = new NameValueCell ("company", () => UserProfile.Company, v => UserProfile.Company= v);
+				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.Words;
 				break;
 			case 1:
-				cell = GetStringOnlyCell (tableView, UserProfile.Title);
+				cell = new NameValueCell ("title", () => UserProfile.Title, v => UserProfile.Title= v);
+				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.Words;
 				break;
 				
 			default:
 				throw new IndexOutOfRangeException ("indexPath.Row out of range.");
 			}
-			
-			return cell;
+
+			return cell.LoadCell (tableView);
 		}
 
 		private UITableViewCell GetCellSectionThree (UITableView tableView, NSIndexPath indexPath)
 		{
-			UITableViewCell cell;
+			NameValueCell cell;
 			
 			switch (indexPath.Row)
 			{
 			case 0:
-				cell = GetStringOnlyCell (tableView, UserProfile.EMail);
+				cell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
+				cell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
 				break;
 			case 1:
-				cell = GetStringOnlyCell (tableView, UserProfile.Phone);
+				cell = cell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
+				cell.ValueTextField.KeyboardType = UIKeyboardType.PhonePad;
 				break;
 				
 			default:
 				throw new IndexOutOfRangeException ("indexPath.Row out of range.");
 			}
 			
-			return cell;
+			return cell.LoadCell (tableView);
 		}
 	}
 	

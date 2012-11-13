@@ -14,9 +14,9 @@ namespace XamarinEvolveIOS
 			string md5 = CalculateMD5Hash (email.ToLower ().Trim ());
 			
 			if (size > 0)
-				return string.Format ("http://www.gravatar.com/avatar/{0}.jpg?s={1}&d=mm", md5, size);
+				return string.Format ("http://www.gravatar.com/avatar/{0}.jpg?s={1}&d=404", md5, size);
 			
-			return string.Format ("http://www.gravatar.com/avatar/{0}.jpg?d=mm", md5);
+			return string.Format ("http://www.gravatar.com/avatar/{0}.jpg?d=404", md5);
 		}
 		
 		static private string CalculateMD5Hash(string input)

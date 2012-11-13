@@ -33,6 +33,17 @@ namespace XamarinEvolveIOS
 				CustomView.Frame = HostView.Bounds;
 			}
 		}
+
+		public delegate void EditStyleChangedDelegate (bool editing, bool animated);
+		public event EditStyleChangedDelegate EditStyleChanged;
+
+		public override void SetEditing (bool editing, bool animated)
+		{
+			base.SetEditing (editing, animated);
+
+			if (EditStyleChanged != null)
+				EditStyleChanged (editing, animated);
+		}
 	}
 }
 

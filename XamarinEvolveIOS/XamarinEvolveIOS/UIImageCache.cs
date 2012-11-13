@@ -15,7 +15,7 @@ namespace XamarinEvolveIOS
 		
 		private class UIImageCacheItem
 		{
-			public UIImageCacheItem (string url, OnImageLoadedDelegate OnImageLoaded, OnImageLoadedDelegate finalOnImageLoaded)
+			public UIImageCacheItem (string url, OnImageLoadedDelegate OnImageLoaded, OnImageLoadedDelegate finalOnImageLoaded, UIImage defaultImage)
 			{
 				URL = url;
 				
@@ -26,8 +26,9 @@ namespace XamarinEvolveIOS
 				
 				new System.Threading.ThreadStart( () => {
 					NSData data = NSData.FromUrl (new NSUrl (url));
-					UIImage image = UIImage.LoadFromData (data);
-					
+					UIImage image = data == null ?
+						defaultImage : UIImage.LoadFromData (data);
+						
 					List<OnImageLoadedDelegate> oldDelList;
 					
 					lock (_lock)
@@ -71,7 +72,7 @@ namespace XamarinEvolveIOS
 			object _lock = new object();
 		}
 		
-		private UIImage internalGetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded)
+		private UIImage internalGetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
 		{
 			lock (_lock)
 			{
@@ -85,10 +86,10 @@ namespace XamarinEvolveIOS
 				
 				_list.Add (new UIImageCacheItem (url, OnImageLoaded, (image) =>{
 					cleanupLongList ();
-				}));
+				}, defaultImage));
 			}
 			
-			return null;	
+			return defaultImage;	
 		}
 		
 		private void cleanupLongList ()
@@ -102,9 +103,9 @@ namespace XamarinEvolveIOS
 			}
 		}
 		
-		static public UIImage GetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded)
+		static public UIImage GetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
 		{
-			return _instance.internalGetOrLoadImage (url, OnImageLoaded);	
+			return _instance.internalGetOrLoadImage (url, OnImageLoaded, defaultImage);	
 		}
 	}
 }
