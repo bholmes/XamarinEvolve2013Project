@@ -93,7 +93,7 @@ namespace XamarinEvolveIOS
 					cleanupLongList ();
 				}, defaultImage));
 			}
-			
+
 			return defaultImage;	
 		}
 		

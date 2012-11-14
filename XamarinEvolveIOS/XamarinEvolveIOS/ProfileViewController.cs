@@ -218,6 +218,7 @@ namespace XamarinEvolveIOS
 			case 0:
 				cell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
 				cell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
+				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.None;
 				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				break;
 			case 1:

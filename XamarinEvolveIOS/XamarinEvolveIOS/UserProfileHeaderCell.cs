@@ -65,7 +65,7 @@ namespace XamarinEvolveIOS
 			
 			int labelXPos = 100;
 			FullNameLabel = new UILabel (new RectangleF (
-				labelXPos, 10,  this.Frame.Width-(labelXPos+10), 40));
+				labelXPos, 10,  this.Frame.Width-(labelXPos+10), 30));
 			FullNameLabel.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			FullNameLabel.BackgroundColor = UIColor.Clear;
 			FullNameLabel.Font = UIFont.BoldSystemFontOfSize (22);
@@ -74,12 +74,15 @@ namespace XamarinEvolveIOS
 			this.Add (FullNameLabel);
 
 			FullNameTextView = new UITextField (new RectangleF (
-				labelXPos, 17,  this.Frame.Width-(labelXPos+10), 40));
+				labelXPos, 12,  this.Frame.Width-(labelXPos+10), 30));
 			FullNameTextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			FullNameTextView.BackgroundColor = UIColor.Clear;
 			FullNameTextView.Font = UIFont.BoldSystemFontOfSize (22);
 			FullNameTextView.AdjustsFontSizeToFitWidth = true;
 			FullNameTextView.Text = _userProfile.FullName;
+			FullNameTextView.ClearButtonMode = UITextFieldViewMode.Always;
+			FullNameTextView.AutocapitalizationType = UITextAutocapitalizationType.Words;
+			FullNameTextView.AutocorrectionType = UITextAutocorrectionType.No;
 			FullNameTextView.Placeholder = "Full Name";
 			FullNameTextView.ReturnKeyType = UIReturnKeyType.Done;
 			FullNameTextView.ShouldReturn = delegate {
@@ -89,7 +92,7 @@ namespace XamarinEvolveIOS
 			this.Add (FullNameTextView);
 			
 			CityLabel = new UILabel (new RectangleF (
-				labelXPos, 50,  this.Frame.Width-(labelXPos+10), 40));
+				labelXPos, 50,  this.Frame.Width-(labelXPos+10), 24));
 			CityLabel.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			CityLabel.BackgroundColor = UIColor.Clear;
 			CityLabel.Font = UIFont.BoldSystemFontOfSize (17);
@@ -98,7 +101,7 @@ namespace XamarinEvolveIOS
 			this.Add (CityLabel);
 
 			CityTextView = new UITextField (new RectangleF (
-				labelXPos, 60,  this.Frame.Width-(labelXPos+10), 40));
+				labelXPos, 52,  this.Frame.Width-(labelXPos+10), 24));
 			CityTextView.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			CityTextView.BackgroundColor = UIColor.Clear;
 			CityTextView.Font = UIFont.BoldSystemFontOfSize (17);
@@ -106,6 +109,8 @@ namespace XamarinEvolveIOS
 			CityTextView.Text = _userProfile.City;
 			CityTextView.Placeholder = "City";
 			CityTextView.ReturnKeyType = UIReturnKeyType.Done;
+			CityTextView.ClearButtonMode = UITextFieldViewMode.Always;
+			CityTextView.AutocapitalizationType = UITextAutocapitalizationType.Words;
 			CityTextView.ShouldReturn = delegate {
 				CityTextView.ResignFirstResponder ();
 				return true;
@@ -236,7 +241,7 @@ namespace XamarinEvolveIOS
 			this.Add (ValueLabel);
 
 			ValueTextField = new UITextField (new RectangleF (
-				label2XPos, 11,  this.Frame.Width-(label2XPos+10), 30));
+				label2XPos, 11,  this.Frame.Width-(label2XPos+10), 21));
 
 			ValueTextField.AutoresizingMask = UIViewAutoresizing.FlexibleWidth;
 			ValueTextField.BackgroundColor = UIColor.Clear;
@@ -244,6 +249,7 @@ namespace XamarinEvolveIOS
 			ValueTextField.AdjustsFontSizeToFitWidth = true;
 			ValueTextField.Text = valueGet.Invoke ();
 			ValueTextField.ReturnKeyType = UIReturnKeyType.Done;
+			ValueTextField.ClearButtonMode = UITextFieldViewMode.Always;
 			ValueTextField.ShouldReturn = delegate {
 				ValueTextField.ResignFirstResponder ();
 				return true;
