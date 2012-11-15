@@ -179,7 +179,7 @@ namespace XamarinEvolveIOS
 			UserProfileHeaderCell headerCell = new UserProfileHeaderCell (UserProfile);
 
 			headerCell.OnImageChangeRequest += delegate {
-				this._controller.NavigationController.PushViewController (new UIViewController (), true);
+				this._controller.NavigationController.PushViewController (new AvatarSelectorController (), true);
 			};
 
 			return headerCell.LoadCell (tableView);

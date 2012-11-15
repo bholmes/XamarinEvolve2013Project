@@ -90,7 +90,6 @@
   <ItemGroup>
     <None Include="Info.plist" />
     <None Include="Images\114_icon.png" />
-    <None Include="Images\144_icon.png" />
     <None Include="Images\29_icon.png" />
     <None Include="Images\50_icon.png" />
     <None Include="Images\57_icon.png" />
@@ -115,6 +114,7 @@
     <Compile Include="GravatarHelper.cs" />
     <Compile Include="UIImageCache.cs" />
     <Compile Include="UserProfileHeaderCell.cs" />
+    <Compile Include="AvatarSelectorController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
@@ -124,6 +124,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Content Include="blankavatar.jpg" />
+    <Content Include="Images\144_icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
