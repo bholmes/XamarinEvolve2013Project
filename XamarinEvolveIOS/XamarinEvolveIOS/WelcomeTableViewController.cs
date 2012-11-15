@@ -56,6 +56,7 @@ namespace XamarinEvolveIOS
 					throw new NotImplementedException ();
 				}
 
+				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
 				return cell;
 			}
 
@@ -86,11 +87,6 @@ namespace XamarinEvolveIOS
 				default:
 					throw new NotImplementedException ();
 				}
-			}
-
-			public override UITableViewCellAccessory AccessoryForRow (UITableView tableView, NSIndexPath indexPath)
-			{
-				return UITableViewCellAccessory.DisclosureIndicator;
 			}
 		}
 	}

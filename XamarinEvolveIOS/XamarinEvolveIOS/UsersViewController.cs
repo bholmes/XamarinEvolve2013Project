@@ -38,10 +38,11 @@ namespace XamarinEvolveIOS
 			}			
 			public override UITableViewCell GetCell (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
 			{
-				UITableViewCell cell = new UITableViewCell (UITableViewCellStyle.Default, "UsersViewDataSourceCell");
+				UserProfileHeaderCell innerCell = new UserProfileHeaderCell (Users[indexPath.Row]);
 
-				cell.TextLabel.Text = Users[indexPath.Row].FullName;
-
+				UITableViewCell cell = innerCell.LoadCell (tableView);
+				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 				return cell;
 			}			
 			#endregion
@@ -65,9 +66,9 @@ namespace XamarinEvolveIOS
 					new ProfileViewController (Users[indexPath.Row]), true);
 			}
 
-			public override UITableViewCellAccessory AccessoryForRow (UITableView tableView, NSIndexPath indexPath)
+			public override float GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
 			{
-				return UITableViewCellAccessory.DisclosureIndicator;
+				return 100;
 			}
 		}
 	}
