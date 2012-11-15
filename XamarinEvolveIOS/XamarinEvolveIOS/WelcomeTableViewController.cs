@@ -10,8 +10,88 @@ namespace XamarinEvolveIOS
 
 	public partial class WelcomeTableViewController : UITableViewController
 	{
-		public WelcomeTableViewController (IntPtr handle) : base (handle)
+		public WelcomeTableViewController () : base ()
 		{
+
+		}
+
+		public override void ViewDidLoad ()
+		{
+			this.Title = "Xamarin Evolve 2013";
+			this.NavigationItem.BackBarButtonItem =  new UIBarButtonItem (
+				"Back", UIBarButtonItemStyle.Bordered, null, null);
+			
+			this.TableView.DataSource = new WelcomeTableViewDataSource ();
+			this.TableView.Delegate = new WelcomeTableViewDelegate (NavigationController);	
+		}
+
+		private class  WelcomeTableViewDataSource : UITableViewDataSource
+		{
+			#region implemented abstract members of UITableViewDataSource	
+
+			public override int RowsInSection (UITableView tableView, int section)
+			{
+				return 2;
+			}			
+
+			public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
+			{
+				UITableViewCell cell = tableView.DequeueReusableCell ("WelcomeTableViewCell");
+
+				if (cell == null)
+				{
+					cell = new UITableViewCell (UITableViewCellStyle.Default, "WelcomeTableViewCell");
+				}
+
+				switch (indexPath.Row)
+				{
+				case 0:
+					cell.TextLabel.Text = "My Profile";
+					break;
+				case 1:
+					cell.TextLabel.Text = "Attendees";
+					break;
+
+				default:
+					throw new NotImplementedException ();
+				}
+
+				return cell;
+			}
+
+			#endregion
+		}
+
+		private class WelcomeTableViewDelegate : UITableViewDelegate
+		{
+			UINavigationController _navigationController;
+
+			public WelcomeTableViewDelegate (UINavigationController navigationController)
+			{
+				_navigationController = navigationController;
+			}
+
+			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+			{
+				switch (indexPath.Row)
+				{
+				case 0:
+					_navigationController.PushViewController (
+						new ProfileViewController (Engine.Instance.GetUsers ()["billholmes"]), true);
+					break;
+				case 1:
+					_navigationController.PushViewController (new UsersViewController (), true);
+					break;
+					
+				default:
+					throw new NotImplementedException ();
+				}
+			}
+
+			public override UITableViewCellAccessory AccessoryForRow (UITableView tableView, NSIndexPath indexPath)
+			{
+				return UITableViewCellAccessory.DisclosureIndicator;
+			}
 		}
 	}
 

@@ -115,6 +115,8 @@
     <Compile Include="UIImageCache.cs" />
     <Compile Include="UserProfileHeaderCell.cs" />
     <Compile Include="AvatarSelectorController.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="UsersViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />

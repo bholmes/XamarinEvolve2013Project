@@ -10,39 +10,38 @@ namespace XamarinEvolveIOS
 {
 	public partial class ProfileViewController : UITableViewController
 	{
-		public ProfileViewController (IntPtr handle) : base (handle)
-		{
+		User CurrentUser {get;set;}
 
+		public ProfileViewController (User user) : base (UITableViewStyle.Grouped)
+		{
+			CurrentUser = user;
 		}
 
 		public override void LoadView ()
 		{
+			this.Title = CurrentUser.IsLocalUser ? "My Profile" : "Profile";
+
 			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
-				this, new LocalUserProfile () {
-				UserName = "billholmes54",
-				FullName = "Bill Holmes",
-				City = "Pittsburgh, PA",
-				Company = "Slap Holmes Productions",
-				Title = "CEO",
-				EMail = "bill@mobillholmes.com",
-				Phone = "(555)-555-5555",
-			});
+				this, CurrentUser);
 			TableView.Delegate = new LocalUserProfileDelegate ();
+			SetupEditButton ();
+		}
+
+		void SetupEditButton ()
+		{
+			if (!CurrentUser.IsLocalUser)
+				return;
+
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
-
 				this.SetEditing (!this.Editing, true);
-
-				if (this.Editing)
-				{
+				if (this.Editing) {
 					this.NavigationItem.RightBarButtonItem.Title = "Done";
 					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Done;
 				}
-				else
-				{
+				else {
 					this.NavigationItem.RightBarButtonItem.Title = "Edit";
 					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
-
 					RefreshHeaderCell ();
 				}
 			});
@@ -115,13 +114,13 @@ namespace XamarinEvolveIOS
 	{
 		UITableViewController _controller;
 
-		public LocalUserProfileDataSource (UITableViewController controller, LocalUserProfile profile)
+		public LocalUserProfileDataSource (UITableViewController controller, User profile)
 		{
 			UserProfile = profile;
 			_controller = controller;
 		}
 		
-		public LocalUserProfile UserProfile {get; private set;}
+		public User UserProfile {get; private set;}
 		
 		#region UITableViewDataSource	
 
@@ -234,22 +233,4 @@ namespace XamarinEvolveIOS
 			return cell.LoadCell (tableView);
 		}
 	}
-	
-	public class UserProfile
-	{
-		public string UserName {get; set;}
-		public string FullName {get; set;}
-		public string EMail {get; set;}
-		public string City {get;set;}
-		public string Company {get; set;}
-		public string Title {get; set;}
-		public string Phone {get;set;}
-		public string AvatarURL {get;set;}
-	}
-
-	public class LocalUserProfile : UserProfile
-	{
-		
-	}
-
 }

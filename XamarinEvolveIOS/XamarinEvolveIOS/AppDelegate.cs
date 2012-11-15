@@ -29,6 +29,14 @@ namespace XamarinEvolveIOS
 		//
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
+			Window = new UIWindow (UIScreen.MainScreen.Bounds);
+
+			WelcomeTableViewController welcome = new WelcomeTableViewController ();
+
+			UINavigationController nav = new UINavigationController (welcome);
+			Window.RootViewController = nav;
+			Window.MakeKeyAndVisible ();
+
 			return true;
 		}
 		

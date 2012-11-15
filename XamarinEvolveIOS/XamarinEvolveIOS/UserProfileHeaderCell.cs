@@ -39,10 +39,10 @@ namespace XamarinEvolveIOS
 
 		public event Action<NSObject> OnImageChangeRequest;
 
-		private UserProfile _userProfile;
+		private User _userProfile;
 		private bool _editing = false;
 		
-		public UserProfileHeaderCell (UserProfile userProfile)
+		public UserProfileHeaderCell (User userProfile)
 		{
 			_userProfile = userProfile;
 
