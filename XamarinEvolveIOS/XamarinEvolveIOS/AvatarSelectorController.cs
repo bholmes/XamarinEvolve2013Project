@@ -186,7 +186,8 @@ namespace XamarinEvolveIOS
 			if (e.ButtonIndex == 0)
 			{
 				MediaPicker picker = new MediaPicker ();
-				Task<MediaFile> task = picker.TakePhotoAsync (new StoreCameraMediaOptions ());
+				Task<MediaFile> task = picker.TakePhotoAsync (new StoreCameraMediaOptions ()
+				                                              {DefaultCamera= CameraDevice.Front});
 				task.ContinueWith (delegate {
 					if (task.Status == TaskStatus.RanToCompletion)
 					{
