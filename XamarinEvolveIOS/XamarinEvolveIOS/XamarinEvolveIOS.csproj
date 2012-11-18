@@ -118,11 +118,17 @@
     <Compile Include="Engine.cs" />
     <Compile Include="UsersViewController.cs" />
     <Compile Include="LocalProfileViewController.cs" />
+    <Compile Include="LoginView.cs" />
+    <Compile Include="LoginView.designer.cs">
+      <DependentUpon>LoginView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
     <InterfaceDefinition Include="MainStoryboard_iPad.storyboard" />
     <InterfaceDefinition Include="CustomUITableViewCell.xib" />
+    <InterfaceDefinition Include="Resources\LoginView.xib" />
+    <InterfaceDefinition Include="LoginView.xib" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -5,6 +5,14 @@ namespace XamarinEvolveIOS
 {
 	public class Engine
 	{
+		public class Debug
+		{
+			static public void SimulateNetworkWait ()
+			{
+				System.Threading.Thread.Sleep (3000);
+			}
+		}
+
 		static Engine _instance = new Engine ();
 		public static Engine Instance
 		{
@@ -19,10 +27,89 @@ namespace XamarinEvolveIOS
 		}
 
 		private UserList _userListForTesting;
+		private User _currentUser = new User ();
 
 		public User GetCurrentUser ()
 		{
-			return GetUsers ()["billholmes"];
+			return _currentUser;
+		}
+
+		public class UserLoginResult
+		{
+			public User User {get; set;}
+			public Exception Exceptin {get;set;}
+		}
+
+		void AsyncUserLoginCall (Func<User> call, Action<UserLoginResult> onComplete)
+		{
+			Func <int> func = delegate {
+				try
+				{
+					User newUser = call ();
+					
+					if (onComplete != null)
+					{
+						onComplete (new UserLoginResult (){
+							User = newUser
+						});
+					}
+				}
+				catch (Exception exp)
+				{
+					if (onComplete != null)
+					{
+						onComplete (new UserLoginResult (){
+							Exceptin = exp
+						});
+					}
+				}
+				
+				return 0;
+			};
+			func.BeginInvoke (null, null);
+		}
+
+		public User CreateNewUser (string username, string password)
+		{
+			Engine.Debug.SimulateNetworkWait ();
+
+			UserList list = GetUsers ();
+			
+			User ret = list[username];
+			
+			if (ret != null)
+				throw new DuplicateUserException (string.Format ("username {0} already exists", username) );
+			
+			return _currentUser = _userListForTesting.Add (new User (){
+				UserName = username,
+			});
+		}
+
+		public void CreateNewUser (string username, string password, Action<UserLoginResult> onComplete)
+		{
+			AsyncUserLoginCall (delegate {
+				return CreateNewUser (username, password);
+			}, onComplete);
+		}
+
+		public User UserLogin (string username, string password)
+		{
+			Engine.Debug.SimulateNetworkWait ();
+
+			UserList list = GetUsers ();
+			
+			User ret = list[username];
+			if (ret == null)
+				throw new UserAuthenticationException (string.Format ("Could not login {0}", username));
+
+			return _currentUser = ret;
+		}
+
+		public void UserLogin (string username, string password, Action<UserLoginResult> onComplete)
+		{
+			AsyncUserLoginCall (delegate {
+				return UserLogin (username, password);
+			}, onComplete);
 		}
 
 		public UserList GetUsers ()
@@ -89,7 +176,20 @@ namespace XamarinEvolveIOS
 		{
 			get
 			{
-				return Engine.Instance.GetCurrentUser ().UserName.Equals (UserName);
+				User localUser = Engine.Instance.GetCurrentUser ();
+
+				if (string.IsNullOrEmpty (localUser.UserName) && string.IsNullOrEmpty (UserName))
+					return true;
+
+				return localUser.UserName.Equals (UserName);
+			}
+		}
+
+		public bool IsAnonymousUser 
+		{
+			get
+			{
+				return string.IsNullOrEmpty (UserName);
 			}
 		}
 	}
@@ -115,14 +215,33 @@ namespace XamarinEvolveIOS
 			get {
 				User ret = _list.Find (e=>e.UserName == username);
 
-				if (ret == null)
-					throw new KeyNotFoundException (username + " not found");
-
 				return ret;
 			}
 		}
 
+		public User Add (User newUser)
+		{
+			_list.Add (newUser);
+			return newUser;
+		}
+
 		public int Count {get{return _list.Count;}}
+	}
+
+	public class UserAuthenticationException : System.Exception
+	{
+		public UserAuthenticationException (string message) : base (message)
+		{
+
+		}
+	}
+
+	public class DuplicateUserException : System.Exception
+	{
+		public DuplicateUserException (string message) : base (message)
+		{
+			
+		}
 	}
 
 }

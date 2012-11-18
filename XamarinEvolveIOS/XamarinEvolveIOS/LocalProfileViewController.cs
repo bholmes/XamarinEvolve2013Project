@@ -6,12 +6,16 @@ namespace XamarinEvolveIOS
 {
 	public class LocalProfileViewController : ProfileViewController
 	{
-		UIView _loginView;
+		enum Mode
+		{
+			Login,
+			NewUser
+		}
+
+		LoginView _loginView;
 		UIBarButtonItem _editButton;
 		string _originalTitle;
-
-		UITextField _usernameField;
-		UITextField _passwordField;
+		Mode _mode = Mode.Login;
 
 		public LocalProfileViewController () : base (Engine.Instance.GetCurrentUser())
 		{
@@ -21,37 +25,150 @@ namespace XamarinEvolveIOS
 		{
 			base.LoadView ();
 
-			//Creatre the login view and hide it
-			_loginView = new UIView (this.View.Bounds);
-			_loginView.BackgroundColor = UIColor.White;
+			//Create the login view and hide it
+			_loginView = LoginView.Create (this);
+			_loginView.Frame = View.Bounds;
 			_loginView.AutoresizingMask = UIViewAutoresizing.All;
 			_loginView.Hidden = true;
+			_loginView.LoginButton.TouchUpInside += LoginButtonClicked;
+
+			_loginView.CancelButton.TouchUpInside += CancelButtonClicked;
 			this.View.Add (_loginView);
 
-			//Add username text field
-			_usernameField = new UITextField (new RectangleF (20, 20, 
-			                                                  this.View.Bounds.Width - 40, 30));
-			_usernameField.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | 
-				UIViewAutoresizing.FlexibleBottomMargin;
-			_usernameField.Text = "name";
-			_loginView.Add (_usernameField);
+			if (Engine.Instance.GetCurrentUser().IsAnonymousUser)
+				ShowLoginScreen ();
+		}
 
-			// Add login button
-			UIButton loginButton = UIButton.FromType (UIButtonType.RoundedRect);
-			loginButton.SetTitle ("Login", UIControlState.Normal);
-			loginButton.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | 
-				UIViewAutoresizing.FlexibleTopMargin;
-			loginButton.Frame = new RectangleF (20, this.View.Bounds.Height - 64, 
-			                                    this.View.Bounds.Width - 40, 44);
-			loginButton.TouchUpInside += LoginButtonClicked;
-			_loginView.Add (loginButton);
+		void ChangeMode (Mode newMode)
+		{
+			if (newMode == _mode)
+				return;
 
-			ShowLoginScreen ();
+			_mode = newMode;
+
+			if (_mode == Mode.Login)
+			{
+				this.Title = "Login";
+				this._loginView.LoginButton.SetTitle ("Login", UIControlState.Normal);
+				this._loginView.CancelButton.SetTitle ("New User", UIControlState.Normal);
+				_loginView.RetypePasswordLabel.Hidden = true;
+				_loginView.RetypePasswordField.Hidden = true;
+			}
+			else
+			{
+				this.Title = "New User";
+				this._loginView.LoginButton.SetTitle ("Create", UIControlState.Normal);
+				this._loginView.CancelButton.SetTitle ("Cancel", UIControlState.Normal);
+				_loginView.RetypePasswordLabel.Hidden = false;
+				_loginView.RetypePasswordField.Hidden = false;
+			}
+		}
+
+		void SetBusyState (bool busy)
+		{
+			_loginView.LoginButton.Enabled = !busy;
+			_loginView.CancelButton.Enabled = !busy;
+			_loginView.UsernameField.Enabled = !busy;
+			_loginView.PasswordField.Enabled = !busy;
+			_loginView.RetypePasswordField.Enabled = !busy;
+
+			if (busy)
+			{
+				_loginView.BusyIndicator.StartAnimating ();
+			}
+			else
+			{
+				_loginView.BusyIndicator.StopAnimating ();
+			}
 		}
 
 		void LoginButtonClicked (object sender, EventArgs e)
 		{
-			HideLoginScreen ();
+			if (_mode == Mode.Login)
+				TryLoginUser ();
+			else
+				TryCreateUser ();
+		}
+
+		void CancelButtonClicked (object sender, EventArgs e)
+		{
+			if (_mode == Mode.Login)
+				ChangeMode (Mode.NewUser);
+			else
+				ChangeMode (Mode.Login);
+		}
+
+		void TryLoginUser()
+		{
+			SetBusyState (true);
+
+			Engine.Instance.UserLogin (_loginView.UsernameField.Text,
+		                                       _loginView.PasswordField.Text,
+			                           (loginResult) => {
+				this.InvokeOnMainThread (delegate {
+					AsyncLoginComplete (loginResult);
+				});
+			});
+		}
+
+		void AsyncLoginComplete (Engine.UserLoginResult loginResult)
+		{
+			SetBusyState (false);
+
+			if (loginResult.User != null) 
+			{
+				HideLoginScreen ();
+				this.CurrentUser = loginResult.User;
+				this.TableView.ReloadData ();
+				this.SetEditing (false, false);
+				return;
+			}
+
+			UIActionSheet actionSheet = new UIActionSheet ("Login Failed");
+			actionSheet.AddButton ("Retry");
+			
+			actionSheet.AddButton ("Register New User");
+			
+			actionSheet.Clicked += (object sender, UIButtonEventArgs e) => {
+				if (e.ButtonIndex == 1)
+				{
+					ChangeMode (Mode.NewUser);
+				}
+			};
+			
+			actionSheet.ShowInView (_loginView);
+		}
+
+		void TryCreateUser ()
+		{
+			SetBusyState (true);
+			
+			Engine.Instance.CreateNewUser (_loginView.UsernameField.Text,
+			                           _loginView.PasswordField.Text,
+			                           (loginResult) => {
+				this.InvokeOnMainThread (delegate {
+					AsyncNewUserComplete (loginResult);
+				});
+			});
+		}
+
+		void AsyncNewUserComplete (Engine.UserLoginResult loginResult)
+		{
+			SetBusyState (false);
+			
+			if (loginResult.User != null) 
+			{
+				HideLoginScreen ();
+				this.CurrentUser = loginResult.User;
+				this.TableView.ReloadData ();
+				this.SetEditing (true, false);
+				return;
+			}
+			
+			using (UIAlertView alert = new UIAlertView ("Error", "Something went wrong", null, "OK", null))
+			{
+				alert.Show ();
+			}
 		}
 
 		void ShowLoginScreen ()

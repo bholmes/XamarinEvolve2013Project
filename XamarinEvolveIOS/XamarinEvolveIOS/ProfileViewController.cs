@@ -10,7 +10,7 @@ namespace XamarinEvolveIOS
 {
 	public partial class ProfileViewController : UITableViewController
 	{
-		User CurrentUser {get;set;}
+		private User _currentUser;
 
 		public ProfileViewController (User user) : base (UITableViewStyle.Grouped)
 		{
@@ -35,17 +35,23 @@ namespace XamarinEvolveIOS
 
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
 				this.SetEditing (!this.Editing, true);
-				if (this.Editing) {
-					this.NavigationItem.RightBarButtonItem.Title = "Done";
-					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Done;
-				}
-				else {
-					this.NavigationItem.RightBarButtonItem.Title = "Edit";
-					this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
-					RefreshHeaderCell ();
-				}
 			});
 			this.NavigationItem.RightBarButtonItem = editButton;
+		}
+
+		public override void SetEditing (bool editing, bool animated)
+		{
+			base.SetEditing (editing, animated);
+
+			if (this.Editing) {
+				this.NavigationItem.RightBarButtonItem.Title = "Done";
+				this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Done;
+			}
+			else {
+				this.NavigationItem.RightBarButtonItem.Title = "Edit";
+				this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
+				RefreshHeaderCell ();
+			}
 		}
 
 		void RefreshHeaderCell ()
@@ -60,6 +66,20 @@ namespace XamarinEvolveIOS
 						headerInnerCell.RefreshImageFromData ();
 					});
 				}
+			}
+		}
+
+		protected User CurrentUser {
+			get{
+				return _currentUser;
+			}
+			set{
+				_currentUser = value;
+
+				LocalUserProfileDataSource dataSrc = TableView.DataSource as LocalUserProfileDataSource;
+				if (dataSrc != null)
+					dataSrc.UserProfile = value;
+
 			}
 		}
 	}
@@ -120,7 +140,7 @@ namespace XamarinEvolveIOS
 			_controller = controller;
 		}
 		
-		public User UserProfile {get; private set;}
+		public User UserProfile {get; set;}
 		
 		#region UITableViewDataSource	
 
