@@ -78,7 +78,7 @@ namespace XamarinEvolveIOS
 				{
 				case 0:
 					_navigationController.PushViewController (
-						new ProfileViewController (Engine.Instance.GetUsers ()["billholmes"]), true);
+						new LocalProfileViewController (), true);
 					break;
 				case 1:
 					_navigationController.PushViewController (new UsersViewController (), true);

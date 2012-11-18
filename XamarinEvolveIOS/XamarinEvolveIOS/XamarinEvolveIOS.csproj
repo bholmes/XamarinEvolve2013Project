@@ -117,6 +117,7 @@
     <Compile Include="AvatarSelectorController.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="UsersViewController.cs" />
+    <Compile Include="LocalProfileViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
@@ -127,6 +128,7 @@
   <ItemGroup>
     <Content Include="blankavatar.jpg" />
     <Content Include="Images\144_icon.png" />
+    <Content Include="Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
