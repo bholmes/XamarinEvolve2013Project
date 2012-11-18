@@ -37,7 +37,8 @@ namespace XamarinEvolveIOS
 		public UITextField FullNameTextView {get;private set;}
 		public UITextField CityTextView {get;private set;}
 
-		public event Action<NSObject> OnImageChangeRequest;
+		public delegate void OnImageChangeRequestDelegate (UIImage originalImage);
+		public event OnImageChangeRequestDelegate OnImageChangeRequest;
 
 		private User _userProfile;
 		private bool _editing = false;
@@ -54,7 +55,7 @@ namespace XamarinEvolveIOS
 				new UITapGestureRecognizer (() => {
 					if (_editing && OnImageChangeRequest != null)
 					{
-						OnImageChangeRequest(ImageView);
+						OnImageChangeRequest(ImageView.Image);
 					}
 			});
 

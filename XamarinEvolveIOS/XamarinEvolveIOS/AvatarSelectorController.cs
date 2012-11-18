@@ -5,18 +5,25 @@ using MonoTouch.CoreGraphics;
 using Xamarin.Media;
 using System.Threading.Tasks;
 using MonoTouch.Foundation;
+using System.Collections.Generic;
 
 namespace XamarinEvolveIOS
 {
 	public class AvatarSelectorController : UIViewController
 	{
-		AvatarSelectorView _view;
+		public AvatarSelectorView SelectorView {get; private set;}
+		UIImage _originalImage;
+
+		public AvatarSelectorController (UIImage originalImage)
+		{
+			_originalImage = originalImage;
+		}
 
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
 
-			this.View.Add (_view = new AvatarSelectorView (this.View.Bounds));
+			this.View.Add (SelectorView = new AvatarSelectorView (this.View.Bounds, _originalImage));
 		}
 	}
 
@@ -24,27 +31,27 @@ namespace XamarinEvolveIOS
 	{
 		UIImageView _imageView = null;
 		UIScrollView _scrollView = null;
-		UIView _screenView1, _screenView2;
+		UIButton _selectNewPhoto;
+		UIButton _applyChanges;
+		const float _windowWidth = 200.0f;
 
-		public AvatarSelectorView (RectangleF rect) : base (rect)
+		public delegate void ImageAppliedDelegate (UIImage image);
+		public event ImageAppliedDelegate ImageApplied;
+
+		public AvatarSelectorView (RectangleF rect, UIImage originalImage) : base (rect)
 		{
 			this.BackgroundColor = UIColor.Black;
 			this.AutoresizingMask = UIViewAutoresizing.All;
-		
+			this.MultipleTouchEnabled = true;
 
-			RectangleF scrollRect = this.Frame;
-			RectangleF screenRect1 = this.Frame;
-			RectangleF screenRect2;
-			
-			CalculateRects (out scrollRect, out screenRect1, out screenRect2);
+			RectangleF scrollRect = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);;
 
 			_scrollView = new UIScrollView (scrollRect);
-			_scrollView.ClipsToBounds = false;
+			_scrollView.ClipsToBounds = true;
 			_scrollView.ShowsHorizontalScrollIndicator = false;
 			_scrollView.ShowsVerticalScrollIndicator = false;
 
-
-			UIImage image = UIImage.FromFile ("blankavatar.jpg");
+			UIImage image = originalImage;
 
 			_imageView = new UIImageView (new RectangleF (new PointF (), image.Size));
 
@@ -58,76 +65,63 @@ namespace XamarinEvolveIOS
 			_scrollView.Add(_imageView);
 			this.Add (_scrollView);
 
-			_screenView1 = new UIView (screenRect1);
-			_screenView1.BackgroundColor = UIColor.DarkGray;
-			_screenView1.Alpha = .95f;
-			this.Add (_screenView1);
-			
-			_screenView2 = new UIView (screenRect2);
-			_screenView2.BackgroundColor = UIColor.DarkGray;
-			_screenView2.Alpha = .95f;
-			this.Add (_screenView2);
+			_applyChanges = AddNewCustomButton ();
+			_applyChanges.Frame = new RectangleF (20,rect.Height-63*2,
+			                                        rect.Width-40, 44);
+			_applyChanges.SetTitle ("Apply Changes", UIControlState.Normal);
+			_applyChanges.TouchUpInside += ApplyChangesTap;
 
-			UIButton changePhoto = UIButton.FromType (UIButtonType.Custom);
-			changePhoto.Frame = new RectangleF (20,rect.Height-63,
-			                                    rect.Width-40, 44);
-			changePhoto.SetTitle ("Change Photo", UIControlState.Normal);
-			changePhoto.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | 
-				UIViewAutoresizing.FlexibleTopMargin;
+			this.Add (_applyChanges);
 
-			changePhoto.SetBackgroundImage (ImageFromColor (UIColor.Black), UIControlState.Normal);
-			changePhoto.SetBackgroundImage (ImageFromColor (UIColor.White), UIControlState.Highlighted);
-			changePhoto.SetTitleColor (UIColor.White, UIControlState.Normal);
-			changePhoto.SetTitleColor (UIColor.LightGray, UIControlState.Highlighted);
+			_selectNewPhoto = AddNewCustomButton ();
+			_selectNewPhoto.Frame = new RectangleF (20,rect.Height-63,
+			                                  rect.Width-40, 44);
+			_selectNewPhoto.SetTitle ("Change Photo", UIControlState.Normal);
+			_selectNewPhoto.TouchUpInside += ChangePhotoTap;
 
-			changePhoto.Layer.MasksToBounds = true;
-			changePhoto.Layer.BorderWidth = 2f;
-			changePhoto.Layer.CornerRadius = 10.0f;
-			changePhoto.Layer.BorderColor = UIColor.White.CGColor;
-
-			changePhoto.TouchUpInside += ChangePhotoTap;
-
-			this.Add (changePhoto);
+			this.Add (_selectNewPhoto);
 		}
 
-		private void CalculateRects (out RectangleF scrollRect, out RectangleF screenRect1, 
-		                             out RectangleF screenRect2)
+		private UIButton AddNewCustomButton ()
 		{
-			scrollRect = screenRect1 = this.Frame;
+			UIButton newButton = UIButton.FromType (UIButtonType.Custom);
+
+			newButton.AutoresizingMask = UIViewAutoresizing.FlexibleWidth | 
+				UIViewAutoresizing.FlexibleTopMargin;
 			
-			if (scrollRect.Width > scrollRect.Height)
-			{
-				scrollRect.Width = scrollRect.Height;
-				scrollRect.X = this.Frame.GetMidX () - (scrollRect.Width / 2.0f);
-				screenRect1.Width = scrollRect.X;
-				screenRect2 = screenRect1;
-				screenRect2.X = scrollRect.Right;
-			}
-			else
-			{
-				scrollRect.Height = scrollRect.Width;
-				screenRect1.Height = scrollRect.Y = 30;
-				screenRect2 = screenRect1;
-				screenRect2.Y = scrollRect.Bottom;
-				screenRect2.Height = this.Frame.Height - screenRect2.Y;
-			}
+			List<UIImage> colorImages = ImagesFromColors (new UIColor [] {UIColor.Black, UIColor.White});
+			
+			newButton.SetBackgroundImage (colorImages[0], UIControlState.Normal);
+			newButton.SetBackgroundImage (colorImages[1], UIControlState.Highlighted);
+			newButton.SetTitleColor (UIColor.White, UIControlState.Normal);
+			newButton.SetTitleColor (UIColor.LightGray, UIControlState.Highlighted);
+			
+			newButton.Layer.MasksToBounds = true;
+			newButton.Layer.BorderWidth = 2f;
+			newButton.Layer.CornerRadius = 10.0f;
+			newButton.Layer.BorderColor = UIColor.White.CGColor;
+
+			return newButton;
+		}
+
+		public override UIView HitTest (PointF point, UIEvent uievent)
+		{
+			if (_selectNewPhoto.Frame.Contains (point))
+			    return _selectNewPhoto;
+
+			if (_applyChanges.Frame.Contains (point))
+				return _applyChanges;
+
+			return _scrollView;
 		}
 
 		public override void LayoutSubviews ()
 		{
 			base.LayoutSubviews ();
 
-			RectangleF scrollRect = this.Frame;
-			RectangleF screenRect1 = this.Frame;
-			RectangleF screenRect2;
-			
-			CalculateRects (out scrollRect, out screenRect1, out screenRect2);
+			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);
 
-			_scrollView.Frame = scrollRect;
-			_screenView1.Frame = screenRect1;
-			_screenView2.Frame = screenRect2;
-
-			SetScrollZoomInfo (scrollRect, false);
+			SetScrollZoomInfo (_scrollView.Frame, false);
 		}
 
 		void SetScrollZoomInfo (RectangleF scrollRect, bool forceScale)
@@ -151,8 +145,17 @@ namespace XamarinEvolveIOS
 
 		void ChangePhotoTap (object sender, EventArgs e)
 		{
+			MediaPicker picker = new MediaPicker ();
+
+			if (!picker.IsCameraAvailable)
+			{
+				PickPhotoFromLibrary (picker);
+				return;
+			}
+
 			UIActionSheet actionSheet = new UIActionSheet ("Select Source");
 			actionSheet.AddButton ("From Camera");
+
 			actionSheet.AddButton ("From Library");
 			actionSheet.AddButton ("Cancel");
 			actionSheet.CancelButtonIndex = 2;
@@ -162,12 +165,61 @@ namespace XamarinEvolveIOS
 			actionSheet.ShowInView (this);
 		}
 
+		void ApplyChangesTap (object sender, EventArgs e)
+		{
+			UIImage imaage = _imageView.Image;
+
+			float scale;
+
+			if (imaage.Size.Width < imaage.Size.Height)
+			{
+				scale = imaage.Size.Width / _scrollView.ContentSize.Width;
+			}
+			else
+			{
+				scale = imaage.Size.Height / _scrollView.ContentSize.Height;
+			}
+
+			RectangleF cropRect = new RectangleF () {
+				X =_scrollView.ContentOffset.X * scale,
+				Y =_scrollView.ContentOffset.Y * scale,
+				Width = scale * _windowWidth,
+				Height = scale * _windowWidth,
+			};
+
+			UIImage newImage = CropImage (imaage, cropRect);
+
+			if (ImageApplied != null)
+				ImageApplied (newImage);
+		}
+
+		UIImage CropImage (UIImage originalImage, RectangleF rect)
+		{
+
+			try
+			{
+				// I found I needed to draw the image to remove rotation
+				// I can probably add scaling here as well to keep image
+				// sizes at 200 x 200
+
+				UIGraphics.BeginImageContext (originalImage.Size);
+				CGContext context = UIGraphics.GetCurrentContext ();
+				
+				originalImage.Draw (new PointF ());
+				
+				UIImage rotateImage = UIGraphics.GetImageFromCurrentImageContext ();
+				{
+					return new UIImage (rotateImage.CGImage.WithImageInRect (rect));
+				}
+			}
+			finally
+			{
+				UIGraphics.EndImageContext ();
+			}
+		}
+
 		void SetNewImage (UIImage image)
 		{
-			RectangleF scrollRect;
-			RectangleF screenRect1;
-			RectangleF screenRect2;
-
 			_scrollView.MinimumZoomScale = 1;
 			_scrollView.MaximumZoomScale =  5;
 			_scrollView.SetZoomScale (1, false);
@@ -176,16 +228,17 @@ namespace XamarinEvolveIOS
 			_imageView.Image = image;
 			_scrollView.ContentSize = image.Size;
 			
-			CalculateRects (out scrollRect, out screenRect1, out screenRect2);
+			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);
 
-			SetScrollZoomInfo (scrollRect, true);
+			SetScrollZoomInfo (_scrollView.Frame, true);
 		}
 
 		void ActionSheetTapped (object sender, UIButtonEventArgs e)
 		{
+			MediaPicker picker = new MediaPicker ();
+
 			if (e.ButtonIndex == 0)
 			{
-				MediaPicker picker = new MediaPicker ();
 				Task<MediaFile> task = picker.TakePhotoAsync (new StoreCameraMediaOptions ()
 				                                              {DefaultCamera= CameraDevice.Front});
 				task.ContinueWith (delegate {
@@ -200,31 +253,46 @@ namespace XamarinEvolveIOS
 			}
 			else if (e.ButtonIndex == 1)
 			{
-				MediaPicker picker = new MediaPicker ();
-				Task<MediaFile> task = picker.PickPhotoAsync ();
-				task.ContinueWith (delegate {
-					if (task.Status == TaskStatus.RanToCompletion)
-					{
-						NSData nsData = NSData.FromStream (task.Result.GetStream ());
-						this.BeginInvokeOnMainThread (delegate {
-							SetNewImage (UIImage.LoadFromData (nsData));
-						});
-					}
-				});
+				PickPhotoFromLibrary (picker);
 			}
 		}
 
-		private UIImage ImageFromColor (UIColor color)
+		private void PickPhotoFromLibrary (MediaPicker picker)
 		{
-			RectangleF rect = new RectangleF (0, 0, 1, 1);
-			UIGraphics.BeginImageContext (rect.Size);
-			CGContext context = UIGraphics.GetCurrentContext ();
-			context.SetFillColor (color.CGColor);
-			context.FillRect (rect);
-			UIImage image = UIGraphics.GetImageFromCurrentImageContext ();
-			UIGraphics.EndImageContext ();
+			Task<MediaFile> task = picker.PickPhotoAsync ();
+			task.ContinueWith (delegate {
+				if (task.Status == TaskStatus.RanToCompletion)
+				{
+					NSData nsData = NSData.FromStream (task.Result.GetStream ());
+					this.BeginInvokeOnMainThread (delegate {
+						SetNewImage (UIImage.LoadFromData (nsData));
+					});
+				}
+			});
+		}
 
-			return image;
+		private List<UIImage> ImagesFromColors (UIColor [] colors)
+		{
+			List<UIImage> ret = new List<UIImage> ();
+			RectangleF rect = new RectangleF (0, 0, 1, 1);
+			try 
+			{
+				UIGraphics.BeginImageContext (rect.Size);
+				CGContext context = UIGraphics.GetCurrentContext ();
+
+				foreach (UIColor color in colors)
+				{
+					context.SetFillColor (color.CGColor);
+					context.FillRect (rect);
+					ret.Add (UIGraphics.GetImageFromCurrentImageContext ());
+				}
+			}
+			finally
+			{
+				UIGraphics.EndImageContext ();
+			}
+			
+			return ret;
 		}
 
 		private class foo : UIScrollViewDelegate
