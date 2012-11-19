@@ -251,10 +251,15 @@ namespace XamarinEvolveIOS
 			{
 				User localUser = Engine.Instance.GetCurrentUser ();
 
-				if (string.IsNullOrEmpty (localUser.UserName) && string.IsNullOrEmpty (UserName))
-					return true;
+				if (string.IsNullOrEmpty (localUser.UserName))
+				{
+					if (string.IsNullOrEmpty (UserName))
+						return true;
+				}
+				else
+					return localUser.UserName.Equals (UserName);
 
-				return localUser.UserName.Equals (UserName);
+				return false;
 			}
 		}
 

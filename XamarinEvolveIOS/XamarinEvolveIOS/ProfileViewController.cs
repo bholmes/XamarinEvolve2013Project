@@ -128,6 +128,90 @@ namespace XamarinEvolveIOS
 		{
 			return false;
 		}
+
+		public static bool canUsePhone ()
+		{
+			return UIApplication.SharedApplication.CanOpenUrl(
+				new NSUrl ("tel://412-867-5309"));
+		}
+
+		public static bool canUseEMail ()
+		{
+			return UIApplication.SharedApplication.CanOpenUrl(
+				new NSUrl ("mailto:?to=fun@xamarin.com"));
+		}
+
+		bool validEMail (string value)
+		{
+			if (string.IsNullOrWhiteSpace (value))
+				return false;
+
+			return true;
+		}
+
+		bool validPhone (string value)
+		{
+			if (string.IsNullOrWhiteSpace (value))
+				return false;
+
+			return true;
+		}
+
+		public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+		{
+			if (indexPath.Section == 2 && indexPath.Row == 1)
+			{
+				if (!canUsePhone ())
+					return;
+
+				CustomUITableViewCell cell = tableView.CellAt (indexPath) as CustomUITableViewCell;
+				NameValueCell nameCell = cell.CustomView as NameValueCell;
+
+				cell.Selected = false;
+				string value = nameCell.ValueLabel.Text;
+
+				if (!validPhone (value))
+					return;
+
+				UIAlertView view = new UIAlertView ("Call Number?", value, 
+				                                    null, null, new string [] {"Yes", "No"}); 
+				view.CancelButtonIndex = 1;
+
+				view.Clicked += (object sender, UIButtonEventArgs e) => {
+					if (e.ButtonIndex == 0)
+					UIApplication.SharedApplication.OpenUrl (
+							new NSUrl (string.Format ("tel://{0}", value)));
+				};
+
+				view.Show ();
+			}
+			else if (indexPath.Section == 2 && indexPath.Row == 0)
+			{
+				if (!canUseEMail ())
+					return;
+
+				CustomUITableViewCell cell = tableView.CellAt (indexPath) as CustomUITableViewCell;
+				NameValueCell nameCell = cell.CustomView as NameValueCell;
+
+				cell.Selected = false;
+				string value = nameCell.ValueLabel.Text;
+				
+				if (!validEMail (value))
+					return;
+
+				UIAlertView view = new UIAlertView ("Create E-Mail?", value, 
+				                                    null, null, new string [] {"Yes", "No"}); 
+				view.CancelButtonIndex = 1;
+				
+				view.Clicked += (object sender, UIButtonEventArgs e) => {
+					if (e.ButtonIndex == 0)
+						UIApplication.SharedApplication.OpenUrl (
+							new NSUrl (string.Format ("mailto:?to={0}", value)));
+				};
+				
+				view.Show ();
+			}
+		}
 	}
 
 	public class LocalUserProfileDataSource : UITableViewDataSource
@@ -250,27 +334,34 @@ namespace XamarinEvolveIOS
 
 		private UITableViewCell GetCellSectionThree (UITableView tableView, NSIndexPath indexPath)
 		{
-			NameValueCell cell;
+			UITableViewCell cell;
+			NameValueCell nameValueCell;
 			
 			switch (indexPath.Row)
 			{
 			case 0:
-				cell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
-				cell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
-				cell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.None;
-				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
+				nameValueCell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
+				nameValueCell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
+				nameValueCell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.None;
+				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
+				cell = nameValueCell.LoadCell (tableView);
+				if (LocalUserProfileDelegate.canUsePhone ())
+					cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 				break;
 			case 1:
-				cell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
-				cell.ValueTextField.KeyboardType = UIKeyboardType.PhonePad;
-				cell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
+				nameValueCell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
+				nameValueCell.ValueTextField.KeyboardType = UIKeyboardType.PhonePad;
+				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
+				cell = nameValueCell.LoadCell (tableView);
+				if (LocalUserProfileDelegate.canUseEMail ())
+					cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 				break;
 				
 			default:
 				throw new IndexOutOfRangeException ("indexPath.Row out of range.");
 			}
 			
-			return cell.LoadCell (tableView);
+			return cell;
 		}
 	}
 }

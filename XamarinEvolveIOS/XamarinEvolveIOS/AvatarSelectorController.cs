@@ -24,6 +24,10 @@ namespace XamarinEvolveIOS
 			base.ViewDidLoad ();
 
 			this.View.Add (SelectorView = new AvatarSelectorView (this.View.Bounds, _originalImage));
+			SelectorView.ImageApplied += delegate {
+				NavigationController.PopToViewController (
+					NavigationController.ViewControllers[NavigationController.ViewControllers.Length-2], true);
+			};
 		}
 	}
 
