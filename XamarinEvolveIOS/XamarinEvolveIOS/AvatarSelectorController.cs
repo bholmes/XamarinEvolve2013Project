@@ -241,15 +241,7 @@ namespace XamarinEvolveIOS
 			{
 				Task<MediaFile> task = picker.TakePhotoAsync (new StoreCameraMediaOptions ()
 				                                              {DefaultCamera= CameraDevice.Front});
-				task.ContinueWith (delegate {
-					if (task.Status == TaskStatus.RanToCompletion)
-					{
-						NSData nsData = NSData.FromStream (task.Result.GetStream ());
-						this.BeginInvokeOnMainThread (delegate {
-							SetNewImage (UIImage.LoadFromData (nsData));	
-						});
-					}
-				});
+				HandlePick (task);
 			}
 			else if (e.ButtonIndex == 1)
 			{
@@ -260,12 +252,23 @@ namespace XamarinEvolveIOS
 		private void PickPhotoFromLibrary (MediaPicker picker)
 		{
 			Task<MediaFile> task = picker.PickPhotoAsync ();
+			HandlePick (task);
+		}
+
+		void HandlePick (Task<MediaFile> task)
+		{
 			task.ContinueWith (delegate {
-				if (task.Status == TaskStatus.RanToCompletion)
-				{
+				if (task.Status == TaskStatus.RanToCompletion) {
 					NSData nsData = NSData.FromStream (task.Result.GetStream ());
 					this.BeginInvokeOnMainThread (delegate {
 						SetNewImage (UIImage.LoadFromData (nsData));
+						try
+						{
+							// try remove the temp files from disk
+							System.IO.File.Delete (task.Result.Path);
+						}
+						catch (Exception) {}
+						task.Result.Dispose ();
 					});
 				}
 			});
