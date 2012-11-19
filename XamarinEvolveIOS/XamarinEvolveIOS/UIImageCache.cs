@@ -74,7 +74,7 @@ namespace XamarinEvolveIOS
 			object _lock = new object();
 		}
 		
-		private UIImage internalGetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
+		private UIImage internalGetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage, bool forceReload)
 		{
 			if (string.IsNullOrEmpty (url))
 				return defaultImage;
@@ -85,8 +85,11 @@ namespace XamarinEvolveIOS
 				if(foundItem != null)
 				{
 					_list.Remove (foundItem);
-					_list.Add (foundItem);
-					return foundItem.GetOrLoadImage (OnImageLoaded);
+					if (!forceReload)
+					{
+						_list.Add (foundItem);
+						return foundItem.GetOrLoadImage (OnImageLoaded);
+					}
 				}
 				
 				_list.Add (new UIImageCacheItem (url, OnImageLoaded, (image) =>{
@@ -110,7 +113,12 @@ namespace XamarinEvolveIOS
 		
 		static public UIImage GetOrLoadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
 		{
-			return _instance.internalGetOrLoadImage (url, OnImageLoaded, defaultImage);	
+			return _instance.internalGetOrLoadImage (url, OnImageLoaded, defaultImage, false);	
+		}
+
+		static public UIImage ReloadImage (string url, OnImageLoadedDelegate OnImageLoaded, UIImage defaultImage)
+		{
+			return _instance.internalGetOrLoadImage (url, OnImageLoaded, defaultImage, true);	
 		}
 	}
 }

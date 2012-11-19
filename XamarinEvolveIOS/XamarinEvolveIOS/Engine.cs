@@ -159,6 +159,79 @@ namespace XamarinEvolveIOS
 
 			return _userListForTesting;
 		}
+
+		public class PostNewAvatarResult
+		{
+			public string URL{get;set;}
+			public Exception Exceptin{get;set;}
+		}
+
+		public string PostNewAvatar (byte [] data)
+		{
+			Engine.Debug.SimulateNetworkWait ();
+
+			User currentUser = GetCurrentUser ();
+			string fullName = currentUser.AvatarURL;
+
+			if (string.IsNullOrEmpty (fullName))
+			{
+				string path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+				string filename = System.IO.Path.GetRandomFileName ();
+
+				fullName = System.IO.Path.Combine (path, filename + ".png");
+			}
+			else
+			{
+				if (fullName.StartsWith ("file:///"))
+					fullName = fullName.Remove (0, "file://".Length);
+			}
+
+			System.IO.FileStream fileStream = null;
+			try
+			{
+				fileStream = new System.IO.FileStream(
+					fullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write);
+				fileStream.Write(data, 0, data.Length);
+			}
+			finally
+			{
+				if (fileStream != null)
+					fileStream.Close();
+			}
+
+			currentUser.AvatarURL = fullName = string.Format ("file://{0}", fullName);
+
+			return fullName;
+		}
+
+		public void PostNewAvatar (byte [] data, Action<PostNewAvatarResult> onComplete)
+		{
+			Func <int> func = delegate {
+				try
+				{
+					string newURL = PostNewAvatar (data);
+					
+					if (onComplete != null)
+					{
+						onComplete (new PostNewAvatarResult (){
+							URL = newURL,
+						});
+					}
+				}
+				catch (Exception exp)
+				{
+					if (onComplete != null)
+					{
+						onComplete (new PostNewAvatarResult (){
+							Exceptin = exp,
+						});
+					}
+				}
+				
+				return 0;
+			};
+			func.BeginInvoke (null, null);
+		}
 	}
 
 	public class User

@@ -200,10 +200,28 @@ namespace XamarinEvolveIOS
 			headerCell.OnImageChangeRequest += (originalImage) => {
 				AvatarSelectorController ctrl;
 				this._controller.NavigationController.PushViewController (ctrl = new AvatarSelectorController (originalImage), true);
-				ctrl.SelectorView.ImageApplied += (image) => {headerCell.ImageView.Image = image;};
+				ctrl.SelectorView.ImageApplied += (image) => {
+					headerCell.ImageView.Image = image; 
+					PostNewAvatar (image);
+				};
 			};
 
 			return headerCell.LoadCell (tableView);
+		}
+
+		void PostNewAvatar (UIImage image)
+		{
+			NSData data = image.AsPNG ();
+
+			byte[] dataBytes = new byte[data.Length];
+			System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
+
+			Engine.Instance.PostNewAvatar (dataBytes, (result) => {
+				if (!string.IsNullOrEmpty (result.URL))
+				{
+					UIImageCache.ReloadImage (result.URL, null, image);
+				}
+			});
 		}
 
 		private UITableViewCell GetCellSectionTwo (UITableView tableView, NSIndexPath indexPath)

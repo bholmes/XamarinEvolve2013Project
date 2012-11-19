@@ -71,6 +71,7 @@ namespace XamarinEvolveIOS
 			_loginView.UsernameField.Enabled = !busy;
 			_loginView.PasswordField.Enabled = !busy;
 			_loginView.RetypePasswordField.Enabled = !busy;
+			this.NavigationItem.SetHidesBackButton (busy, true);
 
 			if (busy)
 			{
