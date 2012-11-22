@@ -7,14 +7,31 @@ using XamarinEvolveSSLibrary;
 
 namespace TestSSAPI
 {
-    class Program
+    public class MySqlOnlyTests
     {
-        static void Main(string[] args)
+        public void RunTests()
+        {
+            
+        }
+    }
+
+    public class SSTests
+    {
+        public void RunTests()
         {
             JsonServiceClient client = new JsonServiceClient(SystemConstants.WebServiceBaseURL);
 
             UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("users");
             Console.WriteLine(response.Users.Count);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            SSTests ssTests = new SSTests();
+            ssTests.RunTests();
         }
     }
 }

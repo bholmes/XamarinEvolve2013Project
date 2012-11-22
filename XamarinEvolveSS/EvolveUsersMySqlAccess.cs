@@ -8,17 +8,8 @@ using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveSS
 {
-    internal class EvolveUsersMySqlAccess
+    public class EvolveUsersMySqlAccess
     {
-        string OdbcConnectionString
-        {
-            get
-            {
-                return string.Format("Driver={0}; Server={1}; Database={2}; User={3}; Password={4}; Socket=MySQL; Option=3;",
-                    "{MySQL ODBC 3.51 Driver}", SystemConstants.DatabaseServer, SystemConstants.DatabaseName, SystemConstants.DatabaseUser, SystemConstants.DatabasePassword);
-            }
-        }
-
         public List<User> GetAllUsers()
         {
             List<User> result = null;
@@ -84,8 +75,6 @@ namespace XamarinEvolveSS
 
         public void UpdateUser(User user)
         {
-            string statement;
-
             SetupAndCall((dbCmd, ev) =>
             {
                 List<string> updateStrs = new List<string>();
@@ -107,7 +96,6 @@ namespace XamarinEvolveSS
 
                 ev.Where(rn => user.username == rn.username).UpdateFields = updateStrs;
                 dbCmd.UpdateOnly(user, ev);
-                statement = dbCmd.GetLastSql();
             });
 
             return;
