@@ -28,7 +28,8 @@ namespace XamarinEvolveSS
                 //}));
 
                 Routes
-                  .Add<XamarinEvolveSSLibrary.User>("/users");
+                  .Add<XamarinEvolveSSLibrary.User>("/user")
+                  .Add<XamarinEvolveSSLibrary.User>("/user/{username}");
             }
         }
 

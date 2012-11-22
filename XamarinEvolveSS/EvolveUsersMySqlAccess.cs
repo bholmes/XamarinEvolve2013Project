@@ -36,7 +36,7 @@ namespace XamarinEvolveSS
             });
 
             if (result == null || result.Count == 0)
-                throw new Exception(string.Format("user '{0} not found'", username));
+                throw new Exception(string.Format("user '{0}' not found", username));
             else if (result.Count > 1)
                 throw new Exception(string.Format("too many users named '{0}' found'", username));
 
@@ -57,7 +57,7 @@ namespace XamarinEvolveSS
             });
 
             if (result != 1)
-                throw new Exception(string.Format("user '{0} not found'", username));
+                throw new Exception(string.Format("user '{0}' not found", username));
         }
 
         public int AddUser(User user)
