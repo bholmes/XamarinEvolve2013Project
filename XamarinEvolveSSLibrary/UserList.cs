@@ -6,7 +6,12 @@ namespace XamarinEvolveSSLibrary
 	public class UserList
 	{
 		List<User> _list;
-		
+
+		public UserList ()
+		{
+			_list = new List<User> ();
+		}
+
 		public UserList (List<User> list)
 		{
 			_list = list;

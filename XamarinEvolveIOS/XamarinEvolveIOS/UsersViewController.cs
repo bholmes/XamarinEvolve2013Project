@@ -2,12 +2,15 @@ using System;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
 using XamarinEvolveSSLibrary;
+using MonoTouch.CoreGraphics;
 
 namespace XamarinEvolveIOS
 {
 	public class UsersViewController : UITableViewController
 	{
 		UserList Users {get;set;}
+		UIActivityIndicatorView _busyIndicator;
+
 		public UsersViewController ()
 		{
 
@@ -17,19 +20,48 @@ namespace XamarinEvolveIOS
 		{
 			base.LoadView ();
 
+			_busyIndicator  = new UIActivityIndicatorView (UIActivityIndicatorViewStyle.Gray);
+			_busyIndicator.Center = new System.Drawing.PointF(this.View.Bounds.GetMidX (),
+			                                                  this.View.Bounds.GetMidY ());
+			_busyIndicator.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
+
+			this.View.Add (_busyIndicator);
+			_busyIndicator.StartAnimating ();
+
 			Title = "Attendees";
-			Users = Engine.Instance.UserAccess.GetUsers ();
-			TableView.DataSource = new UsersViewDataSource (Users);
-			TableView.Delegate = new UsersViewDelegate (Users, NavigationController);
+			Users = new UserList ();
+			TableView.DataSource = new UsersViewDataSource (UserListGetter);
+			TableView.Delegate = new UsersViewDelegate (UserListGetter, NavigationController);
+
+			Engine.Instance.UserAccess.GetUsers ((userList) => {
+				this.InvokeOnMainThread (delegate {
+					Users = userList.UserList;
+					_busyIndicator.StopAnimating ();
+					this.TableView.ReloadData ();
+				});
+			});
+		}
+
+		private UserList UserListGetter ()
+		{
+			return Users;
 		}
 
 		private class UsersViewDataSource : UITableViewDataSource
 		{
-			UserList Users {get;set;}
+			Func <UserList> _userListGet;
 
-			public UsersViewDataSource(UserList users)
+			public UsersViewDataSource(Func <UserList> userListGet)
 			{
-				Users = users;
+				_userListGet = userListGet;
+			}
+
+			UserList Users 
+			{
+				get
+				{
+					return _userListGet ();
+				}
 			}
 
 			#region implemented abstract members of UITableViewDataSource			
@@ -52,12 +84,20 @@ namespace XamarinEvolveIOS
 
 		private class UsersViewDelegate : UITableViewDelegate
 		{
-			UserList Users {get;set;}
+			Func <UserList> _userListGet;
+			
+			UserList Users 
+			{
+				get
+				{
+					return _userListGet ();
+				}
+			}
 			UINavigationController _navigationController;
 
-			public UsersViewDelegate(UserList users, UINavigationController navigationController)
+			public UsersViewDelegate(Func <UserList> userListGet, UINavigationController navigationController)
 			{
-				Users = users;
+				_userListGet = userListGet;
 				_navigationController = navigationController;
 			}
 

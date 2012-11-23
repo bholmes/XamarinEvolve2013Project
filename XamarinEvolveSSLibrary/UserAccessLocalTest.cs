@@ -17,7 +17,7 @@ namespace XamarinEvolveSSLibrary
 		{
 			Debug.SimulateNetworkWait ();
 			
-			UserList list = GetUsers ();
+			UserList list = CachedUserList;
 			
 			User ret = list[username];
 			
@@ -33,7 +33,7 @@ namespace XamarinEvolveSSLibrary
 		{
 			Debug.SimulateNetworkWait ();
 			
-			UserList list = GetUsers ();
+			UserList list = CachedUserList;
 			
 			User ret = list[username];
 			if (ret == null)
@@ -44,50 +44,60 @@ namespace XamarinEvolveSSLibrary
 		
 		override public UserList GetUsers ()
 		{
-			if (_userListForTesting == null)
+			Debug.SimulateNetworkWait ();
+
+			return CachedUserList;
+		}
+
+		private UserList CachedUserList
+		{
+			get 
 			{
-				List<User> users = new List<User> ();
-				users.Add (new User () {
-					UserName="billholmes",
-					FullName="William Holmes",
-					City = "Pittsburgh, PA",
-					Company = "moBill Holmes",
-					Title = "Owner",
-					Phone = "(412)-555-5555", 
-					Email = "bill@mobillholmes.com"
-				});
-				users.Add (new User () {
-					UserName="natfriedman",
-					FullName="Nat Friedman",
-					City="San Francisco, CA",
-					Company="Xamarin",
-					Title="CEO",
-					Phone="(855)-926-2746",
-					Email="nat@xamarin.com"
-				});
-				users.Add (new User () {
-					UserName="migueldeicaza",
-					FullName="Miguel de Icaza",
-					City="Boston, MA",
-					Company="Xamarin",
-					Title="CTO",
-					Phone="(855)-926-2746",
-					Email="miguel@xamarin.com"
-				});
-				users.Add (new User () {
-					UserName="josephhill",
-					FullName="Joseph Hill",
-					City="Boston, MA",
-					Company="Xamarin",
-					Title="COO",
-					Phone="(855)-926-2746",
-					Email="joseph@xamarin.com"
-				});
+				if (_userListForTesting == null)
+				{
+					List<User> users = new List<User> ();
+					users.Add (new User () {
+						UserName="billholmes",
+						FullName="William Holmes",
+						City = "Pittsburgh, PA",
+						Company = "moBill Holmes",
+						Title = "Owner",
+						Phone = "(412)-555-5555", 
+						Email = "bill@mobillholmes.com"
+					});
+					users.Add (new User () {
+						UserName="natfriedman",
+						FullName="Nat Friedman",
+						City="San Francisco, CA",
+						Company="Xamarin",
+						Title="CEO",
+						Phone="(855)-926-2746",
+						Email="nat@xamarin.com"
+					});
+					users.Add (new User () {
+						UserName="migueldeicaza",
+						FullName="Miguel de Icaza",
+						City="Boston, MA",
+						Company="Xamarin",
+						Title="CTO",
+						Phone="(855)-926-2746",
+						Email="miguel@xamarin.com"
+					});
+					users.Add (new User () {
+						UserName="josephhill",
+						FullName="Joseph Hill",
+						City="Boston, MA",
+						Company="Xamarin",
+						Title="COO",
+						Phone="(855)-926-2746",
+						Email="joseph@xamarin.com"
+					});
+					
+					_userListForTesting = new UserList (users);
+				}
 				
-				_userListForTesting = new UserList (users);
+				return _userListForTesting;
 			}
-			
-			return _userListForTesting;
 		}
 	}
 }

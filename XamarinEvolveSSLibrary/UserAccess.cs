@@ -9,13 +9,19 @@ namespace XamarinEvolveSSLibrary
 		abstract public User UserLogin (string username, string password);
 		abstract public UserList GetUsers ();
 		
-		public class UserLoginResult
+		public class UserAsyncResult
 		{
 			public User User {get; set;}
 			public Exception Exceptin {get;set;}
 		}
+
+		public class UserListAsyncResult
+		{
+			public UserList UserList {get; set;}
+			public Exception Exceptin {get;set;}
+		}
 		
-		protected void AsyncUserLoginCall (Func<User> call, Action<UserLoginResult> onComplete)
+		protected void UserAsyncCall (Func<User> call, Action<UserAsyncResult> onComplete)
 		{
 			Func <int> func = delegate {
 				try
@@ -24,7 +30,7 @@ namespace XamarinEvolveSSLibrary
 					
 					if (onComplete != null)
 					{
-						onComplete (new UserLoginResult (){
+						onComplete (new UserAsyncResult (){
 							User = newUser
 						});
 					}
@@ -33,7 +39,36 @@ namespace XamarinEvolveSSLibrary
 				{
 					if (onComplete != null)
 					{
-						onComplete (new UserLoginResult (){
+						onComplete (new UserAsyncResult (){
+							Exceptin = exp
+						});
+					}
+				}
+				
+				return 0;
+			};
+			func.BeginInvoke (null, null);
+		}
+
+		protected void UserListAsyncCall (Func<UserList> call, Action<UserListAsyncResult> onComplete)
+		{
+			Func <int> func = delegate {
+				try
+				{
+					UserList newUser = call ();
+					
+					if (onComplete != null)
+					{
+						onComplete (new UserListAsyncResult (){
+							UserList = newUser
+						});
+					}
+				}
+				catch (Exception exp)
+				{
+					if (onComplete != null)
+					{
+						onComplete (new UserListAsyncResult (){
 							Exceptin = exp
 						});
 					}
@@ -44,17 +79,24 @@ namespace XamarinEvolveSSLibrary
 			func.BeginInvoke (null, null);
 		}
 		
-		public void CreateNewUser (string username, string password, Action<UserLoginResult> onComplete)
+		public void CreateNewUser (string username, string password, Action<UserAsyncResult> onComplete)
 		{
-			AsyncUserLoginCall (delegate {
+			UserAsyncCall (delegate {
 				return CreateNewUser (username, password);
 			}, onComplete);
 		}
 		
-		public void UserLogin (string username, string password, Action<UserLoginResult> onComplete)
+		public void UserLogin (string username, string password, Action<UserAsyncResult> onComplete)
 		{
-			AsyncUserLoginCall (delegate {
+			UserAsyncCall (delegate {
 				return UserLogin (username, password);
+			}, onComplete);
+		}
+
+		public void GetUsers (Action<UserListAsyncResult> onComplete)
+		{
+			UserListAsyncCall (delegate {
+				return GetUsers ();
 			}, onComplete);
 		}
 	}

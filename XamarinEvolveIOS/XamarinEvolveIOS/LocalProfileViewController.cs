@@ -113,7 +113,7 @@ namespace XamarinEvolveIOS
 			});
 		}
 
-		void AsyncLoginComplete (UserAccess.UserLoginResult loginResult)
+		void AsyncLoginComplete (UserAccess.UserAsyncResult loginResult)
 		{
 			SetBusyState (false);
 
@@ -154,7 +154,7 @@ namespace XamarinEvolveIOS
 			});
 		}
 
-		void AsyncNewUserComplete (UserAccess.UserLoginResult loginResult)
+		void AsyncNewUserComplete (UserAccess.UserAsyncResult loginResult)
 		{
 			SetBusyState (false);
 			
