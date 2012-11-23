@@ -4,9 +4,12 @@ using ServiceStack.ServiceHost;
 
 namespace XamarinEvolveSSLibrary
 {
+#if IOS
+#else
     [Alias("evolve_users")]
     [Route("/user")]
     [Route("/user/{username}")]
+#endif
     public class User
     {
         public int id { get; set; }

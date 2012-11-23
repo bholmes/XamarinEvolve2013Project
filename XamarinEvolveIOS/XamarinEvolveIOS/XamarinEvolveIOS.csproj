@@ -49,6 +49,7 @@
     <MtouchProfiling>True</MtouchProfiling>
     <MtouchArch>ARMv7</MtouchArch>
     <CodesignProvision>E0436F93-3ECC-45B0-8C43-6B3FC797BD86</CodesignProvision>
+    <MtouchI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -89,6 +90,15 @@
     <Reference Include="monotouch" />
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\libs\Xamarin.Mobile.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Common.MonoTouch">
+      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Common.MonoTouch.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces.MonoTouch">
+      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Interfaces.MonoTouch.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text.MonoTouch">
+      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Text.MonoTouch.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -141,5 +151,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\XamarinEvolveSSLibrary\XamarinEvolveSSLibraryIOS.csproj">
+      <Project>{5A18791C-9F21-46C4-B5DE-7D0C78076013}</Project>
+      <Name>XamarinEvolveSSLibraryIOS</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
