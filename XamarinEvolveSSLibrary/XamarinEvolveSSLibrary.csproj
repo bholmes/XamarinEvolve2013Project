@@ -37,6 +37,9 @@
     <Reference Include="ServiceStack.Interfaces">
       <HintPath>..\SSLibs\ServiceStack.Interfaces.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.OrmLite">
+      <HintPath>..\SSLibs\ServiceStack.OrmLite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,12 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AvatarAccess.cs" />
+    <Compile Include="AvatarAccessLocalTest.cs" />
+    <Compile Include="CustomExceptions.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="GravatarHelper.cs" />
     <Compile Include="MD5Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemConstants.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserAccess.cs" />
+    <Compile Include="UserAccessLocalTest.cs" />
     <Compile Include="UserAvatar.cs" />
     <Compile Include="UserAvatarResponse.cs" />
+    <Compile Include="UserList.cs" />
     <Compile Include="UserResponse.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
