@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
@@ -17,7 +18,7 @@ namespace XamarinEvolveIOS
 			base.LoadView ();
 
 			Title = "Attendees";
-			Users = Engine.Instance.GetUsers ();
+			Users = Engine.Instance.UserAccess.GetUsers ();
 			TableView.DataSource = new UsersViewDataSource (Users);
 			TableView.Delegate = new UsersViewDelegate (Users, NavigationController);
 		}

@@ -54,5 +54,14 @@
     <Compile Include="UserAvatar.cs" />
     <Compile Include="UserAvatarResponse.cs" />
     <Compile Include="UserResponse.cs" />
+    <Compile Include="UserList.cs" />
+    <Compile Include="CustomExceptions.cs" />
+    <Compile Include="Debug.cs" />
+    <Compile Include="GravatarHelper.cs" />
+    <Compile Include="UserAccess.cs" />
+    <Compile Include="UserAccessLocalTest.cs" />
+    <Compile Include="AvatarAccess.cs" />
+    <Compile Include="AvatarAccessLocalTest.cs" />
+    <Compile Include="Engine.cs" />
   </ItemGroup>
 </Project>

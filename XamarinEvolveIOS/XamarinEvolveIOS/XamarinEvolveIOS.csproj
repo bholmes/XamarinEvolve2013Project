@@ -125,11 +125,9 @@
     <Compile Include="CustomUITableViewCell.designer.cs">
       <DependentUpon>CustomUITableViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="GravatarHelper.cs" />
     <Compile Include="UIImageCache.cs" />
     <Compile Include="UserProfileHeaderCell.cs" />
     <Compile Include="AvatarSelectorController.cs" />
-    <Compile Include="Engine.cs" />
     <Compile Include="UsersViewController.cs" />
     <Compile Include="LocalProfileViewController.cs" />
     <Compile Include="LoginView.cs" />

@@ -29,5 +29,25 @@ namespace XamarinEvolveSSLibrary
             return string.Format("Id='{0}', UserName='{1}', FullName='{2}', City='{3}', Email='{4}', Phone='{5}', Password='{6}', Avatar='{7}', Company='{8}', Title='{9}'",
                 Id, UserName, FullName, City, Email, Phone, Password, Avatar, Company, Title);
         }
+
+		public bool IsAnonymousUser ()
+		{
+			return string.IsNullOrEmpty (UserName);
+		}
+
+		public bool IsLocalUser ()
+		{
+			User localUser = Engine.Instance.UserAccess.GetCurrentUser ();
+			
+			if (string.IsNullOrEmpty (localUser.UserName))
+			{
+				if (string.IsNullOrEmpty (UserName))
+					return true;
+			}
+			else
+				return localUser.UserName.Equals (UserName);
+			
+			return false;
+		}
     }
 }

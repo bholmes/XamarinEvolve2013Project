@@ -5,6 +5,7 @@ using System;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Drawing;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
@@ -19,7 +20,7 @@ namespace XamarinEvolveIOS
 
 		public override void LoadView ()
 		{
-			this.Title = CurrentUser.IsLocalUser ? "My Profile" : "Profile";
+			this.Title = CurrentUser.IsLocalUser() ? "My Profile" : "Profile";
 
 			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
@@ -30,7 +31,7 @@ namespace XamarinEvolveIOS
 
 		void SetupEditButton ()
 		{
-			if (!CurrentUser.IsLocalUser)
+			if (!CurrentUser.IsLocalUser())
 				return;
 
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
@@ -300,7 +301,7 @@ namespace XamarinEvolveIOS
 			byte[] dataBytes = new byte[data.Length];
 			System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
 
-			Engine.Instance.PostNewAvatar (dataBytes, (result) => {
+			Engine.Instance.AvatarAccess.PostNewAvatar (dataBytes, (result) => {
 				if (!string.IsNullOrEmpty (result.URL))
 				{
 					UIImageCache.ReloadImage (result.URL, null, image);
@@ -340,7 +341,7 @@ namespace XamarinEvolveIOS
 			switch (indexPath.Row)
 			{
 			case 0:
-				nameValueCell = new NameValueCell ("e-mail", () => UserProfile.EMail, v => UserProfile.EMail= v);
+				nameValueCell = new NameValueCell ("e-mail", () => UserProfile.Email, v => UserProfile.Email= v);
 				nameValueCell.ValueTextField.KeyboardType = UIKeyboardType.EmailAddress;
 				nameValueCell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.None;
 				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;

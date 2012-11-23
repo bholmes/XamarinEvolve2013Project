@@ -1,6 +1,7 @@
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
@@ -17,7 +18,7 @@ namespace XamarinEvolveIOS
 		string _originalTitle;
 		Mode _mode = Mode.Login;
 
-		public LocalProfileViewController () : base (Engine.Instance.GetCurrentUser())
+		public LocalProfileViewController () : base (Engine.Instance.UserAccess.GetCurrentUser())
 		{
 		}
 
@@ -35,7 +36,7 @@ namespace XamarinEvolveIOS
 			_loginView.CancelButton.TouchUpInside += CancelButtonClicked;
 			this.View.Add (_loginView);
 
-			if (Engine.Instance.GetCurrentUser().IsAnonymousUser)
+			if (Engine.Instance.UserAccess.GetCurrentUser().IsAnonymousUser ())
 				ShowLoginScreen ();
 		}
 
@@ -103,7 +104,7 @@ namespace XamarinEvolveIOS
 		{
 			SetBusyState (true);
 
-			Engine.Instance.UserLogin (_loginView.UsernameField.Text,
+			Engine.Instance.UserAccess.UserLogin (_loginView.UsernameField.Text,
 		                                       _loginView.PasswordField.Text,
 			                           (loginResult) => {
 				this.InvokeOnMainThread (delegate {
@@ -112,7 +113,7 @@ namespace XamarinEvolveIOS
 			});
 		}
 
-		void AsyncLoginComplete (Engine.UserLoginResult loginResult)
+		void AsyncLoginComplete (UserAccess.UserLoginResult loginResult)
 		{
 			SetBusyState (false);
 
@@ -144,7 +145,7 @@ namespace XamarinEvolveIOS
 		{
 			SetBusyState (true);
 			
-			Engine.Instance.CreateNewUser (_loginView.UsernameField.Text,
+			Engine.Instance.UserAccess.CreateNewUser (_loginView.UsernameField.Text,
 			                           _loginView.PasswordField.Text,
 			                           (loginResult) => {
 				this.InvokeOnMainThread (delegate {
@@ -153,7 +154,7 @@ namespace XamarinEvolveIOS
 			});
 		}
 
-		void AsyncNewUserComplete (Engine.UserLoginResult loginResult)
+		void AsyncNewUserComplete (UserAccess.UserLoginResult loginResult)
 		{
 			SetBusyState (false);
 			

@@ -3,6 +3,7 @@ using MonoTouch.UIKit;
 using System.Drawing;
 using MonoTouch.Foundation;
 using MonoTouch.ObjCRuntime;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
@@ -135,9 +136,9 @@ namespace XamarinEvolveIOS
 
 		public void RefreshImageFromData ()
 		{
-			string imageURL = _userProfile.AvatarURL;
-			if (string.IsNullOrEmpty (imageURL) && !string.IsNullOrEmpty (_userProfile.EMail))
-				imageURL = GravatarHelper.GetGravatarURL (_userProfile.EMail, 80);
+			string imageURL = _userProfile.Avatar;
+			if (string.IsNullOrEmpty (imageURL) && !string.IsNullOrEmpty (_userProfile.Email))
+				imageURL = GravatarHelper.GetGravatarURL (_userProfile.Email, 80);
 
 			UIImage image = UIImageCache.GetOrLoadImage (imageURL, imagearg =>  {
 				MonoTouch.UIKit.UIApplication.SharedApplication.BeginInvokeOnMainThread (() =>  {
