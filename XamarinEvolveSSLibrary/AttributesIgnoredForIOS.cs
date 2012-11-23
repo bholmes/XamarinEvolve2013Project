@@ -12,6 +12,11 @@ namespace XamarinEvolveSSLibrary
 	{
 		internal RouteAttribute (string route){}
 	}
+
+	internal class IgnoreAttribute : Attribute
+	{
+
+	}
 }
 #endif
 

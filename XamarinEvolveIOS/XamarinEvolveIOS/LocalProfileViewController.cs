@@ -36,7 +36,7 @@ namespace XamarinEvolveIOS
 			_loginView.CancelButton.TouchUpInside += CancelButtonClicked;
 			this.View.Add (_loginView);
 
-			if (Engine.Instance.UserAccess.GetCurrentUser().IsAnonymousUser ())
+			if (Engine.Instance.UserAccess.GetCurrentUser().IsAnonymousUser)
 				ShowLoginScreen ();
 		}
 

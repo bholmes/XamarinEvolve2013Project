@@ -20,7 +20,7 @@ namespace XamarinEvolveIOS
 
 		public override void LoadView ()
 		{
-			this.Title = CurrentUser.IsLocalUser() ? "My Profile" : "Profile";
+			this.Title = CurrentUser.IsLocalUser ? "My Profile" : "Profile";
 
 			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
@@ -31,7 +31,7 @@ namespace XamarinEvolveIOS
 
 		void SetupEditButton ()
 		{
-			if (!CurrentUser.IsLocalUser())
+			if (!CurrentUser.IsLocalUser)
 				return;
 
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
