@@ -18,21 +18,21 @@ namespace XamarinEvolveSS
             try
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
-                User user = sql.FindUser(request.username);
+                User user = sql.FindUser(request.UserName);
 
-                if (request.size < 1)
-                    request.size = 100;
+                if (request.Size < 1)
+                    request.Size = 100;
 
-                if (request.size > 800)
-                    request.size = 800;
+                if (request.Size > 800)
+                    request.Size = 800;
 
-                if (string.IsNullOrEmpty(user.avatar) || !File.Exists(user.avatar))
-                    throw new Exception(string.Format ("avatar for user {0} does not exist", user.username));
+                if (string.IsNullOrEmpty(user.Avatar) || !File.Exists(user.Avatar))
+                    throw new Exception(string.Format ("avatar for user {0} does not exist", user.UserName));
 
-                Image image = Image.FromFile(user.avatar);
+                Image image = Image.FromFile(user.Avatar);
                 try
                 {
-                    image = ResizeImage(image, (uint)request.size, false);
+                    image = ResizeImage(image, (uint)request.Size, false);
 
                     using (MemoryStream m = new MemoryStream())
                     {
@@ -57,16 +57,16 @@ namespace XamarinEvolveSS
             try
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
-                User user = sql.FindUser(request.username);
+                User user = sql.FindUser(request.UserName);
 
-                if (request.data == null || request.data.Length == 0)
+                if (request.Data == null || request.Data.Length == 0)
                     throw new ArgumentException("data sent was size zero");
 
                 string filename = PathForUser(user);
 
                 using (MemoryStream m = new MemoryStream())
                 {
-                    m.Write(request.data, 0, request.data.Length);
+                    m.Write(request.Data, 0, request.Data.Length);
                     m.Position = 0;
 
                     Image image = Image.FromStream(m);
@@ -78,7 +78,7 @@ namespace XamarinEvolveSS
                         {
                             image.Save(file, ImageFormat.Jpeg);
 
-                            user = new User() { username = user.username, avatar = filename};
+                            user = new User() { UserName = user.UserName, Avatar = filename};
                             sql.UpdateUser(user);
                         }
                     }
@@ -100,14 +100,14 @@ namespace XamarinEvolveSS
             try
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
-                User user = sql.FindUser(request.username);
+                User user = sql.FindUser(request.UserName);
 
                 string filename = PathForUser(user);
 
                 if (File.Exists(filename))
                     File.Delete(filename);
 
-                user = new User() { username = user.username, avatar = "" };
+                user = new User() { UserName = user.UserName, Avatar = "" };
                 sql.UpdateUser(user);
 
                 return null;
@@ -120,10 +120,10 @@ namespace XamarinEvolveSS
 
         private string PathForUser(User user)
         {
-            if (!string.IsNullOrEmpty(user.avatar) && File.Exists(user.avatar))
-                return user.avatar;
+            if (!string.IsNullOrEmpty(user.Avatar) && File.Exists(user.Avatar))
+                return user.Avatar;
 
-            string filename = string.Format("{0}.jpg", MD5Helper.CalculateMD5Hash(user.username));
+            string filename = string.Format("{0}.jpg", MD5Helper.CalculateMD5Hash(user.UserName));
             string directory = Path.Combine(SystemConstants.PathToRoot, "avatars");
 
             if (!Directory.Exists(directory))

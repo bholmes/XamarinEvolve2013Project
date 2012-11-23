@@ -6,28 +6,28 @@ namespace XamarinEvolveSSLibrary
 {
 #if !IOS
     [Alias("evolve_users")]
-    [Route("/user")]
-    [Route("/user/{username}")]
+    [Route("/User")]
+    [Route("/User/{UserName}")]
 #endif
     public class User
     {
-        public int id { get; set; }
-        public string username { get; set; }
-        public string fullname { get; set; }
-        public string city { get; set; }
-        public string email { get; set; }
-        public string phone { get; set; }
-        public string password { get; set; }
-        public string avatar { get; set; }
-        public string company { get; set; }
-        public string title { get; set; }
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string FullName { get; set; }
+        public string City { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Password { get; set; }
+        public string Avatar { get; set; }
+        public string Company { get; set; }
+        public string Title { get; set; }
 
         public User() { }
 
         public override string ToString()
         {
-            return string.Format("id='{0}', username='{1}', fullname='{2}', city='{3}', email='{4}', phone='{5}', password='{6}', avatar='{7}', company='{8}', title='{9}'",
-                id, username, fullname, city, email, phone, password, avatar, company, title);
+            return string.Format("Id='{0}', UserName='{1}', FullName='{2}', City='{3}', Email='{4}', Phone='{5}', Password='{6}', Avatar='{7}', Company='{8}', Title='{9}'",
+                Id, UserName, FullName, City, Email, Phone, Password, Avatar, Company, Title);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace XamarinEvolveSSLibrary
                 foreach (User user in _users)
                 {
                     // Never send back the password
-                    user.password = null;
+                    user.Password = null;
                 }
             }
         }

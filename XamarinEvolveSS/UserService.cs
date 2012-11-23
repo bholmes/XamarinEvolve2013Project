@@ -9,7 +9,7 @@ namespace XamarinEvolveSS
     {
         public override object OnGet(User request)
         {
-            if (request == null || string.IsNullOrWhiteSpace(request.username))
+            if (request == null || string.IsNullOrWhiteSpace(request.UserName))
             {
                 try
                 {
@@ -36,7 +36,7 @@ namespace XamarinEvolveSS
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
 
                 List<User> users = new List<User>();
-                User user = sql.FindUser(request.username);
+                User user = sql.FindUser(request.UserName);
                 users.Add(user);
                 return new UserResponse() { Users = users};
             }
@@ -52,7 +52,7 @@ namespace XamarinEvolveSS
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
 
-                if (request == null || string.IsNullOrWhiteSpace(request.username))
+                if (request == null || string.IsNullOrWhiteSpace(request.UserName))
                     throw new ArgumentException("username not specified");
 
                 sql.UpdateUser(request);
@@ -71,7 +71,7 @@ namespace XamarinEvolveSS
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
 
-                if (request == null || string.IsNullOrWhiteSpace(request.username))
+                if (request == null || string.IsNullOrWhiteSpace(request.UserName))
                     throw new ArgumentException("username not specified");
 
                 sql.AddUser(request);
@@ -90,10 +90,10 @@ namespace XamarinEvolveSS
 
             try
             {
-                if (request == null || string.IsNullOrWhiteSpace(request.username))
+                if (request == null || string.IsNullOrWhiteSpace(request.UserName))
                     throw new ArgumentException("username not specified");
 
-                sql.DeleteUser(request.username);
+                sql.DeleteUser(request.UserName);
             }
             catch (Exception ex)
             {

@@ -30,18 +30,18 @@ namespace TestSSAPI
 
             User user = new User()
             {
-                username = "newuser2",
-                fullname = "Awesome guy",
-                city = "funkytown",
-                email = "fun@hello.net",
-                phone = "8675309",
-                password = "pass",
-                avatar = "avatar.jpg",
-                title = "the man",
-                company = "three's",
+                UserName = "newuser2",
+                FullName = "Awesome guy",
+                City = "funkytown",
+                Email = "fun@hello.net",
+                Phone = "8675309",
+                Password = "pass",
+                Avatar = "avatar.jpg",
+                Title = "the man",
+                Company = "three's",
             };
 
-            UserResponse response = client.Put<XamarinEvolveSSLibrary.UserResponse>("user", user);
+            UserResponse response = client.Put<XamarinEvolveSSLibrary.UserResponse>("User", user);
             Console.WriteLine();
         }
 
@@ -49,7 +49,7 @@ namespace TestSSAPI
         {
             Console.WriteLine("~~~~~ GetAllUsers () ~~~~~~~~~");
 
-            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("user");
+            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("User");
 
             foreach (User user in response.Users)
             {
@@ -62,7 +62,7 @@ namespace TestSSAPI
         {
             Console.WriteLine("~~~~~ FindUser (billholmes) ~~~~~~~~~");
 
-            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("user/billholmes");
+            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("User/billholmes");
 
             User user = response.Users[0];
             Console.WriteLine(user);
@@ -75,12 +75,12 @@ namespace TestSSAPI
 
             User user = new User()
             {
-                username = "newuser2",
-                city = "changedtown",
-                email = "new@address.com"
+                UserName = "newuser2",
+                City = "changedtown",
+                Email = "new@address.com"
             };
 
-            UserResponse response = client.Post<XamarinEvolveSSLibrary.UserResponse>("user", user);
+            UserResponse response = client.Post<XamarinEvolveSSLibrary.UserResponse>("User", user);
             Console.WriteLine();
         }
 
@@ -88,7 +88,7 @@ namespace TestSSAPI
         {
             Console.WriteLine("~~~~~ FindUser (newuser2) ~~~~~~~~~");
 
-            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("user/newuser2");
+            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("User/newuser2");
 
             User user = response.Users[0];
             Console.WriteLine(user);
@@ -98,14 +98,14 @@ namespace TestSSAPI
         void Test6(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ DeleteUser (newuser2) ~~~~~~~~~");
-            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("user/newuser2");
+            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("User/newuser2");
             Console.WriteLine();
         }
 
         void Test7(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ FindUser (newuser2) ~~~~~~~~~");
-            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("user/newuser2");
+            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("User/newuser2");
             Console.WriteLine("Expected : " + response.Exception);
             Console.WriteLine();
         }
@@ -113,7 +113,7 @@ namespace TestSSAPI
         void Test8(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ DeleteUser (newuser2) ~~~~~~~~~");
-            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("user/newuser2");
+            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("User/newuser2");
             Console.WriteLine("Expected : " + response.Exception);
             Console.WriteLine();
         }
@@ -121,7 +121,7 @@ namespace TestSSAPI
         void Test9(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ DeleteUser (newuser2) ~~~~~~~~~");
-            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("user");
+            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("User");
             Console.WriteLine("Expected : " + response.Exception);
             Console.WriteLine();
         }
@@ -132,17 +132,17 @@ namespace TestSSAPI
 
             User user = new User()
             {
-                username = "newuser3"
+                UserName = "newuser3"
             };
 
-            UserResponse response = client.Put<XamarinEvolveSSLibrary.UserResponse>("user", user);
+            UserResponse response = client.Put<XamarinEvolveSSLibrary.UserResponse>("User", user);
             Console.WriteLine();
         }
 
         void Test11(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ FindUser (newuser3) ~~~~~~~~~");
-            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("user/newuser3");
+            UserResponse response = client.Get<XamarinEvolveSSLibrary.UserResponse>("User/newuser3");
             Console.WriteLine("Expected null: " + response.Exception);
             Console.WriteLine();
         }
@@ -150,7 +150,7 @@ namespace TestSSAPI
         void Test12(JsonServiceClient client)
         {
             Console.WriteLine("~~~~~ DeleteUser (newuser3) ~~~~~~~~~");
-            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("user/newuser3");
+            UserResponse response = client.Delete<XamarinEvolveSSLibrary.UserResponse>("User/newuser3");
             Console.WriteLine("Expected null: " + response.Exception);
             Console.WriteLine();
         }

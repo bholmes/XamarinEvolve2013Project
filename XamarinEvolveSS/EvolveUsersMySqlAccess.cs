@@ -25,20 +25,20 @@ namespace XamarinEvolveSS
         public User FindUser(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("username is not valid");
+                throw new ArgumentException("UserName is not valid");
 
             List<User> result = null;
 
             SetupAndCall((dbCmd, ev) =>
             {
-                ev.Where(rn => username == rn.username);
+                ev.Where(rn => username == rn.UserName);
                 result = dbCmd.Select(ev);
             });
 
             if (result == null || result.Count == 0)
-                throw new Exception(string.Format("user '{0}' not found", username));
+                throw new Exception(string.Format("User '{0}' not found", username));
             else if (result.Count > 1)
-                throw new Exception(string.Format("too many users named '{0}' found'", username));
+                throw new Exception(string.Format("Too many Users named '{0}' found'", username));
 
             return result[0];
         }
@@ -46,18 +46,18 @@ namespace XamarinEvolveSS
         public void DeleteUser(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
-                throw new ArgumentException("username is not valid");
+                throw new ArgumentException("Username is not valid");
 
             int result = 1;
 
             SetupAndCall((dbCmd, ev) =>
             {
-                ev.Where(rn => username == rn.username);
+                ev.Where(rn => username == rn.UserName);
                 result = dbCmd.Delete(ev);
             });
 
             if (result != 1)
-                throw new Exception(string.Format("user '{0}' not found", username));
+                throw new Exception(string.Format("User '{0}' not found", username));
         }
 
         public int AddUser(User user)
@@ -78,27 +78,27 @@ namespace XamarinEvolveSS
             SetupAndCall((dbCmd, ev) =>
             {
                 List<string> updateStrs = new List<string>();
-                if (user.fullname != null)
-                    updateStrs.Add("fullname");
-                if (user.city != null)
-                    updateStrs.Add("city");
-                if (user.email != null)
-                    updateStrs.Add("email");
-                if (user.phone != null)
-                    updateStrs.Add("phone");
-                if (user.password != null)
-                    updateStrs.Add("password");
-                if (user.avatar != null)
-                    updateStrs.Add("avatar");
-                if (user.company != null)
-                    updateStrs.Add("company");
-                if (user.title != null)
-                    updateStrs.Add("title");
+                if (user.FullName != null)
+                    updateStrs.Add("FullName");
+                if (user.City != null)
+                    updateStrs.Add("City");
+                if (user.Email != null)
+                    updateStrs.Add("Email");
+                if (user.Phone != null)
+                    updateStrs.Add("Phone");
+                if (user.Password != null)
+                    updateStrs.Add("Password");
+                if (user.Avatar != null)
+                    updateStrs.Add("Avatar");
+                if (user.Company != null)
+                    updateStrs.Add("Company");
+                if (user.Title != null)
+                    updateStrs.Add("Title");
 
                 if (updateStrs.Count == 0)
                     return;
 
-                ev.Where(rn => user.username == rn.username).UpdateFields = updateStrs;
+                ev.Where(rn => user.UserName == rn.UserName).UpdateFields = updateStrs;
                 dbCmd.UpdateOnly(user, ev);
             });
 

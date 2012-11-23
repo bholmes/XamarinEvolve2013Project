@@ -29,13 +29,13 @@ namespace TestSSAPI
 
             UserAvatar userAvatar = new UserAvatar()
             {
-                username = "billholmes",
-                data = imageData,
+                UserName = "billholmes",
+                Data = imageData,
             };
 
-            UserAvatarResponse response = client.Post<UserAvatarResponse>("useravatar", userAvatar);
+            UserAvatarResponse response = client.Post<UserAvatarResponse>("UserAvatar", userAvatar);
 
-            response = client.Delete<UserAvatarResponse>("useravatar/billholmes");
+            //response = client.Delete<UserAvatarResponse>("UserAvatar/billholmes");
 
             return;
         }

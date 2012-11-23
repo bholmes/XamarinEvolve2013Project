@@ -5,14 +5,14 @@ using ServiceStack.ServiceHost;
 namespace XamarinEvolveSSLibrary
 {
 #if !IOS
-    [Route("/useravatar")]
-    [Route("/useravatar/{username}/")]
-    [Route("/useravatar/{username}/{size}")]
+    [Route("/UserAvatar")]
+    [Route("/UserAvatar/{UserName}/")]
+    [Route("/UserAvatar/{UserName}/{Size}")]
 #endif
     public class UserAvatar
     {
-        public string username { get; set; }
-        public int size { get; set; }
-        public byte[] data { get; set; }
+        public string UserName { get; set; }
+        public int Size { get; set; }
+        public byte[] Data { get; set; }
     }
 }
