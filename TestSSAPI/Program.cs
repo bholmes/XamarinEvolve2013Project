@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
+using ServiceStack.ServiceClient.Web;
+using XamarinEvolveSSLibrary;
 
 namespace TestSSAPI
 {
@@ -8,6 +13,9 @@ namespace TestSSAPI
         {
             SSTests ssTests = new SSTests();
             ssTests.RunTests();
+
+            //AvatarTest aTests = new AvatarTest();
+            //aTests.RunTests();
         }
     }
 }

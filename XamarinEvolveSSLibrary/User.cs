@@ -1,9 +1,12 @@
 ﻿using System;
 using ServiceStack.DataAnnotations;
+using ServiceStack.ServiceHost;
 
 namespace XamarinEvolveSSLibrary
 {
     [Alias("evolve_users")]
+    [Route("/user")]
+    [Route("/user/{username}")]
     public class User
     {
         public int id { get; set; }

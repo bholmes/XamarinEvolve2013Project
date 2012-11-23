@@ -27,9 +27,9 @@ namespace XamarinEvolveSS
                 //   new CustomCredentialsAuthProvider()
                 //}));
 
-                Routes
-                  .Add<XamarinEvolveSSLibrary.User>("/user")
-                  .Add<XamarinEvolveSSLibrary.User>("/user/{username}");
+                //Routes
+                //  .Add<XamarinEvolveSSLibrary.User>("/user")
+                //  .Add<XamarinEvolveSSLibrary.User>("/user/{username}");
             }
         }
 
