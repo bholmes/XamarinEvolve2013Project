@@ -36,7 +36,9 @@ namespace TestSSAPI
                 email = "fun@hello.net",
                 phone = "8675309",
                 password = "pass",
-                avatar = "avatar.jpg"
+                avatar = "avatar.jpg",
+                title = "the man",
+                company = "three's",
             };
 
             UserResponse response = client.Put<XamarinEvolveSSLibrary.UserResponse>("user", user);

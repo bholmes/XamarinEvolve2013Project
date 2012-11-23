@@ -90,6 +90,10 @@ namespace XamarinEvolveSS
                     updateStrs.Add("password");
                 if (user.avatar != null)
                     updateStrs.Add("avatar");
+                if (user.company != null)
+                    updateStrs.Add("company");
+                if (user.title != null)
+                    updateStrs.Add("title");
 
                 if (updateStrs.Count == 0)
                     return;
