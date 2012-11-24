@@ -8,6 +8,7 @@ using ServiceStack.ServiceInterface;
 using ServiceStack.Service;
 using System.Collections.Generic;
 using XamarinEvolveSSLibrary;
+using ServiceStack.ServiceInterface.Auth;
 
 namespace XamarinEvolveSS
 {
@@ -62,6 +63,9 @@ namespace XamarinEvolveSS
                 if (request.Data == null || request.Data.Length == 0)
                     throw new ArgumentException("data sent was size zero");
 
+                if (!CheckIsAuthorized(request.UserName))
+                    return null;
+
                 string filename = PathForUser(user);
 
                 using (MemoryStream m = new MemoryStream())
@@ -101,6 +105,9 @@ namespace XamarinEvolveSS
             {
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
                 User user = sql.FindUser(request.UserName);
+
+                if (!CheckIsAuthorized(request.UserName))
+                    return null;
 
                 string filename = PathForUser(user);
 
@@ -149,6 +156,21 @@ namespace XamarinEvolveSS
             srcImage.Dispose();
 
             return image;
+        }
+
+        private bool CheckIsAuthorized(string username)
+        {
+            if (SystemConstants.UseAuthentication)
+            {
+                IAuthSession auth = this.GetSession();
+                if (auth == null || auth.UserName != username)
+                {
+                    this.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

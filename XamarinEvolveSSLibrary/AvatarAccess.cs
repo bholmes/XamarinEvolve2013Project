@@ -9,7 +9,7 @@ namespace XamarinEvolveSSLibrary
 
 		public AvatarAccess ()
 		{
-			_defaultImage = File.ReadAllBytes("blankavatar.jpg");
+			//_defaultImage = File.ReadAllBytes("blankavatar.jpg");
 		}
 
 		public class GetAvatarResult

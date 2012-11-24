@@ -7,16 +7,28 @@ namespace XamarinEvolveSSLibrary
 {
     public class SystemConstants
     {
-        private static bool RunLocalSS = false;
-        private static bool RunLocalMySql = false;
+        private static bool RunLocalSS = true;
+        private static bool RunLocalMySql = true;
+
+        public static bool UseAuthentication { get { return false;  } }
+
+        public static string WebServiceDomain
+        {
+            get
+            {
+                return RunLocalSS ?
+                    "localhost" :
+                    "mobillho.w12.wh-2.com";
+            }
+        }
 
         public static string WebServiceBaseURL
         {
             get
             {
                 return RunLocalSS ?
-                    "http://localhost:54238" :
-                    "http://mobillho.w12.wh-2.com/evolve2013";
+                    string.Format("http://{0}:54238", WebServiceDomain) :
+                    string.Format("http://{0}/evolve2013", WebServiceDomain);
             }
         }
 

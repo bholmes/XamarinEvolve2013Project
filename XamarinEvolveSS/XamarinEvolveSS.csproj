@@ -101,6 +101,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomCredentialsAuthProvider.cs" />
     <Compile Include="EvolveUsersMySqlAccess.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

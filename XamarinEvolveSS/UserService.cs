@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using ServiceStack.ServiceInterface;
 using XamarinEvolveSSLibrary;
+using ServiceStack.ServiceInterface.Auth;
 
 namespace XamarinEvolveSS
 {
@@ -50,10 +51,13 @@ namespace XamarinEvolveSS
         {
             try
             {
-                EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
-
                 if (request == null || string.IsNullOrWhiteSpace(request.UserName))
                     throw new ArgumentException("username not specified");
+
+                if (!CheckIsAuthorized(request.UserName))
+                    return null;
+
+                EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
 
                 sql.UpdateUser(request);
             }
@@ -86,13 +90,15 @@ namespace XamarinEvolveSS
 
         public override object OnDelete(User request)
         {
-            EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
-
             try
             {
                 if (request == null || string.IsNullOrWhiteSpace(request.UserName))
                     throw new ArgumentException("username not specified");
 
+                if (!CheckIsAuthorized(request.UserName))
+                    return null;
+
+                EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
                 sql.DeleteUser(request.UserName);
             }
             catch (Exception ex)
@@ -101,6 +107,21 @@ namespace XamarinEvolveSS
             }
 
             return new UserResponse ();
+        }
+
+        private bool CheckIsAuthorized (string username)
+        {
+            if (SystemConstants.UseAuthentication)
+            {
+                IAuthSession auth = this.GetSession();
+                if (auth == null || auth.UserName != username)
+                {
+                    this.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -16,6 +16,9 @@ namespace TestSSAPI
 
             //AvatarTest aTests = new AvatarTest();
             //aTests.RunTests();
+
+            //AuthTest authTest = new AuthTest();
+            //authTest.RunTests();
         }
     }
 }

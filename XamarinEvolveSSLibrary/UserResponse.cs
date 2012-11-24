@@ -20,6 +20,9 @@ namespace XamarinEvolveSSLibrary
                 {
                     // Never send back the password
                     user.Password = null;
+
+                    // No need to send the avatar
+                    user.Avatar = null;
                 }
             }
         }

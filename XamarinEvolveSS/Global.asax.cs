@@ -9,6 +9,7 @@ using ServiceStack.ServiceInterface;
 using ServiceStack.WebHost.Endpoints;
 using Funq;
 using ServiceStack.Configuration;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveSS
 {
@@ -23,13 +24,10 @@ namespace XamarinEvolveSS
             {
                 var appSettings = new AppSettings();
 
-                //Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[] {
-                //   new CustomCredentialsAuthProvider()
-                //}));
-
-                //Routes
-                //  .Add<XamarinEvolveSSLibrary.User>("/user")
-                //  .Add<XamarinEvolveSSLibrary.User>("/user/{username}");
+                if (SystemConstants.UseAuthentication)
+                    Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[] {
+                        new CustomCredentialsAuthProvider()
+                    }));
             }
         }
 
@@ -66,24 +64,6 @@ namespace XamarinEvolveSS
         protected void Application_End(object sender, EventArgs e)
         {
 
-        }
-    }
-
-    public class CustomCredentialsAuthProvider : CredentialsAuthProvider
-    {
-        public override bool TryAuthenticate(IServiceBase authService, string userName, string password)
-        {
-            return true;
-        }
-
-        public override void OnAuthenticated(IServiceBase authService, IAuthSession session, IOAuthTokens tokens, Dictionary<string, string> authInfo)
-        {
-            //Fill the IAuthSession with data which you want to retrieve in the app eg:
-            session.FirstName = "some_firstname_from_db";
-            //...
-
-            //Important: You need to save the session!
-            authService.SaveSession(session, SessionExpiry);
         }
     }
 }
