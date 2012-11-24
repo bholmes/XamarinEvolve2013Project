@@ -10,7 +10,7 @@ namespace XamarinEvolveSSLibrary
         private static bool RunLocalSS = false;
         private static bool RunLocalMySql = false;
 
-        public static bool UseAuthentication { get { return false; } }
+        public static bool UseAuthentication { get { return true; } }
 
         public static string WebServiceDomain
         {
