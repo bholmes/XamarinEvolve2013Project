@@ -5,6 +5,8 @@ namespace XamarinEvolveSSLibrary
 	public class Engine
 	{
 		static Engine _instance = new Engine ();
+		bool _useTestClasses = false;
+
 		public static Engine Instance
 		{
 			get 
@@ -18,8 +20,18 @@ namespace XamarinEvolveSSLibrary
 		
 		public Engine ()
 		{
-			UserAccess = new UserAccessLocalTest ();
-			AvatarAccess = new AvatarAccessLocalTest ();
+			if (_useTestClasses)
+			{
+				UserAccess = new UserAccessLocalTest ();
+				AvatarAccess = new AvatarAccessLocalTest ();
+			}
+
+			else
+			{
+				ClientWrapper clientWrapper = new ClientWrapper ();
+				UserAccess = new WebserviceUserAccess (clientWrapper);
+				AvatarAccess = new WebserviceAvatarAccess (clientWrapper);
+			}
 		}
 	}
 }

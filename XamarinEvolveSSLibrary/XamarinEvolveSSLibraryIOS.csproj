@@ -64,5 +64,8 @@
     <Compile Include="AvatarAccessLocalTest.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="AttributesIgnoredForIOS.cs" />
+    <Compile Include="WebserviceAvatarAccess.cs" />
+    <Compile Include="WebserviceUserAccess.cs" />
+    <Compile Include="ClientWrapper.cs" />
   </ItemGroup>
 </Project>

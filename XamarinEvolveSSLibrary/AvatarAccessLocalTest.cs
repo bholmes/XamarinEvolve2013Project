@@ -27,11 +27,11 @@ namespace XamarinEvolveSSLibrary
 			{
 
 			}
-			
+
 			return null;
 		}
 
-		override public string PostNewAvatar (byte [] data)
+		override public void PostNewAvatar (byte [] data)
 		{
 			Debug.SimulateNetworkWait ();
 			
@@ -69,8 +69,6 @@ namespace XamarinEvolveSSLibrary
 			}
 			
 			currentUser.Avatar = fullName = string.Format ("file://{0}", fullName);
-			
-			return fullName;
 		}
 	}
 }

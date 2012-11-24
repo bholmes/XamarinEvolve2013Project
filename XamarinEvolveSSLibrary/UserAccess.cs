@@ -5,9 +5,9 @@ namespace XamarinEvolveSSLibrary
 	abstract public class UserAccess 
 	{
 		abstract public User GetCurrentUser ();
-		abstract public User CreateNewUser (string username, string password);
-		abstract public User UserLogin (string username, string password);
-		abstract public UserList GetUsers ();
+		abstract protected User CreateNewUser (string username, string password);
+		abstract protected User UserLogin (string username, string password);
+		abstract protected UserList GetUsers ();
 		
 		public class UserAsyncResult
 		{
@@ -98,6 +98,11 @@ namespace XamarinEvolveSSLibrary
 			UserListAsyncCall (delegate {
 				return GetUsers ();
 			}, onComplete);
+		}
+
+		public virtual void CommitCurrentUserChanges ()
+		{
+			// Noop
 		}
 	}
 }

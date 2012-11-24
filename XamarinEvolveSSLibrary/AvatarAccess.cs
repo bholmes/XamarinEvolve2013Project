@@ -20,7 +20,6 @@ namespace XamarinEvolveSSLibrary
 
 		public class PostNewAvatarResult
 		{
-			public string URL {get;set;}
 			public Exception Exceptin {get;set;}
 		}
 
@@ -70,20 +69,18 @@ namespace XamarinEvolveSSLibrary
 			return _defaultImage;
 		}
 
-		abstract public string PostNewAvatar (byte [] data);
+		abstract public void PostNewAvatar (byte [] data);
 		
 		public void PostNewAvatar (byte [] data, Action<PostNewAvatarResult> onComplete)
 		{
 			Func <int> func = delegate {
 				try
 				{
-					string newURL = PostNewAvatar (data);
+					PostNewAvatar (data);
 					
 					if (onComplete != null)
 					{
-						onComplete (new PostNewAvatarResult (){
-							URL = newURL,
-						});
+						onComplete (new PostNewAvatarResult ());
 					}
 				}
 				catch (Exception exp)

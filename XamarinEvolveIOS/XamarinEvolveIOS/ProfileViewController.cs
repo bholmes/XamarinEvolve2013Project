@@ -52,6 +52,7 @@ namespace XamarinEvolveIOS
 				this.NavigationItem.RightBarButtonItem.Title = "Edit";
 				this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
 				RefreshHeaderCell ();
+				Engine.Instance.UserAccess.CommitCurrentUserChanges ();
 			}
 		}
 
@@ -302,7 +303,7 @@ namespace XamarinEvolveIOS
 			System.Runtime.InteropServices.Marshal.Copy(data.Bytes, dataBytes, 0, Convert.ToInt32(data.Length));
 
 			Engine.Instance.AvatarAccess.PostNewAvatar (dataBytes, (result) => {
-				if (!string.IsNullOrEmpty (result.URL))
+				if (result.Exceptin != null)
 				{
 					_controller.BeginInvokeOnMainThread (delegate {
 						_controller.RefreshHeaderCell ();

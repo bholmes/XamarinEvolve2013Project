@@ -13,7 +13,7 @@ namespace XamarinEvolveSSLibrary
 			return _currentUser;
 		}
 		
-		override public User CreateNewUser (string username, string password)
+		override protected User CreateNewUser (string username, string password)
 		{
 			Debug.SimulateNetworkWait ();
 			
@@ -29,7 +29,7 @@ namespace XamarinEvolveSSLibrary
 			});
 		}
 		
-		override public User UserLogin (string username, string password)
+		override protected User UserLogin (string username, string password)
 		{
 			Debug.SimulateNetworkWait ();
 			
@@ -42,7 +42,7 @@ namespace XamarinEvolveSSLibrary
 			return _currentUser = ret;
 		}
 		
-		override public UserList GetUsers ()
+		override protected UserList GetUsers ()
 		{
 			Debug.SimulateNetworkWait ();
 
