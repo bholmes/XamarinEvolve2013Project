@@ -33,5 +33,11 @@ namespace XamarinEvolveSS
             //Important: You need to save the session!
             authService.SaveSession(session, SessionExpiry);
         }
+
+
+        public override object Logout(IServiceBase service, Auth request)
+        {
+            return base.Logout(service, request);
+        }
     }
 }

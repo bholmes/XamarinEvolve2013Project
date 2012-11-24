@@ -24,10 +24,9 @@ namespace XamarinEvolveSS
             {
                 var appSettings = new AppSettings();
 
-                if (SystemConstants.UseAuthentication)
-                    Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[] {
-                        new CustomCredentialsAuthProvider()
-                    }));
+                Plugins.Add(new AuthFeature(() => new AuthUserSession(), new IAuthProvider[] {
+                    new CustomCredentialsAuthProvider()
+                }));
             }
         }
 
