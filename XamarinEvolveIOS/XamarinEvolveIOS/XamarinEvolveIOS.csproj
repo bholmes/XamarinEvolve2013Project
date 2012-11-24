@@ -136,7 +136,6 @@
   <ItemGroup>
     <Content Include="blankavatar.jpg" />
     <Content Include="Images\144_icon.png" />
-    <Content Include="Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
@@ -146,5 +145,14 @@
       <Project>{5A18791C-9F21-46C4-B5DE-7D0C78076013}</Project>
       <Name>XamarinEvolveSSLibraryIOS</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Landscape%402x.png" />
+    <BundleResource Include="Resources\Default-Landscape.png" />
   </ItemGroup>
 </Project>

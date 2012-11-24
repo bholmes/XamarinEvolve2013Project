@@ -29,6 +29,7 @@ namespace XamarinEvolveIOS
 		//
 		public override bool FinishedLaunching (UIApplication application, NSDictionary launchOptions)
 		{
+			DateTime startTime = DateTime.Now;
 			Window = new UIWindow (UIScreen.MainScreen.Bounds);
 
 			WelcomeTableViewController welcome = new WelcomeTableViewController ();
@@ -36,6 +37,13 @@ namespace XamarinEvolveIOS
 			UINavigationController nav = new UINavigationController (welcome);
 			Window.RootViewController = nav;
 			Window.MakeKeyAndVisible ();
+
+			TimeSpan span = DateTime.Now.Subtract (startTime);
+			int mSecs = 2000 - span.Milliseconds;
+
+			// Want to show the launch screen for at least 2 seconds
+			if (mSecs > 0)
+				System.Threading.Thread.Sleep (mSecs);
 
 			return true;
 		}
