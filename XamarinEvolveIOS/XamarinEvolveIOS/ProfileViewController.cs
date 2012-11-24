@@ -55,7 +55,7 @@ namespace XamarinEvolveIOS
 			}
 		}
 
-		void RefreshHeaderCell ()
+		public void RefreshHeaderCell ()
 		{
 			CustomUITableViewCell headerCell = 
 				this.TableView.CellAt (NSIndexPath.FromRowSection (0, 0)) as CustomUITableViewCell;
@@ -217,9 +217,9 @@ namespace XamarinEvolveIOS
 
 	public class LocalUserProfileDataSource : UITableViewDataSource
 	{
-		UITableViewController _controller;
+		ProfileViewController _controller;
 
-		public LocalUserProfileDataSource (UITableViewController controller, User profile)
+		public LocalUserProfileDataSource (ProfileViewController controller, User profile)
 		{
 			UserProfile = profile;
 			_controller = controller;
@@ -304,7 +304,9 @@ namespace XamarinEvolveIOS
 			Engine.Instance.AvatarAccess.PostNewAvatar (dataBytes, (result) => {
 				if (!string.IsNullOrEmpty (result.URL))
 				{
-					UIImageCache.ReloadImage (result.URL, null, image);
+					_controller.BeginInvokeOnMainThread (delegate {
+						_controller.RefreshHeaderCell ();
+					});
 				}
 			});
 		}

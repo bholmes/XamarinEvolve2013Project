@@ -1,9 +1,36 @@
 using System;
+using System.Net;
+using System.IO;
 
 namespace XamarinEvolveSSLibrary
 {
 	public class AvatarAccessLocalTest : AvatarAccess
 	{
+		override protected byte [] InternalGetAvararForUser (User user, int size)
+		{
+			Debug.SimulateNetworkWait (1000);
+
+			string fullName = user.Avatar;
+			
+			if (string.IsNullOrEmpty (fullName))
+				return null;
+
+			if (fullName.StartsWith ("file:///"))
+				fullName = fullName.Remove (0, "file://".Length);
+
+			try
+			{
+				return File.ReadAllBytes (fullName);
+
+			}
+			catch (Exception)
+			{
+
+			}
+			
+			return null;
+		}
+
 		override public string PostNewAvatar (byte [] data)
 		{
 			Debug.SimulateNetworkWait ();
@@ -30,6 +57,10 @@ namespace XamarinEvolveSSLibrary
 				fileStream = new System.IO.FileStream(
 					fullName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write);
 				fileStream.Write(data, 0, data.Length);
+			}
+			catch (Exception exp)
+			{
+				Console.WriteLine (exp);
 			}
 			finally
 			{

@@ -136,16 +136,27 @@ namespace XamarinEvolveIOS
 
 		public void RefreshImageFromData ()
 		{
-			string imageURL = _userProfile.Avatar;
-			if (string.IsNullOrEmpty (imageURL) && !string.IsNullOrEmpty (_userProfile.Email))
-				imageURL = GravatarHelper.GetGravatarURL (_userProfile.Email, 80);
-
-			UIImage image = UIImageCache.GetOrLoadImage (imageURL, imagearg =>  {
-				MonoTouch.UIKit.UIApplication.SharedApplication.BeginInvokeOnMainThread (() =>  {
-					ImageView.Image = imagearg;
+			byte [] data = Engine.Instance.AvatarAccess.GetAvararForUser 
+				(_userProfile, 80, (avatarResult) => {
+					if (avatarResult.Exceptin == null && avatarResult.Data != null)
+					this.BeginInvokeOnMainThread (delegate {
+						LoadImageView (avatarResult.Data);
 				});
-			}, DefaultImage);
-			ImageView.Image = image;
+			});
+
+			if (ImageView.Image == null)
+				LoadImageView (data);
+		}
+
+		private void LoadImageView (byte [] data)
+		{
+			if (ImageView.Image != null)
+				ImageView.Image.Dispose ();
+
+			using (NSData nsData = NSData.FromArray (data))
+			{
+				ImageView.Image = UIImage.LoadFromData (nsData);
+			}
 		}
 
 		protected override void EditStyleChanged (bool editing, bool animated)

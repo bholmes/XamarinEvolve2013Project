@@ -91,15 +91,6 @@
     <Reference Include="Xamarin.Mobile">
       <HintPath>..\libs\Xamarin.Mobile.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Common.MonoTouch">
-      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Common.MonoTouch.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.Interfaces.MonoTouch">
-      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Interfaces.MonoTouch.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceStack.Text.MonoTouch">
-      <HintPath>..\..\MonoTouchSSLibs\ServiceStack.Text.MonoTouch.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -125,7 +116,6 @@
     <Compile Include="CustomUITableViewCell.designer.cs">
       <DependentUpon>CustomUITableViewCell.cs</DependentUpon>
     </Compile>
-    <Compile Include="UIImageCache.cs" />
     <Compile Include="UserProfileHeaderCell.cs" />
     <Compile Include="AvatarSelectorController.cs" />
     <Compile Include="UsersViewController.cs" />
@@ -146,6 +136,7 @@
   <ItemGroup>
     <Content Include="blankavatar.jpg" />
     <Content Include="Images\144_icon.png" />
+    <Content Include="Default-568h%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
