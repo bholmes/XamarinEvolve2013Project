@@ -102,6 +102,9 @@ namespace XamarinEvolveIOS
 
 		void TryLoginUser()
 		{
+			if (!ValidateUserInfo (false))
+				return;
+
 			SetBusyState (true);
 
 			Engine.Instance.UserAccess.UserLogin (_loginView.UsernameField.Text,
@@ -141,8 +144,40 @@ namespace XamarinEvolveIOS
 			actionSheet.ShowInView (_loginView);
 		}
 
+		bool ValidateUserInfo (bool forNewUser)
+		{
+			if (string.IsNullOrWhiteSpace(_loginView.UsernameField.Text))
+			{
+				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Username", null, "OK", null);
+				alertNew.Show ();
+				return false;
+			}
+
+			if (string.IsNullOrWhiteSpace(_loginView.PasswordField.Text))
+			{
+				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Password", null, "OK", null);
+				alertNew.Show ();
+				return false;	
+			}
+
+			if (forNewUser)
+			{
+				if (!_loginView.PasswordField.Text.Equals (_loginView.RetypePasswordField.Text))
+				{
+					UIAlertView alertNew = new UIAlertView ("Error", "Passwords do not match", null, "OK", null);
+					alertNew.Show ();
+					return false;	
+				}
+			}
+
+			return true;
+		}
+
 		void TryCreateUser ()
 		{
+			if (!ValidateUserInfo (true))
+				return;
+
 			SetBusyState (true);
 			
 			Engine.Instance.UserAccess.CreateNewUser (_loginView.UsernameField.Text,

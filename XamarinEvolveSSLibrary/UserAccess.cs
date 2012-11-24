@@ -8,6 +8,8 @@ namespace XamarinEvolveSSLibrary
 		abstract protected User CreateNewUser (string username, string password);
 		abstract protected User UserLogin (string username, string password);
 		abstract protected UserList GetUsers ();
+		abstract public void Logout ();
+		abstract public void DeleteUser ();
 		
 		public class UserAsyncResult
 		{

@@ -49,6 +49,20 @@ namespace XamarinEvolveSSLibrary
 			return CachedUserList;
 		}
 
+		public override void Logout ()
+		{
+			_currentUser = new User ();
+		}
+
+		public override void DeleteUser ()
+		{
+			User userToDelete = _currentUser;
+
+			_currentUser = new User ();
+
+			CachedUserList.Delete (userToDelete);
+		}
+
 		private UserList CachedUserList
 		{
 			get 

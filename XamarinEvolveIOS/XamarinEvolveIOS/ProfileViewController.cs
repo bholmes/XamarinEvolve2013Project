@@ -20,18 +20,19 @@ namespace XamarinEvolveIOS
 
 		public override void LoadView ()
 		{
-			this.Title = CurrentUser.IsLocalUser ? "My Profile" : "Profile";
+			this.Title = CurrentUser.IsLocalUser && this is LocalProfileViewController? "My Profile" : "Profile";
 
 			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
 				this, CurrentUser);
-			TableView.Delegate = new LocalUserProfileDelegate ();
+			TableView.Delegate = new LocalUserProfileDelegate (
+				this, CurrentUser);
 			SetupEditButton ();
 		}
 
 		void SetupEditButton ()
 		{
-			if (!CurrentUser.IsLocalUser)
+			if (!CurrentUser.IsLocalUser || !(this is LocalProfileViewController))
 				return;
 
 			UIBarButtonItem editButton = new UIBarButtonItem ("Edit", UIBarButtonItemStyle.Done, delegate {
@@ -82,12 +83,28 @@ namespace XamarinEvolveIOS
 				if (dataSrc != null)
 					dataSrc.UserProfile = value;
 
+				LocalUserProfileDelegate tableDelegate = TableView.Delegate as LocalUserProfileDelegate;
+				if (tableDelegate != null)
+					tableDelegate.UserProfile = value;
+
 			}
 		}
 	}
 
 	public class LocalUserProfileDelegate : UITableViewDelegate
 	{
+		ProfileViewController _controller;
+		UIButton _logoutButton;
+		UIButton _deleteButton;
+		
+		public LocalUserProfileDelegate (ProfileViewController controller, User profile)
+		{
+			UserProfile = profile;
+			_controller = controller;
+		}
+		
+		public User UserProfile {get; set;}
+
 		public override float GetHeightForRow (UITableView tableView, NSIndexPath indexPath)
 		{
 			if (indexPath.Section == 0 && indexPath.Row == 0)
@@ -106,19 +123,74 @@ namespace XamarinEvolveIOS
 
 		public override UIView GetViewForFooter (UITableView tableView, int section)
 		{
-//			if (section == 2)
-//			{
-//				UIButton button = UIButton.FromType (UIButtonType.RoundedRect);
-//				button.SetTitle ("click", UIControlState.Normal);
-//				button.Frame = new RectangleF (10, 15, 140, 44);
-//
-//				UIView newView = new UIView (new RectangleF (0, 0, 1000, 60));
-//				newView.Add (button);
-//
-//				return newView;
-//			}
+			if (section == 2)
+			{
+				if (_controller is LocalProfileViewController && this.UserProfile.IsLocalUser && !this.UserProfile.IsAnonymousUser)
+				{
+					_logoutButton = UIButton.FromType (UIButtonType.RoundedRect);
+					_logoutButton.SetTitle ("Logout", UIControlState.Normal);
+					_logoutButton.Frame = new RectangleF (10, 15, 138, 44);
+					_logoutButton.AutoresizingMask  = UIViewAutoresizing.FlexibleBottomMargin | 
+						UIViewAutoresizing.FlexibleRightMargin |
+						UIViewAutoresizing.FlexibleWidth;
+					_logoutButton.TouchUpInside += OnLogout;
+
+					_deleteButton = UIButton.FromType (UIButtonType.RoundedRect);
+					_deleteButton.SetTitle ("Delete", UIControlState.Normal);
+					_deleteButton.Frame = new RectangleF (152, 15, 138, 44);
+					_deleteButton.AutoresizingMask  = UIViewAutoresizing.FlexibleBottomMargin | 
+						UIViewAutoresizing.FlexibleLeftMargin |
+							UIViewAutoresizing.FlexibleWidth;
+					_deleteButton.TouchUpInside += OnDeleteUser;
+
+					UIView newView = new UIView (new RectangleF (0, 0, 300, 44));
+					newView.AutoresizingMask = UIViewAutoresizing.All;
+					newView.Add (_logoutButton);
+					newView.Add (_deleteButton);
+
+					return newView;
+				}
+			}
 
 			return null;
+		}
+
+		void OnDeleteUser (object sender, EventArgs e)
+		{
+			UIAlertView alertView = new UIAlertView (
+				"Delete User?", "Are you sure you want to delete your accout?", 
+				null, null, new string [] {"Yes", "No"});
+
+			alertView.CancelButtonIndex = 1;
+			
+			alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
+				if (e2.ButtonIndex == 0)
+				{
+					Engine.Instance.UserAccess.DeleteUser ();
+					this._controller.NavigationController.PopViewControllerAnimated (true);
+				}
+			};
+
+			alertView.Show ();
+		}
+
+		void OnLogout (object sender, EventArgs e)
+		{
+			UIAlertView alertView = new UIAlertView (
+				"Logout User?", "Are you sure you want to logout?", 
+				null, null, new string [] {"Yes", "No"});
+			
+			alertView.CancelButtonIndex = 1;
+			
+			alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
+				if (e2.ButtonIndex == 0)
+				{
+					Engine.Instance.UserAccess.Logout ();
+					this._controller.NavigationController.PopViewControllerAnimated (true);
+				}
+			};
+
+			alertView.Show ();
 		}
 
 		public override UITableViewCellEditingStyle EditingStyleForRow (UITableView tableView, NSIndexPath indexPath)

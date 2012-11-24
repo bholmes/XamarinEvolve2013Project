@@ -6,7 +6,7 @@ namespace XamarinEvolveSSLibrary
 	{
 		static public void SimulateNetworkWait ()
 		{
-			SimulateNetworkWait (3000);
+			SimulateNetworkWait (2000);
 		}
 
 		static public void SimulateNetworkWait (int milliseconds)

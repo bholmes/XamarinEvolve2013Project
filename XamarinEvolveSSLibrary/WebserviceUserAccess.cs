@@ -1,5 +1,6 @@
 using System;
 using ServiceStack.ServiceClient.Web;
+using ServiceStack.Common.ServiceClient.Web;
 
 namespace XamarinEvolveSSLibrary
 {
@@ -25,9 +26,13 @@ namespace XamarinEvolveSSLibrary
 
 		protected override User CreateNewUser (string username, string password)
 		{
+			if (string.IsNullOrWhiteSpace (username) || string.IsNullOrWhiteSpace (password))
+				throw new UserAuthenticationException (string.Format ("Could not login {0}", username));
+
 			User user = new User()
 			{
 				UserName = username,
+				Password = MD5Helper.CalculateMD5Hash (password),
 			};
 			
 			lock (_clientWrapper.ClientLock)
@@ -37,12 +42,29 @@ namespace XamarinEvolveSSLibrary
 				if (response.Exception != null)
 					throw new DuplicateUserException (string.Format ("username {0} already exists", username) );
 
-				return _currentUser = user;
+				_currentUser = user;
 			}
+
+			try
+			{
+				SendLoginAuth (username, password);
+			}
+			catch (Exception)
+			{
+				_currentUser = new User ();
+				throw;
+			}
+
+			return _currentUser;
 		}
 
 		protected override User UserLogin (string username, string password)
 		{
+			if (string.IsNullOrWhiteSpace (username) || string.IsNullOrWhiteSpace (password))
+				throw new UserAuthenticationException (string.Format ("Could not login {0}", username));
+			
+			SendLoginAuth (username, password);
+
 			string uri = string.Format ("User/{0}", username);
 
 			lock (_clientWrapper.ClientLock)
@@ -94,7 +116,72 @@ namespace XamarinEvolveSSLibrary
 			func.BeginInvoke (null, null);
 		}
 
+		public override void Logout ()
+		{
+			_currentUser = new User ();
+
+			Func <int> func = delegate {
+				SendLogoutAuth ();
+				
+				return 0;
+			};
+			func.BeginInvoke (null, null);
+		}
+
+		public override void DeleteUser ()
+		{
+			User userToDelete = _currentUser;
+			
+			_currentUser = new User ();
+
+			Func <int> func = delegate {
+				lock (_clientWrapper.ClientLock)
+				{
+					string uri = string.Format ("User/{0}", userToDelete.UserName);
+					_clientWrapper.Client.Delete<XamarinEvolveSSLibrary.UserResponse>(uri);
+				}
+
+				SendLogoutAuth ();
+
+				return 0;
+			};
+			func.BeginInvoke (null, null);
+		}
+
 		#endregion
+
+		void SendLoginAuth (string username, string password)
+		{
+			lock (_clientWrapper.ClientLock) {
+				Auth auth = new Auth () {
+					UserName = username,
+					Password = MD5Helper.CalculateMD5Hash (password),
+					RememberMe = false,
+					provider = "credentials"
+				};
+				try {
+					_clientWrapper.Client.Post<AuthResponse> ("Auth", auth);
+				}
+				catch (Exception) {
+					throw new UserAuthenticationException (string.Format ("Could not login {0}", username));
+				}
+			}
+		}
+
+		void SendLogoutAuth ()
+		{
+			lock (_clientWrapper.ClientLock) {
+				Auth auth = new Auth () {
+					provider = "logout"
+				};
+				try {
+					_clientWrapper.Client.Post<AuthResponse> ("Auth", auth);
+				}
+				catch (Exception) {
+					throw new UserAuthenticationException (string.Format ("Could not logout"));
+				}
+			}
+		}
 	}
 }
 

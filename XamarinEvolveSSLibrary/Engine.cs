@@ -17,7 +17,7 @@ namespace XamarinEvolveSSLibrary
 		
 		public UserAccess UserAccess {get; private set;}
 		public AvatarAccess AvatarAccess {get; private set;}
-		
+
 		public Engine ()
 		{
 			if (_useTestClasses)

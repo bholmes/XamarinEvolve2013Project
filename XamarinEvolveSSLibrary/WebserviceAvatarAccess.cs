@@ -29,7 +29,7 @@ namespace XamarinEvolveSSLibrary
 							return ret;
 					}
 				}
-				catch (Exception exp)
+				catch (Exception)
 				{
 
 				}

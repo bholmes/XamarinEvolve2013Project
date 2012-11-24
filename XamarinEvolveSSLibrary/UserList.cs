@@ -38,6 +38,11 @@ namespace XamarinEvolveSSLibrary
 			_list.Add (newUser);
 			return newUser;
 		}
+
+		public void Delete (User userToDelete)
+		{
+			_list.Remove (_list.Find (e=> e.UserName == userToDelete.UserName));
+		}
 		
 		public int Count {get{return _list.Count;}}
 	}
