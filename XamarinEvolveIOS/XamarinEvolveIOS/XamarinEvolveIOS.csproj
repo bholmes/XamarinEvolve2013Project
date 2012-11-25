@@ -128,6 +128,9 @@
     <Compile Include="BusyView.cs" />
     <Compile Include="GeolocationHelper.cs" />
     <Compile Include="GeolocationResult.cs" />
+    <Compile Include="PlaceSortMethod.cs" />
+    <Compile Include="MeetUpViewController.cs" />
+    <Compile Include="PlaceListViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />

@@ -5,7 +5,7 @@ namespace XamarinEvolveSSLibrary
 	public class Engine
 	{
 		static Engine _instance = new Engine ();
-		bool _useTestClasses = false;
+		bool _useTestClasses = true;
 
 		public static Engine Instance
 		{
@@ -18,6 +18,7 @@ namespace XamarinEvolveSSLibrary
 		public UserAccess UserAccess {get; private set;}
 		public AvatarAccess AvatarAccess {get; private set;}
 		public GoogleAPI.PlaceLocator PlaceLocator {get; private set;}
+		public CheckInAccess CheckInAccess {get; private set;}
 
 		public Engine ()
 		{
@@ -35,6 +36,7 @@ namespace XamarinEvolveSSLibrary
 			}
 
 			PlaceLocator = new XamarinEvolveSSLibrary.GoogleAPI.PlaceLocator ();
+			CheckInAccess = new CheckInAccess ();
 		}
 	}
 }

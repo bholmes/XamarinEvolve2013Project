@@ -68,5 +68,11 @@
     <Compile Include="WebserviceUserAccess.cs" />
     <Compile Include="ClientWrapper.cs" />
     <Compile Include="GooglePlaceLocator.cs" />
+    <Compile Include="CheckIn.cs" />
+    <Compile Include="CheckInAccess.cs" />
+    <Compile Include="CheckInList.cs" />
+    <Compile Include="Place.cs" />
+    <Compile Include="PlaceList.cs" />
+    <Compile Include="GeoDistanceHelper.cs" />
   </ItemGroup>
 </Project>

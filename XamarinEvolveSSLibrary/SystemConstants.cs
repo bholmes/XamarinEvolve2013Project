@@ -84,7 +84,16 @@ namespace XamarinEvolveSSLibrary
         }
 
         public static uint MaxAvatarSize { get { return 200; } }
-
 		public static string GoogleAPIKey { get {return "AIzaSyCLphEJioicKAXQOE3NQ5gGnmPkdxaBs6o";}}
+
+		static Place _defaultPlace = new Place 
+		{
+			Name = "Austin Convention Center",
+			Address = "500 E Cesar Chavez St, Austin",
+			Latitude = 30.2635810f,
+			Longitude = 97.7395680f
+		};
+
+		static public Place DefaultPlace {get {return _defaultPlace;}}
     }
 }
