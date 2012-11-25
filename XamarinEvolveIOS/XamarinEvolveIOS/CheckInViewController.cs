@@ -20,7 +20,7 @@ namespace XamarinEvolveIOS
 			base.ViewDidLoad ();
 
 			TableView.DataSource = new PlaceListViewDataSource (this);
-			TableView.Delegate = new PlaceListViewDelegate (this);
+			TableView.Delegate = new CheckInViewDelegate (this);
 			
 			GeolocationHelper.GetLocation ((result) => {
 				LoadPlaceList (result);
@@ -55,6 +55,38 @@ namespace XamarinEvolveIOS
 			};
 
 			func.BeginInvoke (null, null);
+		}
+
+		private class CheckInViewDelegate : PlaceListViewDelegate
+		{
+			CheckInViewController _viewController;
+
+			public CheckInViewDelegate (CheckInViewController viewController) : base (viewController)
+			{
+				_viewController = viewController;
+			}
+
+			public override void RowSelected (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				Place place = PlaceList[indexPath.Row];
+
+				UIAlertView alertView = new UIAlertView (
+					"Check-in?", 
+					string.Format ("Are you sure you want chack-in at {0}?", place.Name), 
+					null, null, new string [] {"Yes", "No"});
+				
+				alertView.CancelButtonIndex = 1;
+				
+				alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
+					if (e2.ButtonIndex == 0)
+					{
+						Engine.Instance.CheckInAccess.CheckInUserAtPlace (place);
+						_viewController.NavigationController.PopViewControllerAnimated (true);
+					}
+				};
+				
+				alertView.Show ();
+			}
 		}
 	}
 }

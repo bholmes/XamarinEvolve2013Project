@@ -13,6 +13,7 @@ namespace XamarinEvolveIOS
 		{
 			_task = task;
 			_geolocator = geolocator;
+			Exception = _task.Exception;
 		}
 		
 		public Position Position 
@@ -48,6 +49,8 @@ namespace XamarinEvolveIOS
 				return _task.IsFaulted && !_geolocator.IsGeolocationEnabled;
 			}
 		}
+
+		public Exception Exception {get; private set;}
 	}
 }
 

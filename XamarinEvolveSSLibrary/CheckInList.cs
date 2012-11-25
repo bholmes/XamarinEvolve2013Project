@@ -38,6 +38,11 @@ namespace XamarinEvolveSSLibrary
 		
 		public CheckIn Add (CheckIn newCheckIn)
 		{
+			if (_list.Count > 0)
+				newCheckIn.Id = _list[_list.Count-1].Id + 1;
+			else
+				newCheckIn.Id = 1;
+
 			_list.Add (newCheckIn);
 			return newCheckIn;
 		}

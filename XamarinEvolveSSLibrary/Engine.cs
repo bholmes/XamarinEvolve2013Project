@@ -5,7 +5,6 @@ namespace XamarinEvolveSSLibrary
 	public class Engine
 	{
 		static Engine _instance = new Engine ();
-		bool _useTestClasses = true;
 
 		public static Engine Instance
 		{
@@ -22,7 +21,7 @@ namespace XamarinEvolveSSLibrary
 
 		public Engine ()
 		{
-			if (_useTestClasses)
+			if (SystemConstants.EngineUseTestClasses)
 			{
 				UserAccess = new UserAccessLocalTest ();
 				AvatarAccess = new AvatarAccessLocalTest ();

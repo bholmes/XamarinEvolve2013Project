@@ -35,7 +35,7 @@ namespace XamarinEvolveIOS
 		{
 			UIActionSheet actionSheet = new UIActionSheet ("Select Sort Priority");
 			actionSheet.AddButton ("Popular Places");
-			actionSheet.AddButton ("Near Convention Center");
+			actionSheet.AddButton (string.Format("Near {0}", SystemConstants.DefaultPlace.Name));
 			actionSheet.AddButton ("Near Me");
 			
 			actionSheet.AddButton ("Cancel");
@@ -96,6 +96,7 @@ namespace XamarinEvolveIOS
 				this.BeginInvokeOnMainThread (delegate {
 					PlaceList = list;
 					TableView.ReloadData ();
+					SortMethod = sortMethod;
 					BusyView.Busy = false;
 					NavigationItem.SetRightBarButtonItem (_sortButton, true);
 				});
@@ -151,7 +152,7 @@ namespace XamarinEvolveIOS
 				case PlaceSortMethod.Popularity :
 					return "Popular Places";
 				case PlaceSortMethod.NearConventionCenter :
-					return "Near Convention Center";
+					return string.Format("Near {0}", SystemConstants.DefaultPlace.Name);
 				case PlaceSortMethod.NearUser :
 					return "Near Me";
 				}

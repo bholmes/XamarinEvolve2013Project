@@ -15,6 +15,20 @@ namespace XamarinEvolveSSLibrary
 			return CachedPlaceList.Copy ();
 		}
 
+		public void CheckInUserAtPlace (Place place)
+		{
+			User currentUser = Engine.Instance.UserAccess.GetCurrentUser ();
+			if (currentUser.IsAnonymousUser)
+				return;
+
+			Place tPlace = CachedPlaceList.AddIfNew (place);
+			CachedCheckInList.Add (new CheckIn {
+				PlaceId = tPlace.Id,
+				Time = DateTime.Now,
+				UserName = currentUser.UserName,
+			});
+		}
+
 		private PlaceList CachedPlaceList
 		{
 			get 

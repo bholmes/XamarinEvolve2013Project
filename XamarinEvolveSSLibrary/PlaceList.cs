@@ -42,8 +42,18 @@ namespace XamarinEvolveSSLibrary
 			}
 		}
 		
-		public Place Add (Place newPlace)
+		public Place AddIfNew (Place newPlace)
 		{
+			Place returnPlace = _list.Find (p => p.Name == newPlace.Name && p.Address == newPlace.Address);
+
+			if (returnPlace != null)
+				return returnPlace;
+
+			if (_list.Count > 0)
+				newPlace.Id = _list[_list.Count-1].Id + 1;
+			else
+				newPlace.Id = 1;
+
 			_list.Add (newPlace);
 			return newPlace;
 		}
