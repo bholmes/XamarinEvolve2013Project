@@ -25,14 +25,14 @@ namespace XamarinEvolveIOS
 			                                                  this.View.Bounds.GetMidY ());
 			_busyIndicator.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
 
-			this.View.Add (_busyIndicator);
-			_busyIndicator.StartAnimating ();
-
 			Title = "Attendees";
 			Users = new UserList ();
 			this.TableView = new UITableView (this.View.Bounds, UITableViewStyle.Grouped);
 			TableView.DataSource = new UsersViewDataSource (UserListGetter);
 			TableView.Delegate = new UsersViewDelegate (UserListGetter, NavigationController);
+
+			this.View.Add (_busyIndicator);
+			_busyIndicator.StartAnimating ();
 
 			Engine.Instance.UserAccess.GetUsers ((userList) => {
 				this.InvokeOnMainThread (delegate {

@@ -134,8 +134,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Content Include="blankavatar.jpg" />
     <Content Include="Images\144_icon.png" />
+    <Content Include="Images\blankavatar.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
