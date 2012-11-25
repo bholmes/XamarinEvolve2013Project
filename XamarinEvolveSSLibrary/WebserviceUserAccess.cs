@@ -7,6 +7,7 @@ namespace XamarinEvolveSSLibrary
 	public class WebserviceUserAccess : UserAccess
 	{
 		private User _currentUser = new User ();
+		object _currentUserLock = new object ();
 		private ClientWrapper _clientWrapper;
 
 		public WebserviceUserAccess (ClientWrapper clientWrapper)
@@ -18,7 +19,7 @@ namespace XamarinEvolveSSLibrary
 
 		public override User GetCurrentUser ()
 		{
-			lock (_clientWrapper.ClientLock)
+			lock (_currentUserLock)
 			{
 				return _currentUser;
 			}
@@ -41,9 +42,10 @@ namespace XamarinEvolveSSLibrary
 
 				if (response.Exception != null)
 					throw new DuplicateUserException (string.Format ("username {0} already exists", username) );
-
-				_currentUser = user;
 			}
+
+			lock (_currentUserLock)
+				_currentUser = user;
 
 			try
 			{
@@ -51,11 +53,13 @@ namespace XamarinEvolveSSLibrary
 			}
 			catch (Exception)
 			{
-				_currentUser = new User ();
+				lock (_currentUserLock)
+					_currentUser = new User ();
 				throw;
 			}
 
-			return _currentUser;
+			lock (_currentUserLock)
+				return _currentUser;
 		}
 
 		protected override User UserLogin (string username, string password)
@@ -67,14 +71,16 @@ namespace XamarinEvolveSSLibrary
 
 			string uri = string.Format ("User/{0}", username);
 
+			UserResponse response;
 			lock (_clientWrapper.ClientLock)
 			{
-				UserResponse response = _clientWrapper.Client.Get<XamarinEvolveSSLibrary.UserResponse>(uri);
+				response = _clientWrapper.Client.Get<XamarinEvolveSSLibrary.UserResponse>(uri);
 				if (response.Exception != null || response.Users == null || response.Users.Count != 1)
 					throw new UserAuthenticationException (string.Format ("Could not login {0}", username));
-			
-				return _currentUser = response.Users[0];
 			}
+
+			lock (_currentUserLock)
+				return _currentUser = response.Users[0];
 		}
 
 		protected override UserList GetUsers ()
@@ -96,15 +102,20 @@ namespace XamarinEvolveSSLibrary
 		{
 			// Make copy to ensure password and avatar are null
 
-			User userToSend = new User () {
-				UserName = _currentUser.UserName,
-				FullName = _currentUser.FullName,
-				City = _currentUser.City,
-				Company = _currentUser.Company,
-				Title = _currentUser.Title,
-				Email = _currentUser.Email,
-				Phone = _currentUser.Phone,
-			};
+			User userToSend;
+
+			lock (_currentUserLock)
+			{
+				userToSend = new User () {
+					UserName = _currentUser.UserName,
+					FullName = _currentUser.FullName,
+					City = _currentUser.City,
+					Company = _currentUser.Company,
+					Title = _currentUser.Title,
+					Email = _currentUser.Email,
+					Phone = _currentUser.Phone,
+				};
+			}
 
 			Func <int> func = delegate {
 				lock (_clientWrapper.ClientLock)
@@ -118,7 +129,10 @@ namespace XamarinEvolveSSLibrary
 
 		public override void Logout ()
 		{
-			_currentUser = new User ();
+			lock (_currentUserLock)
+			{
+				_currentUser = new User ();
+			}
 
 			Func <int> func = delegate {
 				SendLogoutAuth ();
@@ -130,7 +144,12 @@ namespace XamarinEvolveSSLibrary
 
 		public override void DeleteUser ()
 		{
-			User userToDelete = _currentUser;
+			User userToDelete;
+
+			lock (_currentUserLock)
+			{
+				userToDelete = _currentUser;
+			}
 			
 			_currentUser = new User ();
 

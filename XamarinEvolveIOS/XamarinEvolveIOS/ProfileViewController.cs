@@ -20,9 +20,10 @@ namespace XamarinEvolveIOS
 
 		public override void LoadView ()
 		{
+			base.LoadView ();
+
 			this.Title = CurrentUser.IsLocalUser && this is LocalProfileViewController? "My Profile" : "Profile";
 
-			base.LoadView ();
 			TableView.DataSource = new LocalUserProfileDataSource (
 				this, CurrentUser);
 			TableView.Delegate = new LocalUserProfileDelegate (
