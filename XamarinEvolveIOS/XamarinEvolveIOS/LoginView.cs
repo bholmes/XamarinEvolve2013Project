@@ -36,6 +36,7 @@ namespace XamarinEvolveIOS
 			};
 
 			ScrollView.ContentSize = new SizeF (Frame.Width, CancelButton.Frame.Bottom + 20);
+			ScrollView.ShowsVerticalScrollIndicator = false;
 		}
 
 		public static LoginView Create (NSObject owner)

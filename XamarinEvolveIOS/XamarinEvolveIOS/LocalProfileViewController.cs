@@ -2,6 +2,7 @@ using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 using XamarinEvolveSSLibrary;
+using MonoTouch.Foundation;
 
 namespace XamarinEvolveIOS
 {
@@ -20,6 +21,7 @@ namespace XamarinEvolveIOS
 
 		public LocalProfileViewController () : base (Engine.Instance.UserAccess.GetCurrentUser())
 		{
+
 		}
 
 		public override void LoadView ()
@@ -38,6 +40,53 @@ namespace XamarinEvolveIOS
 
 			if (Engine.Instance.UserAccess.GetCurrentUser().IsAnonymousUser)
 				ShowLoginScreen ();
+		}
+
+		NSObject _showKeyboardNotification;
+		NSObject _hideKeyboardNotification;
+
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+
+			_showKeyboardNotification = MonoTouch.Foundation.NSNotificationCenter.
+				DefaultCenter.AddObserver (UIKeyboard.DidShowNotification, (notification) => {
+					var keyboardBounds = (NSValue)notification
+						.UserInfo.ObjectForKey(UIKeyboard.BoundsUserInfoKey);
+					var keyboardSize = keyboardBounds.RectangleFValue;
+					
+					UIView.BeginAnimations("k");
+					UIView.SetAnimationBeginsFromCurrentState(true);
+					_loginView.ScrollView.Frame = new RectangleF(0, 0, View.Bounds.Width, 
+					                                   View.Bounds.Height - keyboardSize.Height);
+					UIView.CommitAnimations();
+				});
+
+			_hideKeyboardNotification = MonoTouch.Foundation.NSNotificationCenter.
+				DefaultCenter.AddObserver (UIKeyboard.WillHideNotification, delegate {
+					UIView.BeginAnimations("k");
+					UIView.SetAnimationBeginsFromCurrentState(true);
+					_loginView.ScrollView.Frame = 
+						new RectangleF(0, 0, View.Bounds.Width, View.Bounds.Height);
+					UIView.CommitAnimations();
+				});
+		}
+
+		public override void ViewDidDisappear (bool animated)
+		{
+			base.ViewDidDisappear (animated);
+
+			NSObject showKeyboardNotification = _showKeyboardNotification;
+			_showKeyboardNotification = null;
+
+			NSObject hideKeyboardNotification = _hideKeyboardNotification;
+			_hideKeyboardNotification = null;
+
+			if (showKeyboardNotification != null)
+				MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.RemoveObserver (showKeyboardNotification);
+
+			if (hideKeyboardNotification != null)
+				MonoTouch.Foundation.NSNotificationCenter.DefaultCenter.RemoveObserver (hideKeyboardNotification);
 		}
 
 		void ChangeMode (Mode newMode)
