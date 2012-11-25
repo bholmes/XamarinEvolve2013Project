@@ -124,6 +124,8 @@
     <Compile Include="LoginView.designer.cs">
       <DependentUpon>LoginView.cs</DependentUpon>
     </Compile>
+    <Compile Include="CheckInViewController.cs" />
+    <Compile Include="BusyView.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />

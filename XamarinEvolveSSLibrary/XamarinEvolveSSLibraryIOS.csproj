@@ -67,5 +67,6 @@
     <Compile Include="WebserviceAvatarAccess.cs" />
     <Compile Include="WebserviceUserAccess.cs" />
     <Compile Include="ClientWrapper.cs" />
+    <Compile Include="GooglePlaceLocator.cs" />
   </ItemGroup>
 </Project>

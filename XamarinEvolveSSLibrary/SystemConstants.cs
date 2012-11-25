@@ -84,5 +84,7 @@ namespace XamarinEvolveSSLibrary
         }
 
         public static uint MaxAvatarSize { get { return 200; } }
+
+		public static string GoogleAPIKey { get {return "AIzaSyCLphEJioicKAXQOE3NQ5gGnmPkdxaBs6o";}}
     }
 }

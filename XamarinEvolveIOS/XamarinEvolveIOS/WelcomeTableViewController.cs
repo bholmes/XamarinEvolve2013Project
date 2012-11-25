@@ -32,7 +32,7 @@ namespace XamarinEvolveIOS
 
 			public override int RowsInSection (UITableView tableView, int section)
 			{
-				return 2;
+				return 3;
 			}			
 
 			public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
@@ -51,6 +51,9 @@ namespace XamarinEvolveIOS
 					break;
 				case 1:
 					cell.TextLabel.Text = "Attendees";
+					break;
+				case 2:
+					cell.TextLabel.Text = "Check-in";
 					break;
 
 				default:
@@ -83,6 +86,9 @@ namespace XamarinEvolveIOS
 					break;
 				case 1:
 					_navigationController.PushViewController (new UsersViewController (), true);
+					break;
+				case 2:
+					_navigationController.PushViewController (new CheckInViewController (), true);
 					break;
 					
 				default:
