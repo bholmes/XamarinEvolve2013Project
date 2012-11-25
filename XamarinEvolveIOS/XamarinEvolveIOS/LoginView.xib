@@ -12,7 +12,6 @@
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBProxyObject</string>
-			<string>IBUIActivityIndicatorView</string>
 			<string>IBUIButton</string>
 			<string>IBUILabel</string>
 			<string>IBUIScrollView</string>
@@ -193,7 +192,7 @@
 								<string key="NSFrame">{{20, 183}, {288, 30}}</string>
 								<reference key="NSSuperview" ref="352627376"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="658465663"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -277,18 +276,6 @@
 								<reference key="IBUIFontDescription" ref="70185406"/>
 								<reference key="IBUIFont" ref="3277944"/>
 							</object>
-							<object class="IBUIActivityIndicatorView" id="658465663">
-								<reference key="NSNextResponder" ref="352627376"/>
-								<int key="NSvFlags">-2147483355</int>
-								<string key="NSFrame">{{156, 228}, {20, 20}}</string>
-								<reference key="NSSuperview" ref="352627376"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView" ref="512420188"/>
-								<string key="NSReuseIdentifierKey">_NS:9</string>
-								<bool key="IBUIOpaque">NO</bool>
-								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<int key="IBUIStyle">2</int>
-							</object>
 						</array>
 						<string key="NSFrameSize">{328, 460}</string>
 						<reference key="NSSuperview" ref="191373211"/>
@@ -365,14 +352,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchOutletConnection" key="connection">
-						<string key="label">BusyIndicator</string>
-						<reference key="source" ref="191373211"/>
-						<reference key="destination" ref="658465663"/>
-					</object>
-					<int key="connectionID">52</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBCocoaTouchOutletConnection" key="connection">
 						<string key="label">CancelButton</string>
 						<reference key="source" ref="191373211"/>
 						<reference key="destination" ref="350304105"/>
@@ -417,7 +396,6 @@
 							<reference ref="195537025"/>
 							<reference ref="1033094450"/>
 							<reference ref="102048798"/>
-							<reference ref="658465663"/>
 							<reference ref="512420188"/>
 							<reference ref="350304105"/>
 						</array>
@@ -459,11 +437,6 @@
 						<reference key="parent" ref="352627376"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">51</int>
-						<reference key="object" ref="658465663"/>
-						<reference key="parent" ref="352627376"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">53</int>
 						<reference key="object" ref="350304105"/>
 						<reference key="parent" ref="352627376"/>
@@ -484,7 +457,6 @@
 				<string key="43.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="44.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="45.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="51.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="53.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>

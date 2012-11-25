@@ -29,9 +29,6 @@ namespace XamarinEvolveIOS
 		public MonoTouch.UIKit.UIButton CancelButton { get; set; }
 
 		[Outlet]
-		public MonoTouch.UIKit.UIActivityIndicatorView BusyIndicator { get; set; }
-
-		[Outlet]
 		public MonoTouch.UIKit.UIScrollView ScrollView { get; set; }
 		
 		void ReleaseDesignerOutlets ()
@@ -64,11 +61,6 @@ namespace XamarinEvolveIOS
 			if (CancelButton != null) {
 				CancelButton.Dispose ();
 				CancelButton = null;
-			}
-
-			if (BusyIndicator != null) {
-				BusyIndicator.Dispose ();
-				BusyIndicator = null;
 			}
 
 			if (ScrollView != null) {

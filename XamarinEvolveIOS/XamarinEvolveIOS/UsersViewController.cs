@@ -9,7 +9,7 @@ namespace XamarinEvolveIOS
 	public class UsersViewController : UITableViewController
 	{
 		UserList Users {get;set;}
-		UIActivityIndicatorView _busyIndicator;
+		public BusyView BusyView {get; private set;}
 
 		public UsersViewController ()
 		{
@@ -20,10 +20,7 @@ namespace XamarinEvolveIOS
 		{
 			base.LoadView ();
 
-			_busyIndicator  = new UIActivityIndicatorView (UIActivityIndicatorViewStyle.Gray);
-			_busyIndicator.Center = new System.Drawing.PointF(this.View.Bounds.GetMidX (),
-			                                                  this.View.Bounds.GetMidY ());
-			_busyIndicator.AutoresizingMask = UIViewAutoresizing.FlexibleMargins;
+			BusyView = new XamarinEvolveIOS.BusyView (this.View.Bounds);
 
 			Title = "Attendees";
 			Users = new UserList ();
@@ -31,13 +28,13 @@ namespace XamarinEvolveIOS
 			TableView.DataSource = new UsersViewDataSource (UserListGetter);
 			TableView.Delegate = new UsersViewDelegate (UserListGetter, NavigationController);
 
-			this.View.Add (_busyIndicator);
-			_busyIndicator.StartAnimating ();
+			this.View.Add (BusyView);
+			BusyView.Busy = true;
 
 			Engine.Instance.UserAccess.GetUsers ((userList) => {
 				this.InvokeOnMainThread (delegate {
 					Users = userList.UserList;
-					_busyIndicator.StopAnimating ();
+					BusyView.Busy = false;
 					this.TableView.ReloadData ();
 				});
 			});

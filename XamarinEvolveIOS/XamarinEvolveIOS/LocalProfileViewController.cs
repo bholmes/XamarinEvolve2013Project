@@ -76,11 +76,11 @@ namespace XamarinEvolveIOS
 
 			if (busy)
 			{
-				_loginView.BusyIndicator.StartAnimating ();
+				_loginView.BusyView.Busy = true;
 			}
 			else
 			{
-				_loginView.BusyIndicator.StopAnimating ();
+				_loginView.BusyView.Busy = false;
 			}
 		}
 
