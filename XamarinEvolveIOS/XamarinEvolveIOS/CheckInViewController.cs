@@ -11,6 +11,7 @@ namespace XamarinEvolveIOS
 	public class CheckInViewController : UIViewController
 	{
 		List<Place> _placeList = new List<Place> ();
+		GeolocationHelper _geolocationHelper = new GeolocationHelper ();
 
 		UITableView TableView {get;set;}
 		BusyView _busyView;
@@ -34,25 +35,59 @@ namespace XamarinEvolveIOS
 			TableView.DataSource = new CheckInTableViewDataSource (this);
 			TableView.Delegate = new CheckInTableViewDelegate (this);
 
-			LoadPlaceList ();
+			_geolocationHelper.GetLocation ((result) => {
+				LoadPlaceList (result);
+			});
+
+
 		}
 
-		private void LoadPlaceList ()
+		private void LoadPlaceList (GeolocationResult result)
 		{
 			Func<int> func = delegate {
-				List<Place> lPlaceList = Engine.Instance.PlaceLocator.GetNearbyPlaces ();
+				List<Place> lPlaceList = new List<Place> ();
+
+				if (result.Position != null)
+				{
+					lPlaceList = Engine.Instance.PlaceLocator.GetNearbyPlaces (
+						(float)result.Position.Latitude, (float)result.Position.Longitude);
+				}
 
 				this.BeginInvokeOnMainThread (delegate {
-					_placeList = lPlaceList;
-					((CheckInTableViewDataSource)(TableView.DataSource)).PlaceList = _placeList;
-					_busyView.Busy = false;
-					TableView.ReloadData ();
+					if (lPlaceList.Count > 0)
+					{
+						_placeList = lPlaceList;
+						((CheckInTableViewDataSource)(TableView.DataSource)).PlaceList = _placeList;
+						TableView.ReloadData ();
+						_busyView.Busy = false;
+					}
+					else
+						ShowLocatinError (lPlaceList, result);
 				});
 
 				return 0;
 			};
 
 			func.BeginInvoke (null, null);
+		}
+
+		private void ShowLocatinError (List<Place> placeList, GeolocationResult result)
+		{
+			string message;
+
+			if (result.Canceled)
+				message = "The location request timed out.";
+			else if (result.GeolocationNotAvailable)
+				message = "Location services are not available on this device.";
+			else if (result.GeolocationDisabled)
+				message = "Location services are not enabled for the Evolve application.";
+			else 
+				message = "Did not find any places near your location.";
+
+			_busyView.Busy = false;
+
+			UIAlertView alertNew = new UIAlertView ("Error", message, null, "OK", null);
+			alertNew.Show ();
 		}
 
 		private class CheckInTableViewDataSource : UITableViewDataSource

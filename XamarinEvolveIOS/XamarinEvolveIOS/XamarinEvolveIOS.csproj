@@ -126,6 +126,8 @@
     </Compile>
     <Compile Include="CheckInViewController.cs" />
     <Compile Include="BusyView.cs" />
+    <Compile Include="GeolocationHelper.cs" />
+    <Compile Include="GeolocationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
