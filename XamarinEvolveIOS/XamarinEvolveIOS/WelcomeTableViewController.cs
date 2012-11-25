@@ -20,7 +20,8 @@ namespace XamarinEvolveIOS
 			this.Title = "Xamarin Evolve 2013";
 			this.NavigationItem.BackBarButtonItem =  new UIBarButtonItem (
 				"Back", UIBarButtonItemStyle.Bordered, null, null);
-			
+
+			this.TableView = new UITableView (this.View.Bounds, UITableViewStyle.Grouped);
 			this.TableView.DataSource = new WelcomeTableViewDataSource ();
 			this.TableView.Delegate = new WelcomeTableViewDelegate (NavigationController);	
 		}

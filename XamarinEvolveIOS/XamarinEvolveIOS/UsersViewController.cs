@@ -30,6 +30,7 @@ namespace XamarinEvolveIOS
 
 			Title = "Attendees";
 			Users = new UserList ();
+			this.TableView = new UITableView (this.View.Bounds, UITableViewStyle.Grouped);
 			TableView.DataSource = new UsersViewDataSource (UserListGetter);
 			TableView.Delegate = new UsersViewDelegate (UserListGetter, NavigationController);
 
