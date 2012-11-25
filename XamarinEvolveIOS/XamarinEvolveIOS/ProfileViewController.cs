@@ -9,11 +9,13 @@ using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
-	public partial class ProfileViewController : UITableViewController
+	public partial class ProfileViewController : UIViewController
 	{
 		private User _currentUser;
 
-		public ProfileViewController (User user) : base (UITableViewStyle.Grouped)
+		public UITableView TableView {get;set;}
+
+		public ProfileViewController (User user) : base ()
 		{
 			CurrentUser = user;
 		}
@@ -21,6 +23,10 @@ namespace XamarinEvolveIOS
 		public override void LoadView ()
 		{
 			base.LoadView ();
+
+			TableView = new UITableView (View.Bounds, UITableViewStyle.Grouped);
+			TableView.AutoresizingMask = UIViewAutoresizing.All;
+			View.Add (TableView);
 
 			this.Title = CurrentUser.IsLocalUser && this is LocalProfileViewController? "My Profile" : "Profile";
 
@@ -42,9 +48,20 @@ namespace XamarinEvolveIOS
 			this.NavigationItem.RightBarButtonItem = editButton;
 		}
 
+		public override bool Editing {
+			get {
+				return base.Editing;
+			}
+			set {
+				base.Editing = value;
+				TableView.Editing = value;
+			}
+		}
+
 		public override void SetEditing (bool editing, bool animated)
 		{
 			base.SetEditing (editing, animated);
+			TableView.SetEditing (editing, animated);
 
 			if (this.Editing) {
 				this.NavigationItem.RightBarButtonItem.Title = "Done";
@@ -79,6 +96,9 @@ namespace XamarinEvolveIOS
 			}
 			set{
 				_currentUser = value;
+
+				if (TableView == null)
+					return;
 
 				LocalUserProfileDataSource dataSrc = TableView.DataSource as LocalUserProfileDataSource;
 				if (dataSrc != null)

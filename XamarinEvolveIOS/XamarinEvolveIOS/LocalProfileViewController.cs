@@ -57,7 +57,7 @@ namespace XamarinEvolveIOS
 					
 					UIView.BeginAnimations("k");
 					UIView.SetAnimationBeginsFromCurrentState(true);
-					_loginView.ScrollView.Frame = new RectangleF(0, 0, View.Bounds.Width, 
+					_loginView.ScrollView.Frame = new RectangleF(0, 0, _loginView.ScrollView.Frame.Width, 
 					                                   View.Bounds.Height - keyboardSize.Height);
 					UIView.CommitAnimations();
 				});
