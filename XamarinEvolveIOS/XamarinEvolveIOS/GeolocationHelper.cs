@@ -11,34 +11,57 @@ namespace XamarinEvolveIOS
 		Geolocator _geolocator = new Geolocator ();
 		private TaskScheduler _scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 		private CancellationTokenSource _cancelSource;
+		private int _timeout = 4000;
 
 		public GeolocationHelper ()
 		{
-		
+
+		}
+
+		Task<Position> GetTask ()
+		{
+			this._cancelSource = new CancellationTokenSource();
+			
+			return _geolocator.GetPositionAsync (timeout: _timeout,
+			                                     cancelToken: this._cancelSource.Token, 
+			                                     includeHeading: false);
+		}
+
+		public GeolocationResult GetLocation ()
+		{
+			ManualResetEvent waitToComplete = new ManualResetEvent (false);
+
+			GeolocationResult result = null;
+
+			// Not getting the right results if not on main thread
+			MonoTouch.Foundation.NSObject obj = new MonoTouch.Foundation.NSObject ();
+			obj.InvokeOnMainThread (delegate {
+			
+				Task<Position> task =  GetTask ();
+
+				task.ContinueWith (t =>
+				{
+					result = new GeolocationResult (_geolocator, t);
+					waitToComplete.Set ();
+					
+				}, _scheduler);
+			});
+
+			waitToComplete.WaitOne ();
+
+			return result;
 		}
 
 		public void GetLocation (Action<GeolocationResult> onComplete)
 		{
-			this._cancelSource = new CancellationTokenSource();
+			Task<Position> task =  GetTask ();
 
-			_geolocator.GetPositionAsync (timeout: 4000, cancelToken: this._cancelSource.Token, includeHeading: false)
-				.ContinueWith (t =>
-				{
-					if (t.IsFaulted)
-						Console.WriteLine (((GeolocationException)t.Exception.InnerException).Error.ToString());
-					else if (t.IsCanceled)
-						Console.WriteLine ("Canceled");
-					else
-					{
-						Console.WriteLine (t.Result.Timestamp.ToString("G"));
-						Console.WriteLine ("La: " + t.Result.Latitude.ToString("N4"));
-						Console.WriteLine ("Lo: " + t.Result.Longitude.ToString("N4"));
-					}
-
-					if (onComplete != null)
-						onComplete (new GeolocationResult (_geolocator, t));
-					
-				}, _scheduler);
+			task.ContinueWith (t =>
+			{
+				if (onComplete != null)
+					onComplete (new GeolocationResult (_geolocator, t));
+				
+			}, _scheduler);
 		}
 
 		public void CancelPosition ()

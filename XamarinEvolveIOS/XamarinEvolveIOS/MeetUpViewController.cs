@@ -36,9 +36,10 @@ namespace XamarinEvolveIOS
 			UIActionSheet actionSheet = new UIActionSheet ("Select Sort Priority");
 			actionSheet.AddButton ("Popular Places");
 			actionSheet.AddButton ("Near Convention Center");
+			actionSheet.AddButton ("Near Me");
 			
 			actionSheet.AddButton ("Cancel");
-			actionSheet.CancelButtonIndex = 2;
+			actionSheet.CancelButtonIndex = 3;
 			
 			actionSheet.Clicked += (sender, e) => {
 				switch (e.ButtonIndex)
@@ -48,6 +49,9 @@ namespace XamarinEvolveIOS
 					break;
 				case 1:
 					ChangeSortMethod (PlaceSortMethod.NearConventionCenter);
+					break;
+				case 2:
+					ChangeSortMethod (PlaceSortMethod.NearUser);
 					break;
 				}
 			};
@@ -70,6 +74,23 @@ namespace XamarinEvolveIOS
 				{
 					list = list.SortByDistance (SystemConstants.DefaultPlace.Latitude,
 					                            SystemConstants.DefaultPlace.Longitude);
+				}
+				else if (sortMethod == PlaceSortMethod.NearUser)
+				{
+					GeolocationResult result =
+						GeolocationHelper.GetLocation ();
+
+					if (result.Position == null)
+					{
+						this.BeginInvokeOnMainThread (delegate {
+							ShowLocatinError (new XamarinEvolveSSLibrary.PlaceList (), result);
+							NavigationItem.SetRightBarButtonItem (_sortButton, true);
+						});
+						return 0;
+					}
+					
+					list = list.SortByDistance ((float)result.Position.Latitude, 
+					                            (float)result.Position.Longitude);
 				}
 				
 				this.BeginInvokeOnMainThread (delegate {
@@ -131,6 +152,8 @@ namespace XamarinEvolveIOS
 					return "Popular Places";
 				case PlaceSortMethod.NearConventionCenter :
 					return "Near Convention Center";
+				case PlaceSortMethod.NearUser :
+					return "Near Me";
 				}
 				
 				return string.Empty;

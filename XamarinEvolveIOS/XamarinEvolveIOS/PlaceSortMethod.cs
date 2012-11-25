@@ -6,6 +6,7 @@ namespace XamarinEvolveIOS
 	{
 		Popularity,
 		NearConventionCenter,
+		NearUser,
 	}
 }
 
