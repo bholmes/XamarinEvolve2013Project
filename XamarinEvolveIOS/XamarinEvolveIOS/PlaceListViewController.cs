@@ -28,6 +28,18 @@ namespace XamarinEvolveIOS
 			BusyView = new BusyView (View.Bounds);
 			this.View.Add (BusyView);
 		}
+
+		public override void ViewWillAppear (bool animated)
+		{
+			base.ViewWillAppear (animated);
+			
+			if (this.TableView != null)
+			{
+				MonoTouch.Foundation.NSIndexPath path = TableView.IndexPathForSelectedRow;
+				if (path != null)
+					TableView.DeselectRow (path, animated);
+			}
+		}
 		
 		protected void ShowLocatinError (PlaceList placeList, GeolocationResult result)
 		{
@@ -78,7 +90,7 @@ namespace XamarinEvolveIOS
 				
 				return cell;
 			}		
-#endregion
+			#endregion
 		}
 		
 		private PlaceList _placeList = new PlaceList ();

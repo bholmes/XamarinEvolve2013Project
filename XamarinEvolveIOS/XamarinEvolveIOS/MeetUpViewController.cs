@@ -17,9 +17,12 @@ namespace XamarinEvolveIOS
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+
+			this.NavigationItem.BackBarButtonItem =  new UIBarButtonItem (
+				"Back", UIBarButtonItemStyle.Bordered, null, null);
 			
 			TableView.DataSource = new MeetUpViewDataDource (this);
-			TableView.Delegate = new PlaceListViewDelegate (this);
+			TableView.Delegate = new MeetUpViewDelegate (this);
 			
 			_sortButton = new UIBarButtonItem ("Sort", UIBarButtonItemStyle.Plain, delegate {
 				SortButtonTouched ();
@@ -174,6 +177,24 @@ namespace XamarinEvolveIOS
 				}
 				
 				return string.Empty;
+			}
+		}
+
+		protected class MeetUpViewDelegate : PlaceListViewDelegate
+		{
+			MeetUpViewController _viewController;
+
+			public MeetUpViewDelegate (MeetUpViewController viewController) : base (viewController)
+			{
+				_viewController = viewController;
+			}
+
+			public override void RowSelected (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				Place place = _viewController.PlaceList[indexPath.Row];
+
+				_viewController.NavigationController.PushViewController (
+					new PlaceInfoViewController (place), true);
 			}
 		}
 	}

@@ -35,8 +35,13 @@ namespace XamarinEvolveSSLibrary
 		public void GetCheckinInfo (Place place, out CheckInList activeList,
 		                            out CheckInList recentList, int recentLimit)
 		{
+			Debug.SimulateNetworkWait ();
+
 			activeList = new CheckInList ();
 			recentList = new CheckInList ();
+
+			CachedCheckInList.GetCheckInsForPlace (place, SystemConstants.RecentThresholdHours,
+			                                       out activeList, out recentList);
 		}
 
 		public void CheckInUserAtPlace (Place place)

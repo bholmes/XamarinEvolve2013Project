@@ -103,6 +103,8 @@ namespace XamarinEvolveSSLibrary
 			List<CheckIn> sortList = new List<CheckIn> ();
 			HashSet <string> hash = new HashSet<string> ();
 
+			CopyTo (sortList);
+
 			sortList.Sort ((a,b) => {
 				return b.Time.CompareTo (a.Time);
 			});

@@ -37,6 +37,18 @@ namespace XamarinEvolveIOS
 			SetupEditButton ();
 		}
 
+		public override void ViewWillAppear (bool animated)
+		{
+			base.ViewWillAppear (animated);
+			
+			if (this.TableView != null)
+			{
+				MonoTouch.Foundation.NSIndexPath path = TableView.IndexPathForSelectedRow;
+				if (path != null)
+					TableView.DeselectRow (path, animated);
+			}
+		}
+
 		void SetupEditButton ()
 		{
 			if (!CurrentUser.IsLocalUser || !(this is LocalProfileViewController))

@@ -131,6 +131,7 @@
     <Compile Include="PlaceSortMethod.cs" />
     <Compile Include="MeetUpViewController.cs" />
     <Compile Include="PlaceListViewController.cs" />
+    <Compile Include="PlaceInfoViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
