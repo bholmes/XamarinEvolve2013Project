@@ -97,6 +97,51 @@ namespace XamarinEvolveSSLibrary
 			return new CheckInList (distinctList);
 		}
 
+		public void GetCheckInsForPlace (Place place, int maxHoursForActive, 
+		                                 out CheckInList activeList, out CheckInList recentList)
+		{
+			List<CheckIn> sortList = new List<CheckIn> ();
+			HashSet <string> hash = new HashSet<string> ();
+
+			sortList.Sort ((a,b) => {
+				return b.Time.CompareTo (a.Time);
+			});
+
+			List<CheckIn> t_activeList = new List<CheckIn> ();
+			List<CheckIn> t_recentList = new List<CheckIn> ();
+
+			TimeSpan maxTimeSpan = new TimeSpan (0, maxHoursForActive, 0, 0, 0);
+			bool maxTimeMet = false;
+
+			foreach (CheckIn checkIn in sortList)
+			{
+				if (!maxTimeMet)
+				{	
+					TimeSpan ts = DateTime.Now - checkIn.Time;
+					if (ts.CompareTo (maxTimeSpan) > 0)
+					{
+						maxTimeMet = true;
+					}
+				}
+
+				if(!maxTimeMet && !hash.Contains(checkIn.UserName))
+				{
+					hash.Add(checkIn.UserName);
+
+					if (checkIn.PlaceId == place.Id)
+						t_activeList.Add (checkIn);
+				}
+				else
+				{
+					if (checkIn.PlaceId == place.Id)
+						t_recentList.Add (checkIn);
+				}
+			}
+
+			activeList = new CheckInList (t_activeList);
+			recentList = new CheckInList (t_recentList);
+		}
+
 		class CheckInUserNameComparer : IEqualityComparer<CheckIn>
 		{
 			public bool Equals(CheckIn x, CheckIn y)

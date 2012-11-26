@@ -148,9 +148,17 @@ namespace XamarinEvolveIOS
 			{
 				if (_controller is LocalProfileViewController && this.UserProfile.IsLocalUser && !this.UserProfile.IsAnonymousUser)
 				{
+					UITableViewCell cell = tableView.CellAt (NSIndexPath.FromRowSection (0, 2));
+
+					float contentWidth = cell.ContentView.Bounds.Width;
+					float tableWidth = tableView.Bounds.Width;
+					float buttonWidth = (contentWidth / 2.0f) - 3;
+					float tableMargin = (tableWidth - contentWidth) / 2.0f;
+					float tableCenter = tableWidth /2.0f;
+
 					_logoutButton = UIButton.FromType (UIButtonType.RoundedRect);
 					_logoutButton.SetTitle ("Logout", UIControlState.Normal);
-					_logoutButton.Frame = new RectangleF (10, 15, 138, 44);
+					_logoutButton.Frame = new RectangleF (tableMargin, 15, buttonWidth, 44);
 					_logoutButton.AutoresizingMask  = UIViewAutoresizing.FlexibleBottomMargin | 
 						UIViewAutoresizing.FlexibleRightMargin |
 						UIViewAutoresizing.FlexibleWidth;
@@ -158,13 +166,13 @@ namespace XamarinEvolveIOS
 
 					_deleteButton = UIButton.FromType (UIButtonType.RoundedRect);
 					_deleteButton.SetTitle ("Delete", UIControlState.Normal);
-					_deleteButton.Frame = new RectangleF (152, 15, 138, 44);
+					_deleteButton.Frame = new RectangleF (tableCenter + 3, 15, buttonWidth, 44);
 					_deleteButton.AutoresizingMask  = UIViewAutoresizing.FlexibleBottomMargin | 
 						UIViewAutoresizing.FlexibleLeftMargin |
 							UIViewAutoresizing.FlexibleWidth;
 					_deleteButton.TouchUpInside += OnDeleteUser;
 
-					UIView newView = new UIView (new RectangleF (0, 0, 300, 44));
+					UIView newView = new UIView (new RectangleF (0, 0, tableWidth, 44));
 					newView.AutoresizingMask = UIViewAutoresizing.All;
 					newView.Add (_logoutButton);
 					newView.Add (_deleteButton);

@@ -8,13 +8,6 @@ namespace XamarinEvolveSSLibrary
 		CheckInList _checkInListForTesting;
 		PlaceList _placeListForTesting;
 
-		public PlaceList GetPlaceList ()
-		{
-			Debug.SimulateNetworkWait ();
-
-			return CachedPlaceList.Copy ();
-		}
-
 		public PlaceList GetPopularPlaceList (int limit)
 		{
 			Debug.SimulateNetworkWait ();
@@ -39,11 +32,11 @@ namespace XamarinEvolveSSLibrary
 			return CachedPlaceList.SortByDistance (lat, lng).Copy (limit);
 		}
 
-		public CheckInList GetCheckInList ()
+		public void GetCheckinInfo (Place place, out CheckInList activeList,
+		                            out CheckInList recentList, int recentLimit)
 		{
-			Debug.SimulateNetworkWait ();
-			
-			return CachedCheckInList.Copy ();
+			activeList = new CheckInList ();
+			recentList = new CheckInList ();
 		}
 
 		public void CheckInUserAtPlace (Place place)
