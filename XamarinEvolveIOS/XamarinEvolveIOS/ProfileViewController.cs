@@ -148,12 +148,12 @@ namespace XamarinEvolveIOS
 			{
 				if (_controller is LocalProfileViewController && this.UserProfile.IsLocalUser && !this.UserProfile.IsAnonymousUser)
 				{
-					UITableViewCell cell = tableView.CellAt (NSIndexPath.FromRowSection (0, 2));
-
-					float contentWidth = cell.ContentView.Bounds.Width;
+					float tableMargin = UIDevice.CurrentDevice.UserInterfaceIdiom == 
+						UIUserInterfaceIdiom.Phone ?  9 : 45;
 					float tableWidth = tableView.Bounds.Width;
+					float contentWidth = tableWidth - (tableMargin * 2.0f);
 					float buttonWidth = (contentWidth / 2.0f) - 3;
-					float tableMargin = (tableWidth - contentWidth) / 2.0f;
+
 					float tableCenter = tableWidth /2.0f;
 
 					_logoutButton = UIButton.FromType (UIButtonType.RoundedRect);
