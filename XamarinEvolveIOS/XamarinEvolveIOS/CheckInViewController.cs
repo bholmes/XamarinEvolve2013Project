@@ -72,7 +72,7 @@ namespace XamarinEvolveIOS
 
 				UIAlertView alertView = new UIAlertView (
 					"Check-in?", 
-					string.Format ("Are you sure you want chack-in at {0}?", place.Name), 
+					string.Format ("Are you sure you want check-in at {0}?", place.Name), 
 					null, null, new string [] {"Yes", "No"});
 				
 				alertView.CancelButtonIndex = 1;

@@ -26,9 +26,9 @@ namespace XamarinEvolveIOS
 			});
 			this.NavigationItem.RightBarButtonItem = _sortButton;
 			
-			SortMethod = PlaceSortMethod.Popularity;
+			SortMethod = PlaceSortMethod.Recent;
 			
-			ChangeSortMethod (PlaceSortMethod.Popularity);
+			ChangeSortMethod (PlaceSortMethod.Recent);
 		}
 		
 		private void SortButtonTouched ()
@@ -37,9 +37,10 @@ namespace XamarinEvolveIOS
 			actionSheet.AddButton ("Popular Places");
 			actionSheet.AddButton (string.Format("Near {0}", SystemConstants.DefaultPlace.Name));
 			actionSheet.AddButton ("Near Me");
+			actionSheet.AddButton ("Recent Check-ins");
 			
 			actionSheet.AddButton ("Cancel");
-			actionSheet.CancelButtonIndex = 3;
+			actionSheet.CancelButtonIndex = 4;
 			
 			actionSheet.Clicked += (sender, e) => {
 				switch (e.ButtonIndex)
@@ -53,6 +54,9 @@ namespace XamarinEvolveIOS
 				case 2:
 					ChangeSortMethod (PlaceSortMethod.NearUser);
 					break;
+				case 3:
+					ChangeSortMethod (PlaceSortMethod.Recent);
+					break;
 				}
 			};
 			
@@ -65,15 +69,18 @@ namespace XamarinEvolveIOS
 			BusyView.Busy = true;
 			
 			Func<int> func = delegate {
-				PlaceList list = Engine.Instance.CheckInAccess.GetPlaceList ();
+				PlaceList list = new PlaceList ();
 				
 				if (sortMethod == PlaceSortMethod.Popularity)
-				list = list.SortByPopularity ();
+					list = Engine.Instance.CheckInAccess.GetPopularPlaceList (
+						SystemConstants.MaxPlacesPerRequest);
 				
 				else if (sortMethod == PlaceSortMethod.NearConventionCenter)
 				{
-					list = list.SortByDistance (SystemConstants.DefaultPlace.Latitude,
-					                            SystemConstants.DefaultPlace.Longitude);
+					list = Engine.Instance.CheckInAccess.GetPlaceListNearLocation (
+						SystemConstants.DefaultPlace.Latitude,
+						SystemConstants.DefaultPlace.Longitude,
+						SystemConstants.MaxPlacesPerRequest);
 				}
 				else if (sortMethod == PlaceSortMethod.NearUser)
 				{
@@ -89,8 +96,15 @@ namespace XamarinEvolveIOS
 						return 0;
 					}
 					
-					list = list.SortByDistance ((float)result.Position.Latitude, 
-					                            (float)result.Position.Longitude);
+					list = Engine.Instance.CheckInAccess.GetPlaceListNearLocation (
+						(float)result.Position.Latitude, 
+						(float)result.Position.Longitude,
+						SystemConstants.MaxPlacesPerRequest);
+				}
+				else if (sortMethod == PlaceSortMethod.Recent)
+				{
+					list = Engine.Instance.CheckInAccess.GetRecentPlaceList (
+						SystemConstants.MaxPlacesPerRequest);
 				}
 				
 				this.BeginInvokeOnMainThread (delegate {
@@ -155,6 +169,8 @@ namespace XamarinEvolveIOS
 					return string.Format("Near {0}", SystemConstants.DefaultPlace.Name);
 				case PlaceSortMethod.NearUser :
 					return "Near Me";
+				case PlaceSortMethod.Recent :
+					return "Recent Check-ins";
 				}
 				
 				return string.Empty;

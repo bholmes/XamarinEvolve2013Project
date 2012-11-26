@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace XamarinEvolveSSLibrary
 {
@@ -17,14 +18,20 @@ namespace XamarinEvolveSSLibrary
 			_list = list;
 		}
 
-		public CheckInList Copy ()
+		private void CopyTo (List<CheckIn> list)
 		{
-			CheckInList ret = new CheckInList ();
-			
 			foreach (CheckIn checkIn in _list)
 			{
-				ret._list.Add (checkIn);
+				list.Add (checkIn);
 			}
+		}
+		
+		public CheckInList Copy ()
+		{
+			List<CheckIn> list = new List<CheckIn> ();
+			CopyTo (list);
+			
+			CheckInList ret = new CheckInList (list);
 			
 			return ret;
 		}
@@ -53,6 +60,55 @@ namespace XamarinEvolveSSLibrary
 		}
 		
 		public int Count {get{return _list.Count;}}
+
+		public IEnumerator<CheckIn> GetEnumerator()
+		{
+			return _list.GetEnumerator ();
+		}
+
+		public CheckInList GetRecentCheckIns(int hours)
+		{
+			List<CheckIn> sortList = new List<CheckIn> ();
+			CopyTo (sortList);
+			
+			sortList.Sort ((a,b) => {
+				return b.Time.CompareTo (a.Time);
+			});
+
+			TimeSpan maxTimeSpan = new TimeSpan (0, hours, 0, 0, 0);
+
+			for (int i=0;i<sortList.Count; i++)
+			{
+				TimeSpan ts = DateTime.Now - sortList[i].Time;
+				if (ts.CompareTo (maxTimeSpan) > 0)
+				{
+					sortList.RemoveRange(i, sortList.Count-i);
+					break;
+				}
+			}
+
+			List<CheckIn> distinctList = new List<CheckIn> ();
+
+			foreach (CheckIn checkIn in sortList.Distinct( new CheckInUserNameComparer ()))
+			{
+				distinctList.Add (checkIn);
+			}
+
+			return new CheckInList (distinctList);
+		}
+
+		class CheckInUserNameComparer : IEqualityComparer<CheckIn>
+		{
+			public bool Equals(CheckIn x, CheckIn y)
+			{
+				return x.UserName.Equals(y.UserName);
+			}
+			
+			public int GetHashCode(CheckIn obj)
+			{
+				return obj.UserName.GetHashCode();
+			}
+		}
 	}
 }
 

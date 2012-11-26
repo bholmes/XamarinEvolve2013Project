@@ -25,6 +25,19 @@ namespace XamarinEvolveSSLibrary
 			}
 		}
 
+		private void CopyTo (List<Place> list, int limit)
+		{
+			int count = 0;
+
+			foreach (Place place in _list)
+			{
+				if (++count > limit)
+					break;
+
+				list.Add (place);
+			}
+		}
+
 		public PlaceList Copy ()
 		{
 			List<Place> list = new List<Place> ();
@@ -32,6 +45,16 @@ namespace XamarinEvolveSSLibrary
 
 			PlaceList ret = new PlaceList (list);
 
+			return ret;
+		}
+
+		public PlaceList Copy (int limit)
+		{
+			List<Place> list = new List<Place> ();
+			CopyTo (list, limit);
+			
+			PlaceList ret = new PlaceList (list);
+			
 			return ret;
 		}
 		
@@ -64,6 +87,11 @@ namespace XamarinEvolveSSLibrary
 		}
 		
 		public int Count {get{return _list.Count;}}
+
+		public IEnumerator<Place> GetEnumerator()
+		{
+			return _list.GetEnumerator ();
+		}
 
 		public PlaceList SortByPopularity ()
 		{
@@ -111,6 +139,26 @@ namespace XamarinEvolveSSLibrary
 				Place = place;
 				Distance = place.DistanceFrom (lat, lng);
 			}
+		}
+
+		public PlaceList SortByRecentCheckIns (CheckInList checkInList) 
+		{
+			List<Place> sortList = new List<Place> ();
+			var hash = new HashSet<int>();
+
+			foreach (CheckIn checkin in checkInList)
+			{
+				if(!hash.Contains(checkin.PlaceId))
+				{
+					hash.Add(checkin.PlaceId);
+
+					Place place = _list.Find (p => p.Id == checkin.PlaceId);
+					if (place != null)
+						sortList.Add (place);
+				}
+			}
+			
+			return new PlaceList (sortList);
 		}
 	}
 }
