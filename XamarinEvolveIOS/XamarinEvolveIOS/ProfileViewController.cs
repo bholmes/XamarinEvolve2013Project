@@ -469,6 +469,7 @@ namespace XamarinEvolveIOS
 				nameValueCell = new NameValueCell ("phone", () => UserProfile.Phone, v => UserProfile.Phone= v);
 				nameValueCell.ValueTextField.KeyboardType = UIKeyboardType.PhonePad;
 				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
+				nameValueCell.ValueTextField.ShouldChangeCharacters = PhoneNumberHelper.ShoudChange;
 				cell = nameValueCell.LoadCell (tableView);
 				if (LocalUserProfileDelegate.canUseEMail ())
 					cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;

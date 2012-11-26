@@ -132,6 +132,7 @@
     <Compile Include="MeetUpViewController.cs" />
     <Compile Include="PlaceListViewController.cs" />
     <Compile Include="PlaceInfoViewController.cs" />
+    <Compile Include="PhoneNumberHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />

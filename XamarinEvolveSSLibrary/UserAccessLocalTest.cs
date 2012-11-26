@@ -76,7 +76,7 @@ namespace XamarinEvolveSSLibrary
 						City = "Pittsburgh, PA",
 						Company = "moBill Holmes",
 						Title = "Owner",
-						Phone = "(412)-555-5555", 
+						Phone = "(412) 555-5555", 
 						Email = "bill@mobillholmes.com"
 					});
 					users.Add (new User () {
@@ -85,7 +85,7 @@ namespace XamarinEvolveSSLibrary
 						City="San Francisco, CA",
 						Company="Xamarin",
 						Title="CEO",
-						Phone="(855)-926-2746",
+						Phone="(855) 926-2746",
 						Email="nat@xamarin.com"
 					});
 					users.Add (new User () {
@@ -94,7 +94,7 @@ namespace XamarinEvolveSSLibrary
 						City="Boston, MA",
 						Company="Xamarin",
 						Title="CTO",
-						Phone="(855)-926-2746",
+						Phone="(855) 926-2746",
 						Email="miguel@xamarin.com"
 					});
 					users.Add (new User () {
@@ -103,7 +103,7 @@ namespace XamarinEvolveSSLibrary
 						City="Boston, MA",
 						Company="Xamarin",
 						Title="COO",
-						Phone="(855)-926-2746",
+						Phone="(855) 926-2746",
 						Email="joseph@xamarin.com"
 					});
 					
