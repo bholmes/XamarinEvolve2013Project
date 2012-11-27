@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AuthTest.cs" />
     <Compile Include="AvatarTest.cs" />
+    <Compile Include="CheckInLINQTest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SSTests.cs" />
