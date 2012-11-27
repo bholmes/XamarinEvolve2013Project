@@ -1,7 +1,9 @@
 using System;
+using ServiceStack.DataAnnotations;
 
 namespace XamarinEvolveSSLibrary
 {
+    [Alias("evolve_checkins")]
 	public class CheckIn
 	{
 		public int Id {get;set;}

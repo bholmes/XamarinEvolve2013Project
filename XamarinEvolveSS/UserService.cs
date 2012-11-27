@@ -98,6 +98,9 @@ namespace XamarinEvolveSS
                 if (!CheckIsAuthorized(request.UserName))
                     return null;
 
+                MySqlCheckInAccess sqlCheckIn = new MySqlCheckInAccess();
+                sqlCheckIn.DeleteCheckInsForUser(request.UserName);
+
                 EvolveUsersMySqlAccess sql = new EvolveUsersMySqlAccess();
                 sql.DeleteUser(request.UserName);
             }

@@ -23,8 +23,11 @@ namespace TestSSAPI
             //AuthTest authTest = new AuthTest();
             //authTest.RunTests();
 
-            CheckInLINQTest ciLINQ = new CheckInLINQTest();
-            ciLINQ.RunTests ();
+            //CheckInLINQTest ciLINQ = new CheckInLINQTest();
+            //ciLINQ.RunTests ();
+
+            SSCheckInAccessTest sqlCheckInTest = new SSCheckInAccessTest();
+            sqlCheckInTest.RunTests();
         }
 
 

@@ -1,7 +1,9 @@
 using System;
+using ServiceStack.DataAnnotations;
 
 namespace XamarinEvolveSSLibrary
 {
+    [Alias("evolve_places")]
 	public class Place
 	{
 		public int Id {get;set;}
