@@ -54,7 +54,9 @@
     <Compile Include="AvatarAccessLocalTest.cs" />
     <Compile Include="CheckIn.cs" />
     <Compile Include="CheckInAccess.cs" />
+    <Compile Include="CheckInAccessLocalTest.cs" />
     <Compile Include="CheckInList.cs" />
+    <Compile Include="CheckInUserPair.cs" />
     <Compile Include="ClientWrapper.cs" />
     <Compile Include="CustomExceptions.cs" />
     <Compile Include="Debug.cs" />

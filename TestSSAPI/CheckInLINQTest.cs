@@ -75,7 +75,7 @@ namespace TestSSAPI
 
             // Groups of checkins grouped by user then sorted by time
             var sortedGroupList = CheckInList.OrderByDescending(c => c.Time)
-                .GroupBy(c => c.UserName);
+                .GroupBy(c => c.UserId);
 
             // represents users last check-in anywhere within time limit
             var usersLastCheckIn = sortedGroupList.Select(g => g.First()).Where(c => c.Time > refTime);
@@ -130,9 +130,9 @@ namespace TestSSAPI
             return placeList.ToList();
         }
 
-        void CheckInUser(string user, Place place, DateTime time, List<CheckIn> checkInList, List<Place> placeList)
+        void CheckInUser(int user, Place place, DateTime time, List<CheckIn> checkInList, List<Place> placeList)
         {
-            CheckIn newCheckIn = new CheckIn { UserName = user, PlaceId = place.Id, Time = time, Id = checkInList.Count };
+            CheckIn newCheckIn = new CheckIn { UserId = user, PlaceId = place.Id, Time = time, Id = checkInList.Count };
             checkInList.Add(newCheckIn);
         }
 
@@ -154,25 +154,25 @@ namespace TestSSAPI
             placeList = GetPlaceList();
             checkIns = new List<CheckIn>();
 
-            CheckInUser("Bill", placeList[0], current, checkIns, placeList);
+            CheckInUser(1, placeList[0], current, checkIns, placeList);
 
             current += new TimeSpan(0, 45, 0);
-            CheckInUser("Bill", placeList[4], current, checkIns, placeList);
+            CheckInUser(1, placeList[4], current, checkIns, placeList);
 
             current += new TimeSpan(0, 15, 0);
-            CheckInUser("Joe", placeList[3], current, checkIns, placeList);
+            CheckInUser(2, placeList[3], current, checkIns, placeList);
 
             current += new TimeSpan(0, 15, 0);
-            CheckInUser("Bill", placeList[5], current, checkIns, placeList);
+            CheckInUser(1, placeList[5], current, checkIns, placeList);
 
             current += new TimeSpan(0, 15, 0);
-            CheckInUser("Pete", placeList[3], current, checkIns, placeList);
+            CheckInUser(3, placeList[3], current, checkIns, placeList);
 
             current += new TimeSpan(0, 15, 0);
-            CheckInUser("Pete", placeList[0], current, checkIns, placeList);
+            CheckInUser(3, placeList[0], current, checkIns, placeList);
 
             current += new TimeSpan(0, 15, 0);
-            CheckInUser("Jason", placeList[3], current, checkIns, placeList);
+            CheckInUser(4, placeList[3], current, checkIns, placeList);
         }
     }
 }
