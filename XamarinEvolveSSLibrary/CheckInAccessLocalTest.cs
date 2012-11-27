@@ -90,7 +90,7 @@ namespace XamarinEvolveSSLibrary
 			
 			// Groups of checkins grouped by user then sorted by time
 			var sortedGroupList = CachedCheckInList.CheckIns.OrderByDescending(c => c.Time)
-				.GroupBy(c => c.UserName);
+				.GroupBy(c => c.UserId);
 			
 			// represents users last check-in anywhere within time limit
 			var usersLastCheckIn = sortedGroupList.Select(g => g.First()).Where(c => c.Time > refTime);
@@ -112,10 +112,10 @@ namespace XamarinEvolveSSLibrary
 			List<User> userList = _sharedUserList.Users;
 			
 			activeList = actList.Select (
-				c=> new CheckInUserPair { CheckIn=c, User = userList.FirstOrDefault (u=> u.UserName == c.UserName)})
+				c=> new CheckInUserPair { CheckIn=c, User = userList.FirstOrDefault (u=> u.Id == c.UserId)})
 				.ToList ();
 			
-			recentList = recList.Select (c=> new CheckInUserPair { CheckIn=c, User = userList.FirstOrDefault (u=> u.UserName == c.UserName)})
+			recentList = recList.Select (c=> new CheckInUserPair { CheckIn=c, User = userList.FirstOrDefault (u=> u.Id == c.UserId)})
 				.ToList ();
 		}
 		
@@ -129,7 +129,7 @@ namespace XamarinEvolveSSLibrary
 			CachedCheckInList.Add (new CheckIn {
 				PlaceId = tPlace.Id,
 				Time = DateTime.Now,
-				UserName = currentUser.UserName,
+				UserId = currentUser.Id,
 			});
 		}
 		
@@ -183,28 +183,28 @@ namespace XamarinEvolveSSLibrary
 					
 					checkIns.Add (new CheckIn {
 						Id = 1,
-						UserName = "billholmes",
+						UserId = _sharedUserList.Users.First (u=>u.UserName == "billholmes").Id,
 						PlaceId = 1,
 						Time = DateTime.Now.Subtract (new TimeSpan (0, 5, 3, 4, 0)),
 					});
 					
 					checkIns.Add (new CheckIn {
 						Id = 2,
-						UserName = "migueldeicaza",
+						UserId = _sharedUserList.Users.First (u=>u.UserName == "migueldeicaza").Id,
 						PlaceId = 2,
 						Time = DateTime.Now.Subtract (new TimeSpan (0, 1, 30, 50, 0)),
 					});
 					
 					checkIns.Add (new CheckIn {
 						Id = 3,
-						UserName = "billholmes",
+						UserId = _sharedUserList.Users.First (u=>u.UserName == "billholmes").Id,
 						PlaceId = 3,
 						Time = DateTime.Now.Subtract (new TimeSpan (0, 0, 11, 4, 0)),
 					});
 					
 					checkIns.Add (new CheckIn {
 						Id = 4,
-						UserName = "josephhill",
+						UserId = _sharedUserList.Users.First (u=>u.UserName == "josephhill").Id,
 						PlaceId = 3,
 						Time = DateTime.Now.Subtract (new TimeSpan (0, 0, 11, 4, 30)),
 					});

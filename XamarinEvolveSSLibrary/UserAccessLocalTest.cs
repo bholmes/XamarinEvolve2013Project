@@ -71,6 +71,7 @@ namespace XamarinEvolveSSLibrary
 				{
 					List<User> users = new List<User> ();
 					users.Add (new User () {
+						Id = 1,
 						UserName="billholmes",
 						FullName="William Holmes",
 						City = "Pittsburgh, PA",
@@ -80,6 +81,7 @@ namespace XamarinEvolveSSLibrary
 						Email = "bill@mobillholmes.com"
 					});
 					users.Add (new User () {
+						Id = 2,
 						UserName="natfriedman",
 						FullName="Nat Friedman",
 						City="San Francisco, CA",
@@ -89,6 +91,7 @@ namespace XamarinEvolveSSLibrary
 						Email="nat@xamarin.com"
 					});
 					users.Add (new User () {
+						Id = 3,
 						UserName="migueldeicaza",
 						FullName="Miguel de Icaza",
 						City="Boston, MA",
@@ -98,6 +101,7 @@ namespace XamarinEvolveSSLibrary
 						Email="miguel@xamarin.com"
 					});
 					users.Add (new User () {
+						Id = 4,
 						UserName="josephhill",
 						FullName="Joseph Hill",
 						City="Boston, MA",
