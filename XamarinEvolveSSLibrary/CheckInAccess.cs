@@ -18,9 +18,11 @@ namespace XamarinEvolveSSLibrary
 		{
 			Debug.SimulateNetworkWait ();
 
-			var query = CachedPlaceList.Places.
-				OrderByDescending (p=>p.NumberOfCheckIns).
-					Take (limit);
+            var query = CachedCheckInList.CheckIns
+                .GroupBy(c => c.PlaceId)
+                .OrderByDescending(g => g.Count())
+                .Take(limit)
+                .Select(g => CachedPlaceList.Places.First(p => p.Id == g.First().PlaceId));
 
 			return new PlaceList (query.ToList ());
 		}
@@ -34,31 +36,21 @@ namespace XamarinEvolveSSLibrary
 		{
 			Debug.SimulateNetworkWait ();
 
-			List <Place> resultList = new List<Place> ();
+            DateTime refTime = DateTime.Now - new TimeSpan
+                (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
-			DateTime refTime = DateTime.Now - new TimeSpan 
-				(0, SystemConstants.RecentThresholdHours, 0, 0, 0);
+            // List of unique place Ids sorted by most recent check-in
+            var checkInList = CachedCheckInList.CheckIns
+                .Where(c => c.Time > refTime)
+                    .OrderByDescending(c => c.Time)
+                    .Select(c => c.PlaceId)
+                    .Take(limit)
+                    .Distinct();
 
-			// List of unique place Ids sorted by most recent check-in
-			var checkInList = CachedCheckInList.CheckIns.
-				Where (c=>c.Time > refTime).
-					OrderByDescending (c=>c.Time).
-					Select (c=>c.PlaceId).
-					Take (limit).
-					Distinct ();
+            // Build a list of places in the right order
+            var placeList = checkInList.Select(placeId => CachedPlaceList.Places.FirstOrDefault(p => p.Id == placeId));
 
-			// List of places from previous query 'checkInList'
-			var placeList = CachedPlaceList.Places.
-				Where (p=> checkInList.Contains (p.Id));
-
-			// Build a list of places in the right order
-			// Must be a better way?
-			foreach (int placeId in checkInList)
-			{
-				resultList.Add (placeList.FirstOrDefault (p=>p.Id == placeId));
-			}
-
-			return new PlaceList (resultList);
+            return new PlaceList (placeList.ToList());
 		}
 
 		// Used when sorting places in the Meetup list
@@ -89,56 +81,29 @@ namespace XamarinEvolveSSLibrary
 			DateTime refTime = DateTime.Now - new TimeSpan 
 				(0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
-			// All checkins in the time frame sorted
-			var checkInsInTimeFrame = CachedCheckInList.CheckIns
-				.Where (c=>c.Time > refTime)
-					.OrderByDescending (c=>c.Time);
+            // Groups of checkins grouped by user then sorted by time
+            var sortedGroupList = CachedCheckInList.CheckIns.OrderByDescending(c => c.Time)
+                .GroupBy(c => c.UserName);
 
-			// Last unique user check-in to the palce list
-			var possibleActiveUserQuery = checkInsInTimeFrame
-				.Where (c=> c.PlaceId == place.Id)
-					.Select(c=>c.UserName).Distinct ();
+            // represents users last check-in anywhere within time limit
+            var usersLastCheckIn = sortedGroupList.Select(g => g.First()).Where(c => c.Time > refTime);
 
-			var actList = new List <CheckIn>();
+            // represents users last check-in at the place
+            var usersListCheckInToPlace = sortedGroupList.Select(g => g.FirstOrDefault(c => c.PlaceId == place.Id)).Where(c => c != null);
 
-			foreach (string possibleActiveUser in possibleActiveUserQuery)
-			{
-				CheckIn tCheckIn = checkInsInTimeFrame
-					.FirstOrDefault(c=>c.UserName == possibleActiveUser);
+            // The activeList is where the users 
+            // last check-in anywhere within the time limit
+            // AND
+            // at this place, are the same place.
+            var actList = usersListCheckInToPlace.Intersect(usersLastCheckIn);
 
-				if (tCheckIn.PlaceId == place.Id)
-				{
-					actList.Add (tCheckIn);
-				}
-			}
+            // the recent list is all users last check-in at the place
+            // that is not in the active list
+            // limited by recentLimit
+            var recList = usersListCheckInToPlace.Except(actList).Take(recentLimit);
 
-			var allRecentCheckIns = CachedCheckInList.CheckIns
-				.Where (c=>c.PlaceId == place.Id && 
-				        !actList.Select(actC=>actC.UserName).Contains(c.UserName))
-					.OrderByDescending (c=>c.Time);
-
-			var recentCheckInsNames = allRecentCheckIns.Select (c=>c.UserName)
-				.Distinct ()
-					.Take (recentLimit);
-
-			var recList = new List<CheckIn> ();
-
-			foreach (string recentCheckInUserName in recentCheckInsNames)
-			{
-				recList.Add (allRecentCheckIns.FirstOrDefault (c=>c.UserName == recentCheckInUserName));
-			}
-
-			activeList = new CheckInList (actList);
-			recentList = new CheckInList (recList);
-
-			if (false) // or I could do this
-			{
-				activeList = new CheckInList ();
-				recentList = new CheckInList ();
-
-				CachedCheckInList.GetCheckInsForPlace (place, SystemConstants.RecentThresholdHours,
-			                                       out activeList, out recentList);
-			}
+			activeList = new CheckInList (actList.ToList ());
+			recentList = new CheckInList (recList.ToList ());
 		}
 
 		public void CheckInUserAtPlace (Place place)
@@ -168,8 +133,7 @@ namespace XamarinEvolveSSLibrary
 						Name = "Downtown Burgers",
 						Address = "310 East 3rd Street, Austin",
 						Latitude = 30.2644490f,
-						Longitude = -97.7405240f,
-						NumberOfCheckIns = 1,
+						Longitude = -97.7405240f
 					});
 
 					places.Add (new Place {
@@ -177,8 +141,7 @@ namespace XamarinEvolveSSLibrary
 						Name = "Piranha Killer Sushi",
 						Address = "207 San Jacinto Boulevard #202, Austin",
 						Latitude = 30.2642190f,
-						Longitude = -97.7414510f,
-						NumberOfCheckIns = 1,
+						Longitude = -97.7414510f
 					});
 
 					places.Add (new Place {
@@ -186,8 +149,7 @@ namespace XamarinEvolveSSLibrary
 						Name = "Max's Wine Dive",
 						Address = "207 San Jacinto Boulevard, Austin",
 						Latitude = 30.2642140f,
-						Longitude = -97.7414300f,
-						NumberOfCheckIns = 2,
+						Longitude = -97.7414300f
 					});
 
 					_placeListForTesting = new PlaceList (places);

@@ -73,62 +73,36 @@ namespace TestSSAPI
             DateTime refTime = DateTime.Now - new TimeSpan
                 (0, hours, 0, 0, 0);
 
-            // All checkins in the time frame sorted
-            var checkInsInTimeFrame = CheckInList
-                .Where(c => c.Time > refTime)
-                    .OrderByDescending(c => c.Time);
+            // Groups of checkins grouped by user then sorted by time
+            var sortedGroupList = CheckInList.OrderByDescending(c => c.Time)
+                .GroupBy(c => c.UserName);
 
-            // Last unique user check-in to the palce list
-            var possibleActiveUserQuery = checkInsInTimeFrame
-                .Where(c => c.PlaceId == place.Id)
-                    .Select(c => c.UserName).Distinct();
+            // represents users last check-in anywhere within time limit
+            var usersLastCheckIn = sortedGroupList.Select(g => g.First()).Where(c => c.Time > refTime);
 
-            var actList = new List<CheckIn>();
+            // represents users last check-in at the place
+            var usersListCheckInToPlace = sortedGroupList.Select(g => g.FirstOrDefault(c=>c.PlaceId == place.Id)).Where (c=> c != null);
 
-            foreach (string possibleActiveUser in possibleActiveUserQuery)
-            {
-                CheckIn tCheckIn = checkInsInTimeFrame
-                    .FirstOrDefault(c => c.UserName == possibleActiveUser);
+            // The activeList is where the users 
+            // last check-in anywhere within the time limit
+            // AND
+            // at this place, are the same place.
+            var actList = usersListCheckInToPlace.Intersect(usersLastCheckIn);
 
-                if (tCheckIn.PlaceId == place.Id)
-                {
-                    actList.Add(tCheckIn);
-                }
-            }
+            // the recent list is all users last check-in at the place
+            // that is not in the active list
+            // limited by recentLimit
+            var recList = usersListCheckInToPlace.Except(actList).Take (recentLimit);
 
-            var allRecentCheckIns = CheckInList
-                .Where(c => c.PlaceId == place.Id &&
-                        !actList.Select(actC => actC.UserName).Contains(c.UserName))
-                    .OrderByDescending(c => c.Time);
-
-            allRecentCheckIns.GroupBy(c => c.UserName);
-
-            var recentCheckInsNames = allRecentCheckIns.Select(c => c.UserName)
-                .Distinct()
-                    .Take(recentLimit);
-
-            var recList = new List<CheckIn>();
-
-            foreach (string recentCheckInUserName in recentCheckInsNames)
-            {
-                recList.Add(allRecentCheckIns.FirstOrDefault(c => c.UserName == recentCheckInUserName));
-            }
-
-            activeList = actList;
-            recentList = recList;
+            activeList = actList.ToList ();
+            recentList = recList.ToList ();
         }
 
         List<Place> GetPopularPlaceList(List<CheckIn> CheckInList, List<Place> PlaceList, int limit)
         {
-            //var query = PlaceList.
-            //            OrderByDescending(p => p.NumberOfCheckIns).
-            //                Take(limit);
-
-            //return query.ToList();
-
-
             var query2 = CheckInList.GroupBy(c => c.PlaceId)
                 .OrderByDescending(g => g.Count())
+                .Take(limit)
                 .Select(g => PlaceList.First(p => p.Id == g.First().PlaceId));
 
             return query2.ToList();
@@ -137,36 +111,27 @@ namespace TestSSAPI
 
         List<Place> SortPlaceByRecentCheckIns(List<CheckIn> CheckInList, List<Place> PlaceList, int limit, int hours)
         {
-            List<Place> resultList = new List<Place>();
-
             DateTime refTime = DateTime.Now - new TimeSpan
                 (0, hours, 0, 0, 0);
 
             // List of unique place Ids sorted by most recent check-in
-            var checkInList = CheckInList.
-                Where(c => c.Time > refTime).
-                    OrderByDescending(c => c.Time).
-                    Select(c => c.PlaceId).
-                    Take(limit).
-                    Distinct();
-
-            // List of places from previous query 'checkInList'
-            var placeList = PlaceList.
-                Where(p => checkInList.Contains(p.Id));
+            var checkInList = CheckInList
+                .Where(c => c.Time > refTime)
+                    .OrderByDescending(c => c.Time)
+                    .Select(c => c.PlaceId)
+                    .Take(limit)
+                    .Distinct();
 
             // Build a list of places in the right order
-            // Must be a better way?
-            foreach (int placeId in checkInList)
-            {
-                resultList.Add(placeList.FirstOrDefault(p => p.Id == placeId));
-            }
+            var placeList = checkInList.Select(
+                placeId => PlaceList.FirstOrDefault(p => p.Id == placeId)
+            );
 
-            return resultList.ToList();
+            return placeList.ToList();
         }
 
         void CheckInUser(string user, Place place, DateTime time, List<CheckIn> checkInList, List<Place> placeList)
         {
-            placeList.FirstOrDefault(p => p.Id == place.Id).NumberOfCheckIns++;
             CheckIn newCheckIn = new CheckIn { UserName = user, PlaceId = place.Id, Time = time, Id = checkInList.Count };
             checkInList.Add(newCheckIn);
         }
