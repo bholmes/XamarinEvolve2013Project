@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace XamarinEvolveSSLibrary
 {
@@ -17,46 +18,7 @@ namespace XamarinEvolveSSLibrary
 			_list = list;
 		}
 
-		private void CopyTo (List<Place> list)
-		{
-			foreach (Place place in _list)
-			{
-				list.Add (place);
-			}
-		}
-
-		private void CopyTo (List<Place> list, int limit)
-		{
-			int count = 0;
-
-			foreach (Place place in _list)
-			{
-				if (++count > limit)
-					break;
-
-				list.Add (place);
-			}
-		}
-
-		public PlaceList Copy ()
-		{
-			List<Place> list = new List<Place> ();
-			CopyTo (list);
-
-			PlaceList ret = new PlaceList (list);
-
-			return ret;
-		}
-
-		public PlaceList Copy (int limit)
-		{
-			List<Place> list = new List<Place> ();
-			CopyTo (list, limit);
-			
-			PlaceList ret = new PlaceList (list);
-			
-			return ret;
-		}
+		public List<Place> Places {get {return _list;}}
 		
 		public Place this[int index]
 		{
@@ -88,26 +50,7 @@ namespace XamarinEvolveSSLibrary
 		
 		public int Count {get{return _list.Count;}}
 
-		public IEnumerator<Place> GetEnumerator()
-		{
-			return _list.GetEnumerator ();
-		}
-
-		public PlaceList SortByPopularity ()
-		{
-			List<Place> sortList = new List<Place> ();
-			CopyTo (sortList);
-
-			sortList.Sort ((a,b) => {
-				return a.NumberOfCheckIns == b.NumberOfCheckIns ? 
-					0 : a.NumberOfCheckIns < b.NumberOfCheckIns ? 
-						-1 : 1;
-			});
-
-			return new PlaceList (sortList);
-		}
-
-		public PlaceList SortByDistance (float lat, float lng)
+		public PlaceList SortByDistance (float lat, float lng, int limit)
 		{
 			List <DistanceSortHelper> dList = new List<DistanceSortHelper> ();
 
@@ -116,15 +59,14 @@ namespace XamarinEvolveSSLibrary
 				dList.Add (new DistanceSortHelper (place, lat, lng));
 			}
 
-			dList.Sort ((a,b) => {
-				return a.Distance < b.Distance ? -1 : 1;
-			});
-
 			List<Place> sortList = new List<Place> ();
 
-			foreach (DistanceSortHelper dHelper in dList)
+			foreach (DistanceSortHelper dHelper in dList.OrderBy (h=>h.Distance))
 			{
-				sortList.Add (dHelper.Place);
+				if (sortList.Count < limit)
+					sortList.Add (dHelper.Place);
+				else
+					break;
 			}
 			
 			return new PlaceList (sortList);
@@ -139,26 +81,6 @@ namespace XamarinEvolveSSLibrary
 				Place = place;
 				Distance = place.DistanceFrom (lat, lng);
 			}
-		}
-
-		public PlaceList SortByRecentCheckIns (CheckInList checkInList) 
-		{
-			List<Place> sortList = new List<Place> ();
-			var hash = new HashSet<int>();
-
-			foreach (CheckIn checkin in checkInList)
-			{
-				if(!hash.Contains(checkin.PlaceId))
-				{
-					hash.Add(checkin.PlaceId);
-
-					Place place = _list.Find (p => p.Id == checkin.PlaceId);
-					if (place != null)
-						sortList.Add (place);
-				}
-			}
-			
-			return new PlaceList (sortList);
 		}
 	}
 }

@@ -18,23 +18,7 @@ namespace XamarinEvolveSSLibrary
 			_list = list;
 		}
 
-		private void CopyTo (List<CheckIn> list)
-		{
-			foreach (CheckIn checkIn in _list)
-			{
-				list.Add (checkIn);
-			}
-		}
-		
-		public CheckInList Copy ()
-		{
-			List<CheckIn> list = new List<CheckIn> ();
-			CopyTo (list);
-			
-			CheckInList ret = new CheckInList (list);
-			
-			return ret;
-		}
+		public List<CheckIn> CheckIns {get {return _list;}}
 		
 		public CheckIn this[int index]
 		{
@@ -61,53 +45,13 @@ namespace XamarinEvolveSSLibrary
 		
 		public int Count {get{return _list.Count;}}
 
-		public IEnumerator<CheckIn> GetEnumerator()
-		{
-			return _list.GetEnumerator ();
-		}
-
-		public CheckInList GetRecentCheckIns(int hours)
-		{
-			List<CheckIn> sortList = new List<CheckIn> ();
-			CopyTo (sortList);
-			
-			sortList.Sort ((a,b) => {
-				return b.Time.CompareTo (a.Time);
-			});
-
-			TimeSpan maxTimeSpan = new TimeSpan (0, hours, 0, 0, 0);
-
-			for (int i=0;i<sortList.Count; i++)
-			{
-				TimeSpan ts = DateTime.Now - sortList[i].Time;
-				if (ts.CompareTo (maxTimeSpan) > 0)
-				{
-					sortList.RemoveRange(i, sortList.Count-i);
-					break;
-				}
-			}
-
-			List<CheckIn> distinctList = new List<CheckIn> ();
-
-			foreach (CheckIn checkIn in sortList.Distinct( new CheckInUserNameComparer ()))
-			{
-				distinctList.Add (checkIn);
-			}
-
-			return new CheckInList (distinctList);
-		}
-
 		public void GetCheckInsForPlace (Place place, int maxHoursForActive, 
 		                                 out CheckInList activeList, out CheckInList recentList)
 		{
-			List<CheckIn> sortList = new List<CheckIn> ();
-			HashSet <string> hash = new HashSet<string> ();
+			HashSet <string> activeHash = new HashSet<string> ();
+			HashSet <string> totalHash = new HashSet<string> ();
 
-			CopyTo (sortList);
-
-			sortList.Sort ((a,b) => {
-				return b.Time.CompareTo (a.Time);
-			});
+			var sortList = _list.OrderByDescending (c=> c.Time);
 
 			List<CheckIn> t_activeList = new List<CheckIn> ();
 			List<CheckIn> t_recentList = new List<CheckIn> ();
@@ -126,35 +70,25 @@ namespace XamarinEvolveSSLibrary
 					}
 				}
 
-				if(!maxTimeMet && !hash.Contains(checkIn.UserName))
+				if (checkIn.PlaceId == place.Id)
 				{
-					hash.Add(checkIn.UserName);
-
-					if (checkIn.PlaceId == place.Id)
+					if (!maxTimeMet && !activeHash.Contains(checkIn.UserName))
+					{
 						t_activeList.Add (checkIn);
-				}
-				else
-				{
-					if (checkIn.PlaceId == place.Id)
+						totalHash.Add (checkIn.UserName);
+					}
+					else if (!totalHash.Contains(checkIn.UserName))
+					{
 						t_recentList.Add (checkIn);
+						totalHash.Add (checkIn.UserName);
+					}
 				}
+				   
+				activeHash.Add (checkIn.UserName);
 			}
 
 			activeList = new CheckInList (t_activeList);
 			recentList = new CheckInList (t_recentList);
-		}
-
-		class CheckInUserNameComparer : IEqualityComparer<CheckIn>
-		{
-			public bool Equals(CheckIn x, CheckIn y)
-			{
-				return x.UserName.Equals(y.UserName);
-			}
-			
-			public int GetHashCode(CheckIn obj)
-			{
-				return obj.UserName.GetHashCode();
-			}
 		}
 	}
 }
