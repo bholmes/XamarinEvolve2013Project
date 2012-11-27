@@ -74,5 +74,7 @@
     <Compile Include="Place.cs" />
     <Compile Include="PlaceList.cs" />
     <Compile Include="GeoDistanceHelper.cs" />
+    <Compile Include="CheckInUserPair.cs" />
+    <Compile Include="CheckInAccessLocalTest.cs" />
   </ItemGroup>
 </Project>

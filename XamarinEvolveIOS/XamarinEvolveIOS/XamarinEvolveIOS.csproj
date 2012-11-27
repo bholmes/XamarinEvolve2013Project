@@ -133,6 +133,7 @@
     <Compile Include="PlaceListViewController.cs" />
     <Compile Include="PlaceInfoViewController.cs" />
     <Compile Include="PhoneNumberHelper.cs" />
+    <Compile Include="NameValueCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />

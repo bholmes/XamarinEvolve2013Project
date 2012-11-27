@@ -23,8 +23,10 @@ namespace XamarinEvolveSSLibrary
 		{
 			if (SystemConstants.EngineUseTestClasses)
 			{
-				UserAccess = new UserAccessLocalTest ();
+				UserAccessLocalTest userAccessLocalTest = new UserAccessLocalTest ();
+				UserAccess = userAccessLocalTest;
 				AvatarAccess = new AvatarAccessLocalTest ();
+				CheckInAccess = new CheckInAccessLocalTest (userAccessLocalTest.CachedUserList);
 			}
 
 			else
@@ -32,10 +34,10 @@ namespace XamarinEvolveSSLibrary
 				ClientWrapper clientWrapper = new ClientWrapper ();
 				UserAccess = new WebserviceUserAccess (clientWrapper);
 				AvatarAccess = new WebserviceAvatarAccess (clientWrapper);
+				throw new Exception ("still need CheckInAccess");
 			}
 
 			PlaceLocator = new XamarinEvolveSSLibrary.GoogleAPI.PlaceLocator ();
-			CheckInAccess = new CheckInAccess ();
 		}
 	}
 }

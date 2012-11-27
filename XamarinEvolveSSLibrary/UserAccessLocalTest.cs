@@ -63,7 +63,7 @@ namespace XamarinEvolveSSLibrary
 			CachedUserList.Delete (userToDelete);
 		}
 
-		private UserList CachedUserList
+		public UserList CachedUserList
 		{
 			get 
 			{

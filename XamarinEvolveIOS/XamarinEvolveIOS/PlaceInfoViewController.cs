@@ -1,6 +1,8 @@
 using System;
 using MonoTouch.UIKit;
 using XamarinEvolveSSLibrary;
+using System.Collections.Generic;
+using MonoTouch.Foundation;
 
 namespace XamarinEvolveIOS
 {
@@ -8,8 +10,8 @@ namespace XamarinEvolveIOS
 	{
 		public UITableView TableView { get; private set;}
 		public Place Place { get; private set;}
-		public CheckInList ActiveCheckInList {get; private set;}
-		public CheckInList RecentCheckInList {get;private set;}
+		public List<CheckInUserPair> ActiveCheckInList {get; private set;}
+		public List<CheckInUserPair> RecentCheckInList {get;private set;}
 
 		public BusyView BusyView {get; private set;}
 
@@ -17,8 +19,8 @@ namespace XamarinEvolveIOS
 		{
 			this.Title = "Place Info";
 			Place = place;
-			ActiveCheckInList = new CheckInList ();
-			RecentCheckInList = new CheckInList ();
+			ActiveCheckInList = new List<CheckInUserPair> ();
+			RecentCheckInList = new List<CheckInUserPair> ();
 		}
 
 		public override void ViewDidLoad ()
@@ -33,6 +35,7 @@ namespace XamarinEvolveIOS
 			TableView = new UITableView (View.Bounds, UITableViewStyle.Grouped);
 			TableView.DataSource = new PlaceInfoViewDataSource (this);
 			TableView.Delegate = new PlaceInfoViewDelegate (this);
+			TableView.RowHeight = 50;
 
 			View.Add (TableView);
 
@@ -42,12 +45,24 @@ namespace XamarinEvolveIOS
 			LoadPlaceCheckInInfo ();
 		}
 
+		public override void ViewWillAppear (bool animated)
+		{
+			base.ViewWillAppear (animated);
+			
+			if (this.TableView != null)
+			{
+				MonoTouch.Foundation.NSIndexPath path = TableView.IndexPathForSelectedRow;
+				if (path != null)
+					TableView.DeselectRow (path, animated);
+			}
+		}
+
 		private void LoadPlaceCheckInInfo ()
 		{
 			Func<int> func = delegate {
 
-				CheckInList recentList;
-				CheckInList activeList;
+				List<CheckInUserPair> recentList;
+				List<CheckInUserPair> activeList;
 
 				Engine.Instance.CheckInAccess.GetCheckinInfo (Place, out activeList, 
 				                                              out recentList, SystemConstants.MaxPlacesPerRequest);
@@ -171,6 +186,8 @@ namespace XamarinEvolveIOS
 					cell = new UITableViewCell (UITableViewCellStyle.Subtitle, "PlaceInfoViewTopCell");
 				}
 
+				cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+
 				cell.TextLabel.Text = ViewController.Place.Name;
 				cell.DetailTextLabel.Text = ViewController.Place.Address;
 
@@ -185,8 +202,8 @@ namespace XamarinEvolveIOS
 				{
 					cell = new UITableViewCell (UITableViewCellStyle.Default, "PlaceInfoViewActiveCheckInCell");
 				}
-				
-				cell.TextLabel.Text = ViewController.ActiveCheckInList[indexPath.Row].UserName;
+
+				SetupCellForUser (cell, ViewController.ActiveCheckInList[indexPath.Row].User);
 				
 				return cell;
 			}
@@ -199,10 +216,39 @@ namespace XamarinEvolveIOS
 				{
 					cell = new UITableViewCell (UITableViewCellStyle.Default, "PlaceInfoViewRecentCheckInCell");
 				}
-				
-				cell.TextLabel.Text = ViewController.RecentCheckInList[indexPath.Row].UserName;
+
+				SetupCellForUser (cell, ViewController.RecentCheckInList[indexPath.Row].User);
 				
 				return cell;
+			}
+
+			private void SetupCellForUser (UITableViewCell cell, User user)
+			{
+				cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
+				cell.TextLabel.Text = user.FullName;
+				cell.ImageView.Layer.MasksToBounds = true;
+				cell.ImageView.Layer.CornerRadius = 5.0f;
+				
+				byte [] data = Engine.Instance.AvatarAccess.GetAvararForUser 
+					(user, 50, (avatarResult) => {
+						if (avatarResult.Exceptin == null && avatarResult.Data != null)
+							this.BeginInvokeOnMainThread (delegate {
+								LoadImageForCell (cell, avatarResult.Data);
+							});
+					});
+				
+				LoadImageForCell (cell, data);
+			}
+
+			private void LoadImageForCell (UITableViewCell cell, byte [] data)
+			{
+				if (cell.ImageView.Image != null)
+					cell.ImageView.Image.Dispose ();
+				
+				using (NSData nsData = NSData.FromArray (data))
+				{
+					cell.ImageView.Image = UIImage.LoadFromData (nsData);
+				}
 			}
 		}
 
@@ -213,6 +259,35 @@ namespace XamarinEvolveIOS
 			public PlaceInfoViewDelegate (PlaceInfoViewController viewController)
 			{
 				ViewController = viewController;
+			}
+
+			public override void RowSelected (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				switch (indexPath.Section)
+				{
+				case 0:
+					return;
+				case 1 :
+					if (ViewController.HasActiveCheckIns)
+						ViewController.NavigationController.PushViewController (
+								new ProfileViewController (
+									ViewController.ActiveCheckInList[indexPath.Row].User), true
+							);
+					else
+						ViewController.NavigationController.PushViewController (
+							new ProfileViewController (
+								ViewController.RecentCheckInList[indexPath.Row].User), true
+							);
+					return;
+				case 2 :
+					ViewController.NavigationController.PushViewController (
+						new ProfileViewController (
+							ViewController.RecentCheckInList[indexPath.Row].User), true
+						);
+					return;
+				}
+				
+				throw new NotImplementedException ();
 			}
 		}
 	}

@@ -45,6 +45,8 @@ namespace XamarinEvolveSSLibrary
 		}
 		
 		public int Count {get{return _list.Count;}}
+
+		public List<User> Users {get{return _list;}}
 	}
 }
 
