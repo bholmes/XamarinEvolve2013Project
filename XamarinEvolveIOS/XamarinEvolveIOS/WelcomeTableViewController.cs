@@ -4,6 +4,7 @@ using System;
 
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using XamarinEvolveSSLibrary;
 
 namespace XamarinEvolveIOS
 {
@@ -26,13 +27,31 @@ namespace XamarinEvolveIOS
 			this.TableView.Delegate = new WelcomeTableViewDelegate (NavigationController);	
 		}
 
+		public override void ViewDidAppear (bool animated)
+		{
+			base.ViewDidAppear (animated);
+
+			TableView.ReloadData ();
+		}
+
 		private class  WelcomeTableViewDataSource : UITableViewDataSource
 		{
 			#region implemented abstract members of UITableViewDataSource	
 
+			public override int NumberOfSections (UITableView tableView)
+			{
+				return 2;
+			}
+
 			public override int RowsInSection (UITableView tableView, int section)
 			{
-				return 4;
+				if (section == 1)
+				{
+					if (Engine.Instance.UserAccess.GetCurrentUser ().IsAnonymousUser)
+						return 1;
+				}
+
+				return 2;
 			}			
 
 			public override UITableViewCell GetCell (UITableView tableView, NSIndexPath indexPath)
@@ -44,23 +63,38 @@ namespace XamarinEvolveIOS
 					cell = new UITableViewCell (UITableViewCellStyle.Default, "WelcomeTableViewCell");
 				}
 
-				switch (indexPath.Row)
+				if (indexPath.Section == 0)
 				{
-				case 0:
-					cell.TextLabel.Text = "My Profile";
-					break;
-				case 1:
-					cell.TextLabel.Text = "Attendees";
-					break;
-				case 2:
-					cell.TextLabel.Text = "Attendee Check-ins";
-					break;
-				case 3:
-					cell.TextLabel.Text = "Check-in";
-					break;
+					switch (indexPath.Row)
+					{
+					case 0:
+						cell.TextLabel.Text = "Attendees";
+						break;
+					case 1:
+						cell.TextLabel.Text = "Attendee Check-ins";
+						break;
 
-				default:
-					throw new NotImplementedException ();
+					default:
+						throw new NotImplementedException ();
+					}
+				}
+				else
+				{
+					switch (indexPath.Row)
+					{
+					case 0:
+						if (!Engine.Instance.UserAccess.GetCurrentUser ().IsAnonymousUser)
+							cell.TextLabel.Text = "Check-in";
+						else
+							cell.TextLabel.Text = "My Profile";
+						break;
+					case 1:
+						cell.TextLabel.Text = "My Profile";
+						break;
+						
+					default:
+						throw new NotImplementedException ();
+					}
 				}
 
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
@@ -81,24 +115,40 @@ namespace XamarinEvolveIOS
 
 			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
 			{
-				switch (indexPath.Row)
+				if (indexPath.Section == 0)
 				{
-				case 0:
-					_navigationController.PushViewController (
-						new LocalProfileViewController (), true);
-					break;
-				case 1:
-					_navigationController.PushViewController (new UsersViewController (), true);
-					break;
-				case 2:
-					_navigationController.PushViewController (new MeetUpViewController (), true);
-					break;	
-				case 3:
-					_navigationController.PushViewController (new CheckInViewController (), true);
-					break;
-					
-				default:
-					throw new NotImplementedException ();
+					switch (indexPath.Row)
+					{
+					case 0:
+						_navigationController.PushViewController (new UsersViewController (), true);
+						break;
+					case 1:
+						_navigationController.PushViewController (new MeetUpViewController (), true);
+						break;
+						
+					default:
+						throw new NotImplementedException ();
+					}
+				}
+				else
+				{
+					switch (indexPath.Row)
+					{
+					case 0:
+						if (!Engine.Instance.UserAccess.GetCurrentUser ().IsAnonymousUser)
+							_navigationController.PushViewController (new CheckInViewController (), true);
+						else
+							_navigationController.PushViewController (
+								new LocalProfileViewController (), true);
+						break;	
+					case 1:
+						_navigationController.PushViewController (
+							new LocalProfileViewController (), true);
+						break;
+						
+					default:
+						throw new NotImplementedException ();
+					}
 				}
 			}
 		}
