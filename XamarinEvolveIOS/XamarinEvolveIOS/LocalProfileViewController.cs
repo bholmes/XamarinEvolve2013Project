@@ -274,6 +274,8 @@ namespace XamarinEvolveIOS
 
 		void HideLoginScreen ()
 		{
+			this.HideTheDamnButtons = true;
+
 			UIView.Animate (.5f, 0, UIViewAnimationOptions.CurveEaseInOut, delegate {
 				_loginView.Frame = new RectangleF (_loginView.Frame.X,
 				                                   _loginView.Frame.Height,
@@ -283,6 +285,7 @@ namespace XamarinEvolveIOS
 			delegate {
 				_loginView.Hidden = true;
 				_loginView.Frame = this.View.Bounds;
+				this.HideTheDamnButtons = false;
 			});
 			this.TableView.ScrollEnabled = true;
 			this.NavigationItem.RightBarButtonItem = _editButton;
