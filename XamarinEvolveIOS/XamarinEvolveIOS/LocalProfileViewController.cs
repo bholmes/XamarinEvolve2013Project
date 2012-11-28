@@ -57,7 +57,9 @@ namespace XamarinEvolveIOS
 					
 					UIView.BeginAnimations("k");
 					UIView.SetAnimationBeginsFromCurrentState(true);
-					_loginView.ScrollView.Frame = new RectangleF(0, 0, _loginView.ScrollView.Frame.Width, 
+					_loginView.ScrollView.Frame = new RectangleF(_loginView.ScrollView.Frame.X,
+					                                             _loginView.ScrollView.Frame.Y, 
+					                                             _loginView.ScrollView.Frame.Width, 
 					                                   View.Bounds.Height - keyboardSize.Height);
 					UIView.CommitAnimations();
 				});
@@ -67,7 +69,10 @@ namespace XamarinEvolveIOS
 					UIView.BeginAnimations("k");
 					UIView.SetAnimationBeginsFromCurrentState(true);
 					_loginView.ScrollView.Frame = 
-						new RectangleF(0, 0, View.Bounds.Width, View.Bounds.Height);
+						new RectangleF(_loginView.ScrollView.Frame.X,
+						               _loginView.ScrollView.Frame.Y, 
+						               _loginView.ScrollView.Frame.Width,
+						               View.Bounds.Height);
 					UIView.CommitAnimations();
 				});
 		}
