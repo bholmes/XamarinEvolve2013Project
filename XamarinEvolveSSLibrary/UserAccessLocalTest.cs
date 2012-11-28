@@ -60,6 +60,10 @@ namespace XamarinEvolveSSLibrary
 
 			_currentUser = new User ();
 
+			CheckInAccessLocalTest localCheckIn = Engine.Instance.CheckInAccess as CheckInAccessLocalTest;
+
+			localCheckIn.DeleteCheckinsForUser (userToDelete);
+
 			CachedUserList.Delete (userToDelete);
 		}
 

@@ -132,6 +132,13 @@ namespace XamarinEvolveSSLibrary
 				UserId = currentUser.Id,
 			});
 		}
+
+		public void DeleteCheckinsForUser (User user)
+		{
+			_checkInListForTesting = new CheckInList (
+				CachedCheckInList.CheckIns.Where (c=>c.UserId != user.Id)
+				.ToList ());
+		}
 		
 		private PlaceList CachedPlaceList
 		{
