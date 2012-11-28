@@ -11,24 +11,135 @@ namespace XamarinEvolveSS
 {
     public class MySqlCheckInAccess
     {
-        public PlaceList GetPopularPlaceList(int limit)
+        public List<Place> GetPopularPlaceList(int limit)
         {
-            throw new NotImplementedException();
+            List<Place> returnList = new List<Place>();
+
+            SetupAndCall((dbCmd) =>
+            {
+                SqlExpressionVisitor<Place> evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
+                SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
+
+                var checkInList = dbCmd.Select(evCheckIn);
+
+                var placeIdList = checkInList
+                    .GroupBy(c => c.PlaceId)
+                        .OrderByDescending(g => g.Count())
+                        .Take(limit)
+                        .Select (g=>(object)g.First().PlaceId);
+
+                evPlace.Where(p => Sql.In(p.Id, placeIdList.ToList()));
+                var unsortedPlaceList = dbCmd.Select(evPlace);
+
+                returnList = placeIdList.Select(pId => unsortedPlaceList.First(p => p.Id == (int)pId)).ToList ();
+            });
+
+            return returnList;
         }
 
-        public PlaceList GetRecentPlaceList(int limit)
+        public List<Place> GetRecentPlaceList(int limit)
         {
-            throw new NotImplementedException();
+            List<Place> returnList = new List<Place>();
+
+            SetupAndCall((dbCmd) =>
+            {
+                SqlExpressionVisitor<Place> evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
+                SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
+
+                DateTime refTime = DateTime.Now - new TimeSpan
+                    (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
+
+                // List of unique place Ids sorted by most recent check-in
+                evCheckIn.Where(c => c.Time > refTime)
+                    .OrderByDescending(c => c.Time)
+                    .Select (c=>c.PlaceId);
+
+                var checkInRsponse = dbCmd.Select(evCheckIn);
+                var checkInIds = checkInRsponse
+                    .Select(c => (object)c.PlaceId)
+                    .Distinct()
+                    .Take(limit).ToArray ();
+
+                evPlace.Where(p => Sql.In(p.Id, checkInIds));
+                var unsortedPlaces = dbCmd.Select(evPlace);
+
+                var placeList = checkInIds.Select(placeId => unsortedPlaces.FirstOrDefault(p => p.Id == (int)placeId));
+
+                returnList = placeList.ToList();
+            });
+
+            return returnList;
         }
 
-        public PlaceList GetPlaceListNearLocation(float lat, float lng, int limit)
+        public List<Place> GetPlaceListNearLocation(float lat, float lng, int limit)
         {
-            throw new NotImplementedException();
+            List<Place> returnList = new List<Place>();
+
+            SetupAndCall((dbCmd) =>
+            {
+                SqlExpressionVisitor<Place> evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
+                var placeList = dbCmd.Select(evPlace);
+
+                returnList = new PlaceList(placeList.ToList()).SortByDistance(lat, lng, limit).Places;
+            });
+
+            return returnList;
         }
 
-        public void GetCheckinInfo(Place place, out List<CheckInUserPair> activeList, out List<CheckInUserPair> recentList, int recentLimit)
+        public void GetCheckinInfo(int placeId, out List<CheckInUserPair> activeList, out List<CheckInUserPair> recentList, int recentLimit)
         {
-            throw new NotImplementedException();
+            List<CheckInUserPair>  t_activeList = new List<CheckInUserPair>();
+            List<CheckInUserPair> t_recentList = new List<CheckInUserPair>();
+
+            SetupAndCall((dbCmd) =>
+            {
+                SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
+                SqlExpressionVisitor<User> evUser = OrmLiteConfig.DialectProvider.ExpressionVisitor<User>();
+
+                DateTime refTime = DateTime.Now - new TimeSpan
+                    (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
+
+                // Groups of checkins grouped by user then sorted by time
+                var sortedCheckInList = dbCmd.Select(evCheckIn.OrderByDescending(c => c.Time));
+                var sortedGroupList = sortedCheckInList.GroupBy(c => c.UserId);
+
+                // represents users last check-in anywhere within time limit
+                var usersLastCheckIn = sortedGroupList.Select(g => g.First()).Where(c => c.Time > refTime);
+
+                // represents users last check-in at the place
+                var usersListCheckInToPlace = sortedGroupList.Select(g => g.FirstOrDefault(c => c.PlaceId == placeId)).Where(c => c != null);
+
+                // The activeList is where the users 
+                // last check-in anywhere within the time limit
+                // AND
+                // at this place, are the same place.
+                var actList = usersListCheckInToPlace.Intersect(usersLastCheckIn);
+
+                // the recent list is all users last check-in at the place
+                // that is not in the active list
+                // limited by recentLimit
+                var recList = usersListCheckInToPlace.Except(actList).Take(recentLimit);
+
+                // does this need to be an object [] again?
+                var allUserIds = actList.Select(c => (object)c.UserId).Union(recList.Select(c => (object)c.UserId)).ToArray ();
+
+                if (!allUserIds.Any())
+                    return;
+
+                evUser.Where(u => Sql.In(u.Id, allUserIds));
+                var userList = dbCmd.Select(evUser);
+
+                t_activeList = actList.Select(
+                    c => new CheckInUserPair { CheckIn = c, User = userList.FirstOrDefault(u => u.Id == c.UserId) })
+                    .ToList();
+
+                t_recentList = recList.Select(c => new CheckInUserPair { CheckIn = c, User = userList.FirstOrDefault(u => u.Id == c.UserId) })
+                    .ToList();
+
+            });
+
+            activeList = t_activeList;
+            recentList = t_recentList;
         }
 
         public void CheckInUserAtPlace(string username, Place place)

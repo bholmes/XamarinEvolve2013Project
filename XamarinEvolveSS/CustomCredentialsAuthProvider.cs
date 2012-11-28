@@ -19,7 +19,7 @@ namespace XamarinEvolveSS
                     return true;
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

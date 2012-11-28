@@ -69,6 +69,8 @@
     <Compile Include="MD5Helper.cs" />
     <Compile Include="Place.cs" />
     <Compile Include="PlaceList.cs" />
+    <Compile Include="PlacesRequest.cs" />
+    <Compile Include="PlacesRequestResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemConstants.cs" />
     <Compile Include="User.cs" />

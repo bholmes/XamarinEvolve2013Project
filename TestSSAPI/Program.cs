@@ -26,8 +26,8 @@ namespace TestSSAPI
             //CheckInLINQTest ciLINQ = new CheckInLINQTest();
             //ciLINQ.RunTests ();
 
-            SSCheckInAccessTest sqlCheckInTest = new SSCheckInAccessTest();
-            sqlCheckInTest.RunTests();
+            //SSCheckInAccessTest sqlCheckInTest = new SSCheckInAccessTest();
+            //sqlCheckInTest.RunTests();
         }
 
 

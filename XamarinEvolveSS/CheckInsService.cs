@@ -13,7 +13,22 @@ namespace XamarinEvolveSS
     {
         public override object OnGet(CheckInRequest request)
         {
-            return new CheckInRequestResponse();
+            try
+            {
+                var limit = request.RecentLimit > 0 ? request.RecentLimit : SystemConstants.MaxPlacesPerRequest;
+                
+                MySqlCheckInAccess sql = new MySqlCheckInAccess();
+                List<CheckInUserPair> activePairList;
+                List<CheckInUserPair> recentPairList;
+
+                sql.GetCheckinInfo(request.PlaceId, out activePairList, out recentPairList, limit);
+
+                return new CheckInRequestResponse { ActivePairList = activePairList,RecentPairList = recentPairList };
+            }
+            catch (Exception ex)
+            {
+                return new CheckInRequestResponse() { Exception = ex };
+            }
         }
 
         public override object OnPut(CheckInRequest request)

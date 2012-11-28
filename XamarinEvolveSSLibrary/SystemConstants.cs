@@ -7,8 +7,8 @@ namespace XamarinEvolveSSLibrary
 {
     public class SystemConstants
     {
-        private static bool RunLocalSS = true;
-        private static bool RunLocalMySql = true;
+        private static bool RunLocalSS = false;
+        private static bool RunLocalMySql = false;
 
         public static bool UseAuthentication { get { return true; } }
 

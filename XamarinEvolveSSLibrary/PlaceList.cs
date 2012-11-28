@@ -72,7 +72,7 @@ namespace XamarinEvolveSSLibrary
 			return new PlaceList (sortList);
 		}
 
-		private class DistanceSortHelper
+		public class DistanceSortHelper
 		{
 			public Place Place {get;private set;}
 			public float Distance {get;private set;}
