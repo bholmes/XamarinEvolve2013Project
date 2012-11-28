@@ -34,7 +34,7 @@ namespace XamarinEvolveSSLibrary
 				ClientWrapper clientWrapper = new ClientWrapper ();
 				UserAccess = new WebserviceUserAccess (clientWrapper);
 				AvatarAccess = new WebserviceAvatarAccess (clientWrapper);
-				throw new Exception ("still need CheckInAccess");
+				CheckInAccess = new WebserviceCheckInAccess (clientWrapper);
 			}
 
 			PlaceLocator = new XamarinEvolveSSLibrary.GoogleAPI.PlaceLocator ();

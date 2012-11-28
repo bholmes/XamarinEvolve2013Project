@@ -76,5 +76,10 @@
     <Compile Include="GeoDistanceHelper.cs" />
     <Compile Include="CheckInUserPair.cs" />
     <Compile Include="CheckInAccessLocalTest.cs" />
+    <Compile Include="CheckInRequest.cs" />
+    <Compile Include="CheckInRequestResponse.cs" />
+    <Compile Include="PlacesRequest.cs" />
+    <Compile Include="PlacesRequestResponse.cs" />
+    <Compile Include="WebserviceCheckInAccess.cs" />
   </ItemGroup>
 </Project>
