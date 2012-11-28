@@ -40,7 +40,7 @@ namespace XamarinEvolveIOS
 
 			public override int NumberOfSections (UITableView tableView)
 			{
-				return 2;
+				return 3;
 			}
 
 			public override int RowsInSection (UITableView tableView, int section)
@@ -50,6 +50,8 @@ namespace XamarinEvolveIOS
 					if (Engine.Instance.UserAccess.GetCurrentUser ().IsAnonymousUser)
 						return 1;
 				}
+				else if (section == 2)
+					return 1;
 
 				return 2;
 			}			
@@ -78,7 +80,7 @@ namespace XamarinEvolveIOS
 						throw new NotImplementedException ();
 					}
 				}
-				else
+				else if (indexPath.Section == 1)
 				{
 					switch (indexPath.Row)
 					{
@@ -95,6 +97,11 @@ namespace XamarinEvolveIOS
 					default:
 						throw new NotImplementedException ();
 					}
+				}
+
+				else
+				{
+					cell.TextLabel.Text = "Evolve on the Web";
 				}
 
 				cell.Accessory = UITableViewCellAccessory.DisclosureIndicator;
@@ -130,7 +137,7 @@ namespace XamarinEvolveIOS
 						throw new NotImplementedException ();
 					}
 				}
-				else
+				else if (indexPath.Section == 1)
 				{
 					switch (indexPath.Row)
 					{
@@ -149,6 +156,19 @@ namespace XamarinEvolveIOS
 					default:
 						throw new NotImplementedException ();
 					}
+				}
+				else
+				{
+					UIViewController viewContoller = new UIViewController ();
+
+					UIWebView view = new UIWebView (viewContoller.View.Bounds);
+					view.AutoresizingMask = UIViewAutoresizing.All;
+					view.ScalesPageToFit = true;
+					viewContoller.View.Add (view);
+
+
+
+					_navigationController.PushViewController (new EvolveOnTheWebViewController (), true);
 				}
 			}
 		}

@@ -134,6 +134,7 @@
     <Compile Include="PlaceInfoViewController.cs" />
     <Compile Include="PhoneNumberHelper.cs" />
     <Compile Include="NameValueCell.cs" />
+    <Compile Include="EvolveOnTheWebViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
