@@ -18,7 +18,7 @@ namespace XamarinEvolveSSLibrary
             {
                 return RunLocalSS ?
                     "localhost" :
-                    "mobillho.w12.wh-2.com";
+                    "evolve.mobillholmes.com";
             }
         }
 
