@@ -53,6 +53,11 @@ namespace XamarinEvolveIOS
 				ValueTextField.ResignFirstResponder ();
 				return true;
 			};
+
+			ValueTextField.EditingDidEnd += delegate {
+				_valueSet.Invoke (ValueTextField.Text);
+			}; 
+
 			this.Add (ValueTextField);
 			
 			_valueGet = valueGet;

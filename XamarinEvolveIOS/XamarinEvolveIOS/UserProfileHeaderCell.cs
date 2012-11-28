@@ -41,7 +41,7 @@ namespace XamarinEvolveIOS
 			});
 
 			ImageView.AddGestureRecognizer (imageTap);
-			ImageView.UserInteractionEnabled = true;
+			ImageView.UserInteractionEnabled = _editing;
 
 			this.Add (ImageView);
 			
@@ -71,6 +71,10 @@ namespace XamarinEvolveIOS
 				FullNameTextView.ResignFirstResponder ();
 				return true;
 			};
+			FullNameTextView.EditingDidEnd += delegate {
+				if (_userProfile != null)
+					_userProfile.FullName = FullNameTextView.Text;
+			}; 
 			this.Add (FullNameTextView);
 			
 			CityLabel = new UILabel (new RectangleF (
@@ -97,6 +101,10 @@ namespace XamarinEvolveIOS
 				CityTextView.ResignFirstResponder ();
 				return true;
 			};
+			CityTextView.EditingDidEnd += delegate {
+				if (_userProfile != null)
+					_userProfile.City = CityTextView.Text;
+			}; 
 			this.Add (CityTextView);
 
 			ImageEditTip = new UILabel (new RectangleF (
@@ -183,6 +191,8 @@ namespace XamarinEvolveIOS
 				CityLabel.Hidden = false;
 				CityTextView.Hidden = true;
 			}
+
+			ImageView.UserInteractionEnabled = _editing;
 		}
 
 		static UIImage _defaultImage;
