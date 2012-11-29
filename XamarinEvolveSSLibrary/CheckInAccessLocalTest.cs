@@ -135,18 +135,25 @@ namespace XamarinEvolveSSLibrary
 
 			if (lastCheckIn != null)
 			{
-				// Find the palce for that place id
-				var lastPlace = CachedPlaceList.Places
-					.Where (p=>p.Id == lastCheckIn.PlaceId)
-						.FirstOrDefault ();
+				DateTime refTime = DateTime.UtcNow - new TimeSpan
+                    (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
-				// if it is the same place just update the time
-				if (lastPlace.Name == place.Name &&
-				    lastPlace.Address == place.Address)
-				{
-					lastCheckIn.Time = DateTime.UtcNow;
-					return;
-				}
+                // If it has been a while allow the checkin
+                if (refTime < lastCheckIn.Time)
+                {
+                    // Find the palce for that place id
+                    var lastPlace = CachedPlaceList.Places
+                        .Where(p => p.Id == lastCheckIn.PlaceId)
+                            .FirstOrDefault();
+
+                    // if it is the same place just update the time
+                    if (lastPlace.Name == place.Name &&
+                        lastPlace.Address == place.Address)
+                    {
+                        lastCheckIn.Time = DateTime.UtcNow;
+                        return;
+                    }
+                }
 			}
 			
 			Place tPlace = CachedPlaceList.AddIfNew (place);

@@ -166,17 +166,24 @@ namespace XamarinEvolveSS
 
                 if (lastCheckIn.Count != 0)
                 {
-                    //// Find the palce for that place id
-                    evPlace.Where(p => p.Id == lastCheckIn.First ().PlaceId).Limit (1);
-                    var existingPlaceResult = dbCmd.Select(evPlace);
+                    DateTime refTime = DateTime.UtcNow - new TimeSpan
+                    (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
-                    // if it is the same place just update the time
-                    if (existingPlaceResult.First().Name == place.Name &&
-                        existingPlaceResult.First().Address == place.Address)
+                    // If it has been a while allow the checkin
+                    if (refTime < lastCheckIn.First().Time)
                     {
-                        evCheckIn.Where(c => c.Id == lastCheckIn.First().Id).Update(c => c.Time);
-                        dbCmd.UpdateOnly(new CheckIn { Time = DateTime.UtcNow }, evCheckIn);
-                        return;
+                        //// Find the palce for that place id
+                        evPlace.Where(p => p.Id == lastCheckIn.First().PlaceId).Limit(1);
+                        var existingPlaceResult = dbCmd.Select(evPlace);
+
+                        // if it is the same place just update the time
+                        if (existingPlaceResult.First().Name == place.Name &&
+                            existingPlaceResult.First().Address == place.Address)
+                        {
+                            evCheckIn.Where(c => c.Id == lastCheckIn.First().Id).Update(c => c.Time);
+                            dbCmd.UpdateOnly(new CheckIn { Time = DateTime.UtcNow }, evCheckIn);
+                            return;
+                        }
                     }
                 }
 
