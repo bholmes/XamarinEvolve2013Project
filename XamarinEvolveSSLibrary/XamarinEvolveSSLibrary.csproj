@@ -66,6 +66,7 @@
     <Compile Include="GeoDistanceHelper.cs" />
     <Compile Include="GooglePlaceLocator.cs" />
     <Compile Include="GravatarHelper.cs" />
+    <Compile Include="ImageCache.cs" />
     <Compile Include="MD5Helper.cs" />
     <Compile Include="Place.cs" />
     <Compile Include="PlaceList.cs" />
