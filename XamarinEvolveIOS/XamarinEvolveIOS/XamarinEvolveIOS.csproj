@@ -138,8 +138,6 @@
     <Compile Include="CustomUITableViewCellSubView.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MainStoryboard_iPhone.storyboard" />
-    <InterfaceDefinition Include="MainStoryboard_iPad.storyboard" />
     <InterfaceDefinition Include="CustomUITableViewCell.xib" />
     <InterfaceDefinition Include="Resources\LoginView.xib" />
     <InterfaceDefinition Include="LoginView.xib" />
