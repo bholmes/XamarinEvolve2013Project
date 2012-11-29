@@ -33,6 +33,29 @@ namespace XamarinEvolveSSLibrary
 			});
 		}
 
+		public byte [] FindAny (User user)
+		{
+			byte [] data = new byte[0];
+			int bestSize = 0;
+
+			lock (_cacheLock)
+			{
+				foreach (KeyValuePair <ImageCacheItem, ImageCacheItem> iter in _cache)
+				{
+					if (iter.Key.UserName.Equals (user.UserName))
+					{
+						if (iter.Key.Size > bestSize)
+						{
+							bestSize = iter.Key.Size;
+							data = iter.Key.Data;
+						}
+					}
+				}
+			}
+
+			return data;
+		}
+
 		public void TouchUser (User user)
 		{
 			lock (_cacheLock)

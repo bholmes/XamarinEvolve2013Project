@@ -279,6 +279,12 @@ namespace XamarinEvolveIOS
 			}
 
 			// Get any image from cache
+			byte [] data = Engine.Instance.ImageCache.FindAny (UserProfile);
+
+			if (data != null && data.Length > 0)
+			{
+				person.Image = NSData.FromArray(data); 
+			}
 
 			abController.DisplayedPerson  = person;
 

@@ -60,9 +60,10 @@
     <ConsolePause>False</ConsolePause>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchArch>ARMv7</MtouchArch>
-    <CodesignProvision>E0436F93-3ECC-45B0-8C43-6B3FC797BD86</CodesignProvision>
+    <CodesignProvision>4B42FA72-B7B6-4160-A205-5E58F6BC09AD</CodesignProvision>
     <MtouchI18n />
     <IpaPackageName />
+    <BuildIpa>True</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <DebugType>none</DebugType>
