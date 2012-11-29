@@ -256,7 +256,7 @@ namespace XamarinEvolveIOS
 				return;
 			}
 			
-			using (UIAlertView alert = new UIAlertView ("Error", "Something went wrong", null, "OK", null))
+			using (UIAlertView alert = new UIAlertView ("Error", "User creation failed.  Try another username", null, "OK", null))
 			{
 				alert.Show ();
 			}

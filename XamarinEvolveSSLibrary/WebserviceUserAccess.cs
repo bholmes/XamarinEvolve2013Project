@@ -153,6 +153,8 @@ namespace XamarinEvolveSSLibrary
 			
 			_currentUser = new User ();
 
+			Engine.Instance.ImageCache.TouchUser (userToDelete);
+
 			Func <int> func = delegate {
 				lock (_clientWrapper.ClientLock)
 				{

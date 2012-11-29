@@ -76,6 +76,7 @@ namespace XamarinEvolveIOS
 				this.NavigationItem.RightBarButtonItem.Style = UIBarButtonItemStyle.Plain;
 				RefreshHeaderCell ();
 				Engine.Instance.UserAccess.CommitCurrentUserChanges ();
+				Engine.Instance.ImageCache.TouchUser (_currentUser);
 			}
 		}
 
