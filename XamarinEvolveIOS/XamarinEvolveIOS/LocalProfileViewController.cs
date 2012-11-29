@@ -130,11 +130,11 @@ namespace XamarinEvolveIOS
 
 			if (busy)
 			{
-				_loginView.BusyView.Busy = true;
+				BusyView.Busy = true;
 			}
 			else
 			{
-				_loginView.BusyView.Busy = false;
+				BusyView.Busy = false;
 			}
 		}
 
@@ -202,14 +202,14 @@ namespace XamarinEvolveIOS
 		{
 			if (string.IsNullOrWhiteSpace(_loginView.UsernameField.Text))
 			{
-				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Username", null, "OK", null);
+				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Username", null, "Close", null);
 				alertNew.Show ();
 				return false;
 			}
 
 			if (string.IsNullOrWhiteSpace(_loginView.PasswordField.Text))
 			{
-				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Password", null, "OK", null);
+				UIAlertView alertNew = new UIAlertView ("Error", "Invalid Password", null, "Close", null);
 				alertNew.Show ();
 				return false;	
 			}
@@ -218,7 +218,7 @@ namespace XamarinEvolveIOS
 			{
 				if (!_loginView.PasswordField.Text.Equals (_loginView.RetypePasswordField.Text))
 				{
-					UIAlertView alertNew = new UIAlertView ("Error", "Passwords do not match", null, "OK", null);
+					UIAlertView alertNew = new UIAlertView ("Error", "Passwords do not match", null, "Close", null);
 					alertNew.Show ();
 					return false;	
 				}
@@ -256,7 +256,7 @@ namespace XamarinEvolveIOS
 				return;
 			}
 			
-			using (UIAlertView alert = new UIAlertView ("Error", "User creation failed.  Try another username", null, "OK", null))
+			using (UIAlertView alert = new UIAlertView ("Error", "User creation failed.  Try another username", null, "Close", null))
 			{
 				alert.Show ();
 			}

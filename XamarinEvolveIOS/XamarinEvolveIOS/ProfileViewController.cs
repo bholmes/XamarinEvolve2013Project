@@ -12,6 +12,7 @@ namespace XamarinEvolveIOS
 	public partial class ProfileViewController : UITableViewController
 	{
 		private User _currentUser;
+		public BusyView BusyView {get;private set;}
 
 		public ProfileViewController (User user) : base (UITableViewStyle.Grouped)
 		{
@@ -23,6 +24,10 @@ namespace XamarinEvolveIOS
 			base.LoadView ();
 
 			this.Title = CurrentUser.IsLocalUser && this is LocalProfileViewController? "My Profile" : "Profile";
+
+			BusyView = new XamarinEvolveIOS.BusyView (View.Bounds);
+			BusyView.Busy = false;
+			View.Add (BusyView);
 
 			TableView.DataSource = new LocalUserProfileDataSource (
 				this, CurrentUser);
@@ -240,7 +245,19 @@ namespace XamarinEvolveIOS
 
 		void OnAddContact (object sender, EventArgs e)
 		{
-			ContactHelper.OnAddContact (_controller.NavigationController, UserProfile);
+			ContactHelper helper = new ContactHelper ();
+
+			helper.OnAddContactCompleted = delegate {
+				_controller.BusyView.Busy = false;
+			};
+
+			// Make sure the busy view is on top
+			_controller.BusyView.RemoveFromSuperview ();
+			_controller.View.Add (_controller.BusyView);
+
+			_controller.BusyView.Busy = true;
+
+			helper.AddContact (_controller.NavigationController, UserProfile);
 		}
 
 		void OnDeleteUser (object sender, EventArgs e)

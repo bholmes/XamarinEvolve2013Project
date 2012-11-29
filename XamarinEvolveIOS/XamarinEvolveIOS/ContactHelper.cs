@@ -4,31 +4,118 @@ using MonoTouch.AddressBook;
 using XamarinEvolveSSLibrary;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using Xamarin.Contacts;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace XamarinEvolveIOS
 {
 	public class ContactHelper
 	{
-		public static void OnAddContact (UINavigationController navigationController, User user)
+		static bool _canAccessAddress = false;
+
+		public delegate void OnAddContactCompletedDelegate();
+		public OnAddContactCompletedDelegate OnAddContactCompleted {get;set;}
+
+		public void AddContact (UINavigationController navigationController, User user)
+		{
+			if (!_canAccessAddress)
+				StartOnAddContactAction (navigationController, user);
+			else
+			{
+				CheckForExistingAndContinue (navigationController, user);
+			}
+		}
+
+		private void StartOnAddContactAction (UINavigationController navigationController, User user)
+		{
+			AddressBook book = new AddressBook ();
+			book.RequestPermission ().ContinueWith (task => {
+				navigationController.BeginInvokeOnMainThread (delegate {
+					if (task.IsFaulted || task.IsCanceled || !task.Result)
+					{
+						ShowNoContactAccess ();
+					}
+
+					else 
+					{
+						_canAccessAddress = true;
+						CheckForExistingAndContinue (navigationController, user);
+					}
+				});
+				
+			},TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private void ShowNoContactAccess ()
+		{
+			UIAlertView alert = new UIAlertView ("Permission denied", "Contact access is not enabled for the Evolve application", null, "Close");
+			alert.Show();
+
+			if (OnAddContactCompleted != null)
+				OnAddContactCompleted ();
+		}
+
+		private void CheckForExistingAndContinue (UINavigationController navigationController, User user)
+		{
+			KeyValuePair <string, string> namePair = GetFirstAndLastName (user);
+
+			string firstName = namePair.Key;
+			string lastName = namePair.Value;
+
+			AddressBook book = new AddressBook ();
+
+			foreach (Contact contact in book)
+			{
+				if (contact.FirstName == firstName ||
+				    contact.LastName == lastName)
+				{
+					AskShouldAddDuplicateAndContinue (navigationController, user);
+					return;
+				}
+			}
+
+			ShowAddContactController (navigationController, user);
+		}
+
+		private bool AskShouldAddDuplicateAndContinue (UINavigationController navigationController, User user)
+		{
+			string message = string.Format 
+				("You have a contact with the name {0}.  Do you still want to add?",
+				 user.FullName);
+
+			UIAlertView view = new UIAlertView ("Duplicate Found", message, 
+			                                    null, null, new string [] {"Yes", "No"}); 
+			view.CancelButtonIndex = 1;
+			
+			view.Clicked += (object sender, UIButtonEventArgs e) => {
+				if (e.ButtonIndex == 0) 
+				{
+					ShowAddContactController (navigationController, user);
+				}
+				else
+				{
+					if (OnAddContactCompleted != null)
+						OnAddContactCompleted ();
+				}
+			};
+			
+			view.Show ();
+
+			return false;
+		}
+
+		public void ShowAddContactController (UINavigationController navigationController, User user)
 		{
 			ABNewPersonViewController abController = new ABNewPersonViewController ();
 			
 			ABPerson person = new ABPerson ();
-			string firstName = string.Empty;
-			string lastName = string.Empty;
-			if (!string.IsNullOrEmpty (user.FullName))
-			{
-				string [] names = user.FullName.Split ();
-				
-				if (names.Length > 0)
-					firstName = names[0];
-				
-				if (names.Length > 1)
-					lastName = user.FullName.Substring (firstName.Length);
-			}
+
+			KeyValuePair <string, string> namePair = GetFirstAndLastName (user);
 			
-			person.FirstName = firstName;
-			person.LastName = lastName;
+			person.FirstName = namePair.Key;
+			person.LastName = namePair.Value;
 			
 			if (!string.IsNullOrEmpty (user.Company))
 			{
@@ -64,12 +151,36 @@ namespace XamarinEvolveIOS
 			};
 			
 			navigationController.PushViewController (abController, true);
+
+			if (OnAddContactCompleted != null)
+				OnAddContactCompleted ();
+		}
+
+		public static KeyValuePair<string, string> GetFirstAndLastName (User user)
+		{
+			string firstName = string.Empty;
+			string lastName = string.Empty;
+			if (!string.IsNullOrEmpty (user.FullName))
+			{
+				string [] names = user.FullName.Split ();
+				
+				if (names.Length > 0)
+					firstName = names[0];
+				
+				if (names.Length > 1)
+					lastName = user.FullName.Substring (firstName.Length);
+				lastName = lastName.Trim ();
+			}
+
+			return new KeyValuePair<string, string> (firstName, lastName);
 		}
 
 		public static bool CanCallPerson (string number)
 		{
 			if (string.IsNullOrEmpty (number))
 				return false;
+
+			number = number.Replace (" ", "");
 
 			return UIApplication.SharedApplication.CanOpenUrl(
 				new NSUrl (string.Format ("tel://{0}", number)));
@@ -85,6 +196,9 @@ namespace XamarinEvolveIOS
 			view.CancelButtonIndex = 1;
 			
 			view.Clicked += (object sender, UIButtonEventArgs e) => {
+
+				number = number.Replace (" ", "");
+
 				if (e.ButtonIndex == 0)
 					UIApplication.SharedApplication.OpenUrl (
 						new NSUrl (string.Format ("tel://{0}", number)));
@@ -97,12 +211,14 @@ namespace XamarinEvolveIOS
 		{
 			if (string.IsNullOrEmpty (address))
 				return false;
+
+			address = address.Replace (" ", "");
 			
 			return UIApplication.SharedApplication.CanOpenUrl(
 				new NSUrl (string.Format ("mailto:?to={0}", address)));
 		}
 
-		static public void EmailPerson (string address)
+		public static void EmailPerson (string address)
 		{
 			if (!CanEMailPerson (address))
 				return;
@@ -112,6 +228,9 @@ namespace XamarinEvolveIOS
 			view.CancelButtonIndex = 1;
 			
 			view.Clicked += (object sender, UIButtonEventArgs e) => {
+
+				address = address.Replace (" ", "");
+
 				if (e.ButtonIndex == 0)
 					UIApplication.SharedApplication.OpenUrl (
 						new NSUrl (string.Format ("mailto:?to={0}", address)));
@@ -119,7 +238,6 @@ namespace XamarinEvolveIOS
 			
 			view.Show ();
 		}
-
 	}
 }
 

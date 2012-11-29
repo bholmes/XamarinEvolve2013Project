@@ -9,13 +9,9 @@ namespace XamarinEvolveIOS
 	[Register("LoginView")]
 	public partial class LoginView : UIView
 	{
-		public BusyView BusyView {get;private set;}
-
 		public LoginView (IntPtr ptr) : base (ptr)
 		{
-			BusyView = new XamarinEvolveIOS.BusyView (this.Bounds);
-			BusyView.Busy = false;
-			this.Add (BusyView);
+
 		}
 
 		private void InitMembers ()

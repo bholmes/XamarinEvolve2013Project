@@ -56,7 +56,7 @@ namespace XamarinEvolveIOS
 			
 			BusyView.Busy = false;
 			
-			UIAlertView alertNew = new UIAlertView ("Error", message, null, "OK", null);
+			UIAlertView alertNew = new UIAlertView ("Error", message, null, "Close", null);
 			alertNew.Show ();
 		}
 		
