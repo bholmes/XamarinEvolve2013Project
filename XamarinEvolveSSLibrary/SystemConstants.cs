@@ -96,7 +96,7 @@ namespace XamarinEvolveSSLibrary
 
 		static public Place DefaultPlace {get {return _defaultPlace;}}
 
-		static public bool EngineUseTestClasses {get {return false;}}
+		static public bool EngineUseTestClasses {get {return true;}}
 
 		static public int RecentThresholdHours {get {return 2;}}
 

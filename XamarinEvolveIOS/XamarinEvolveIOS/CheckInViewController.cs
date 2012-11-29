@@ -80,7 +80,11 @@ namespace XamarinEvolveIOS
 				alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
 					if (e2.ButtonIndex == 0)
 					{
-						Engine.Instance.CheckInAccess.CheckInUserAtPlace (place);
+						new Func <int> (delegate {
+							Engine.Instance.CheckInAccess.CheckInUserAtPlace (place);
+							return 0;
+						}).BeginInvoke (null, null);
+
 						_viewController.NavigationController.PopViewControllerAnimated (true);
 					}
 				};

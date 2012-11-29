@@ -124,6 +124,8 @@ namespace XamarinEvolveSSLibrary
 			User currentUser = Engine.Instance.UserAccess.GetCurrentUser ();
 			if (currentUser.IsAnonymousUser)
 				return;
+
+			Debug.SimulateNetworkWait ();
 			
 			Place tPlace = CachedPlaceList.AddIfNew (place);
 			CachedCheckInList.Add (new CheckIn {
