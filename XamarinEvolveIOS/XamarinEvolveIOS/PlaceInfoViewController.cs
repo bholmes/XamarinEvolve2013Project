@@ -3,6 +3,8 @@ using MonoTouch.UIKit;
 using XamarinEvolveSSLibrary;
 using System.Collections.Generic;
 using MonoTouch.Foundation;
+using MonoTouch.MapKit;
+using MonoTouch.CoreLocation;
 
 namespace XamarinEvolveIOS
 {
@@ -186,7 +188,7 @@ namespace XamarinEvolveIOS
 					cell = new UITableViewCell (UITableViewCellStyle.Subtitle, "PlaceInfoViewTopCell");
 				}
 
-				cell.SelectionStyle = UITableViewCellSelectionStyle.None;
+				//cell.SelectionStyle = UITableViewCellSelectionStyle.None;
 
 				cell.TextLabel.Text = ViewController.Place.Name;
 				cell.DetailTextLabel.Text = ViewController.Place.Address;
@@ -266,6 +268,7 @@ namespace XamarinEvolveIOS
 				switch (indexPath.Section)
 				{
 				case 0:
+					OpenInMaps (tableView, indexPath);
 					return;
 				case 1 :
 					if (ViewController.HasActiveCheckIns)
@@ -288,6 +291,69 @@ namespace XamarinEvolveIOS
 				}
 				
 				throw new NotImplementedException ();
+			}
+
+			void OpenInMaps (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				UIAlertView alertView = new UIAlertView (
+					"Open in maps?", string.Format("Do you want to view {0} in maps?",
+				        ViewController.Place.Name), 
+						null, null, new string [] {"Yes", "No"});
+				
+				alertView.CancelButtonIndex = 1;
+				
+				alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
+					if (e2.ButtonIndex == 0)
+					{
+						OpenInMaps ();
+					}
+				
+					tableView.DeselectRow (indexPath, false);
+				};
+				
+				alertView.Show ();
+			}
+
+			void OpenInMaps ()
+			{
+				bool canDoIOS6Maps = false;
+				
+				using (NSString curVer = new NSString (UIDevice.CurrentDevice.SystemVersion))
+				{
+					using (NSString targetVar = new NSString ("6.0"))
+					{
+						canDoIOS6Maps = curVer.Compare (
+							targetVar, NSStringCompareOptions.NumericSearch) != NSComparisonResult.Ascending;
+						
+					}
+				}
+
+				if (canDoIOS6Maps)
+					OpenIOSMap ();
+				else
+					OpenGoogleMap ();
+			}
+
+			void OpenIOSMap ()
+			{
+				double latitude = ViewController.Place.Latitude;
+				double longitude = ViewController.Place.Longitude;
+				CLLocationCoordinate2D center = new CLLocationCoordinate2D (latitude, longitude);
+				
+				MKPlacemark placemark = new MKPlacemark (center, null);
+				MKMapItem mapItem = new MKMapItem (placemark);
+				mapItem.Name = ViewController.Place.Name;
+				MKLaunchOptions options = new MKLaunchOptions ();
+				options.MapSpan = MKCoordinateRegion.FromDistance (center, 200, 200).Span;
+				mapItem.OpenInMaps (options);
+			}
+
+			void OpenGoogleMap ()
+			{
+				UIApplication.SharedApplication
+					.OpenUrl (new NSUrl (string.Format("https://maps.google.com/?q={0},{1}",
+					                                   ViewController.Place.Latitude,
+					                                   ViewController.Place.Longitude)));
 			}
 		}
 	}
