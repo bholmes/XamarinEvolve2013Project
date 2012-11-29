@@ -305,55 +305,13 @@ namespace XamarinEvolveIOS
 				alertView.Clicked += (object sender2, UIButtonEventArgs e2) => {
 					if (e2.ButtonIndex == 0)
 					{
-						OpenInMaps ();
+						OpenMapHelper.OpenInMaps (ViewController.Place);
 					}
 				
 					tableView.DeselectRow (indexPath, false);
 				};
 				
 				alertView.Show ();
-			}
-
-			void OpenInMaps ()
-			{
-				bool canDoIOS6Maps = false;
-				
-				using (NSString curVer = new NSString (UIDevice.CurrentDevice.SystemVersion))
-				{
-					using (NSString targetVar = new NSString ("6.0"))
-					{
-						canDoIOS6Maps = curVer.Compare (
-							targetVar, NSStringCompareOptions.NumericSearch) != NSComparisonResult.Ascending;
-						
-					}
-				}
-
-				if (canDoIOS6Maps)
-					OpenIOSMap ();
-				else
-					OpenGoogleMap ();
-			}
-
-			void OpenIOSMap ()
-			{
-				double latitude = ViewController.Place.Latitude;
-				double longitude = ViewController.Place.Longitude;
-				CLLocationCoordinate2D center = new CLLocationCoordinate2D (latitude, longitude);
-				
-				MKPlacemark placemark = new MKPlacemark (center, null);
-				MKMapItem mapItem = new MKMapItem (placemark);
-				mapItem.Name = ViewController.Place.Name;
-				MKLaunchOptions options = new MKLaunchOptions ();
-				options.MapSpan = MKCoordinateRegion.FromDistance (center, 200, 200).Span;
-				mapItem.OpenInMaps (options);
-			}
-
-			void OpenGoogleMap ()
-			{
-				UIApplication.SharedApplication
-					.OpenUrl (new NSUrl (string.Format("https://maps.google.com/?q={0},{1}",
-					                                   ViewController.Place.Latitude,
-					                                   ViewController.Place.Longitude)));
 			}
 		}
 	}

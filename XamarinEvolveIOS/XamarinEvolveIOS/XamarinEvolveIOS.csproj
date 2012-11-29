@@ -48,7 +48,7 @@
     <MtouchDebug>True</MtouchDebug>
     <MtouchProfiling>True</MtouchProfiling>
     <MtouchArch>ARMv7</MtouchArch>
-    <CodesignProvision>E0436F93-3ECC-45B0-8C43-6B3FC797BD86</CodesignProvision>
+    <CodesignProvision>4B42FA72-B7B6-4160-A205-5E58F6BC09AD</CodesignProvision>
     <MtouchI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -137,6 +137,8 @@
     <Compile Include="NameValueCell.cs" />
     <Compile Include="EvolveOnTheWebViewController.cs" />
     <Compile Include="CustomUITableViewCellSubView.cs" />
+    <Compile Include="OpenMapHelper.cs" />
+    <Compile Include="ContactHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="CustomUITableViewCell.xib" />

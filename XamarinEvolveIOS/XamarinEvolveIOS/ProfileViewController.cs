@@ -240,59 +240,7 @@ namespace XamarinEvolveIOS
 
 		void OnAddContact (object sender, EventArgs e)
 		{
-			ABNewPersonViewController abController = new ABNewPersonViewController ();
-
-			ABPerson person = new ABPerson ();
-			string firstName = string.Empty;
-			string lastName = string.Empty;
-			if (!string.IsNullOrEmpty (UserProfile.FullName))
-			{
-				string [] names = UserProfile.FullName.Split ();
-
-				if (names.Length > 0)
-					firstName = names[0];
-
-				if (names.Length > 1)
-					lastName = UserProfile.FullName.Substring (firstName.Length);
-			}
-
-			person.FirstName = firstName;
-			person.LastName = lastName;
-
-			if (!string.IsNullOrEmpty (UserProfile.Company))
-			{
-				person.Organization = UserProfile.Company;
-			}
-
-			if (!string.IsNullOrEmpty (UserProfile.Phone))
-			{
-				ABMutableMultiValue<string> phones = new ABMutableStringMultiValue();
-				phones.Add(UserProfile.Phone, ABPersonPhoneLabel.Main);
-				person.SetPhones(phones);
-			}
-
-			if (!string.IsNullOrEmpty (UserProfile.Email))
-			{
-				ABMutableMultiValue<string> emails = new ABMutableStringMultiValue();
-				emails.Add(UserProfile.Email, null);
-				person.SetEmails(emails);
-			}
-
-			// Get any image from cache
-			byte [] data = Engine.Instance.ImageCache.FindAny (UserProfile);
-
-			if (data != null && data.Length > 0)
-			{
-				person.Image = NSData.FromArray(data); 
-			}
-
-			abController.DisplayedPerson  = person;
-
-			abController.NewPersonComplete += delegate {
-				_controller.NavigationController.PopViewControllerAnimated (true);
-			};
-
-			_controller.NavigationController.PushViewController (abController, true);
+			ContactHelper.OnAddContact (_controller.NavigationController, UserProfile);
 		}
 
 		void OnDeleteUser (object sender, EventArgs e)
@@ -343,87 +291,24 @@ namespace XamarinEvolveIOS
 			return false;
 		}
 
-		public static bool canUsePhone ()
-		{
-			return UIApplication.SharedApplication.CanOpenUrl(
-				new NSUrl ("tel://412-867-5309"));
-		}
-
-		public static bool canUseEMail ()
-		{
-			return UIApplication.SharedApplication.CanOpenUrl(
-				new NSUrl ("mailto:?to=fun@xamarin.com"));
-		}
-
-		bool validEMail (string value)
-		{
-			if (string.IsNullOrWhiteSpace (value))
-				return false;
-
-			return true;
-		}
-
-		bool validPhone (string value)
-		{
-			if (string.IsNullOrWhiteSpace (value))
-				return false;
-
-			return true;
-		}
-
 		public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
 		{
-			if (indexPath.Section == 2 && indexPath.Row == 1)
+			if (indexPath.Section == 2)
 			{
-				if (!canUsePhone ())
-					return;
-
 				CustomUITableViewCell cell = tableView.CellAt (indexPath) as CustomUITableViewCell;
 				NameValueCell nameCell = cell.CustomView as NameValueCell;
-
+				
 				cell.Selected = false;
 				string value = nameCell.ValueLabel.Text;
 
-				if (!validPhone (value))
-					return;
-
-				UIAlertView view = new UIAlertView ("Call Number?", value, 
-				                                    null, null, new string [] {"Yes", "No"}); 
-				view.CancelButtonIndex = 1;
-
-				view.Clicked += (object sender, UIButtonEventArgs e) => {
-					if (e.ButtonIndex == 0)
-					UIApplication.SharedApplication.OpenUrl (
-							new NSUrl (string.Format ("tel://{0}", value)));
-				};
-
-				view.Show ();
-			}
-			else if (indexPath.Section == 2 && indexPath.Row == 0)
-			{
-				if (!canUseEMail ())
-					return;
-
-				CustomUITableViewCell cell = tableView.CellAt (indexPath) as CustomUITableViewCell;
-				NameValueCell nameCell = cell.CustomView as NameValueCell;
-
-				cell.Selected = false;
-				string value = nameCell.ValueLabel.Text;
-				
-				if (!validEMail (value))
-					return;
-
-				UIAlertView view = new UIAlertView ("Create E-Mail?", value, 
-				                                    null, null, new string [] {"Yes", "No"}); 
-				view.CancelButtonIndex = 1;
-				
-				view.Clicked += (object sender, UIButtonEventArgs e) => {
-					if (e.ButtonIndex == 0)
-						UIApplication.SharedApplication.OpenUrl (
-							new NSUrl (string.Format ("mailto:?to={0}", value)));
-				};
-				
-				view.Show ();
+				if (indexPath.Row == 1)
+				{
+					ContactHelper.CallPerson (value);
+				}
+				else if (indexPath.Row == 0)
+				{
+					ContactHelper.EmailPerson (value);
+				}
 			}
 		}
 	}
@@ -561,7 +446,7 @@ namespace XamarinEvolveIOS
 				nameValueCell.ValueTextField.AutocapitalizationType = UITextAutocapitalizationType.None;
 				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				cell = nameValueCell.LoadCell (tableView);
-				if (LocalUserProfileDelegate.canUsePhone ())
+				if (ContactHelper.CanEMailPerson (UserProfile.Email))
 					cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 				break;
 			case 1:
@@ -570,7 +455,7 @@ namespace XamarinEvolveIOS
 				nameValueCell.ValueTextField.AutocorrectionType = UITextAutocorrectionType.No;
 				nameValueCell.ValueTextField.ShouldChangeCharacters = PhoneNumberHelper.ShoudChange;
 				cell = nameValueCell.LoadCell (tableView);
-				if (LocalUserProfileDelegate.canUseEMail ())
+				if (ContactHelper.CanCallPerson (UserProfile.Phone))
 					cell.SelectionStyle = UITableViewCellSelectionStyle.Blue;
 				break;
 				
