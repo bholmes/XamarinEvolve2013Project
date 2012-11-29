@@ -46,7 +46,7 @@ namespace XamarinEvolveSS
                 SqlExpressionVisitor<Place> evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
                 SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
 
-                DateTime refTime = DateTime.Now - new TimeSpan
+                DateTime refTime = DateTime.UtcNow - new TimeSpan
                     (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
                 // List of unique place Ids sorted by most recent check-in
@@ -96,7 +96,7 @@ namespace XamarinEvolveSS
                 SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
                 SqlExpressionVisitor<User> evUser = OrmLiteConfig.DialectProvider.ExpressionVisitor<User>();
 
-                DateTime refTime = DateTime.Now - new TimeSpan
+                DateTime refTime = DateTime.UtcNow - new TimeSpan
                     (0, SystemConstants.RecentThresholdHours, 0, 0, 0);
 
                 // Groups of checkins grouped by user then sorted by time
@@ -148,10 +148,42 @@ namespace XamarinEvolveSS
             {
                 SqlExpressionVisitor<Place> evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
                 SqlExpressionVisitor<User> evUser = OrmLiteConfig.DialectProvider.ExpressionVisitor<User>();
+                SqlExpressionVisitor<CheckIn> evCheckIn = OrmLiteConfig.DialectProvider.ExpressionVisitor<CheckIn>();
+
+                // Find the user Id
+                int userId;
+                evUser.Where(u => u.UserName == username).Select(u => u.Id);
+                var userResult = dbCmd.Select(evUser);
+
+                if (userResult.Count == 0)
+                    throw new ArgumentException(string.Format("username : '{0}' does not exist", username));
+                userId = userResult[0].Id;
+               
+
+                //// Get the last checkin for the user
+                evCheckIn.Where(c => c.UserId == userId).OrderByDescending(c => c.Time).Limit(1);
+                var lastCheckIn = dbCmd.Select(evCheckIn);
+
+                if (lastCheckIn.Count != 0)
+                {
+                    //// Find the palce for that place id
+                    evPlace.Where(p => p.Id == lastCheckIn.First ().PlaceId).Limit (1);
+                    var existingPlaceResult = dbCmd.Select(evPlace);
+
+                    // if it is the same place just update the time
+                    if (existingPlaceResult.First().Name == place.Name &&
+                        existingPlaceResult.First().Address == place.Address)
+                    {
+                        evCheckIn.Where(c => c.Id == lastCheckIn.First().Id).Update(c => c.Time);
+                        dbCmd.UpdateOnly(new CheckIn { Time = DateTime.UtcNow }, evCheckIn);
+                        return;
+                    }
+                }
 
                 // Add place to table if it does not exist
                 // compared my name and address
                 int placeId;
+                evPlace = OrmLiteConfig.DialectProvider.ExpressionVisitor<Place>();
                 evPlace.Where(p => p.Name == place.Name && p.Address == place.Address)
                     .Select(p => p.Id);
 
@@ -165,16 +197,8 @@ namespace XamarinEvolveSS
                 else
                     placeId = placeResult[0].Id;
 
-                // Find the user Id
-                int userId;
-                evUser.Where(u => u.UserName == username).Select(u => u.Id);
-                var userResult = dbCmd.Select(evUser);
-
-                if (userResult.Count == 0)
-                    throw new ArgumentException(string.Format("username : '{0}' does not exist", username));
-                userId = userResult[0].Id;
-
-                CheckIn checkIn = new CheckIn { UserId = userId, PlaceId = placeId, Time = DateTime.Now };
+                // Check in the user
+                CheckIn checkIn = new CheckIn { UserId = userId, PlaceId = placeId, Time = DateTime.UtcNow };
                 dbCmd.Insert(checkIn);
             });            
         }

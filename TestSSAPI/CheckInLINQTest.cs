@@ -70,7 +70,7 @@ namespace TestSSAPI
             Place place, out List<CheckIn> activeList, out List<CheckIn> recentList,
             int recentLimit, int hours)
         {
-            DateTime refTime = DateTime.Now - new TimeSpan
+            DateTime refTime = DateTime.UtcNow - new TimeSpan
                 (0, hours, 0, 0, 0);
 
             // Groups of checkins grouped by user then sorted by time
@@ -111,7 +111,7 @@ namespace TestSSAPI
 
         List<Place> SortPlaceByRecentCheckIns(List<CheckIn> CheckInList, List<Place> PlaceList, int limit, int hours)
         {
-            DateTime refTime = DateTime.Now - new TimeSpan
+            DateTime refTime = DateTime.UtcNow - new TimeSpan
                 (0, hours, 0, 0, 0);
 
             // List of unique place Ids sorted by most recent check-in
@@ -150,7 +150,7 @@ namespace TestSSAPI
 
         private void SetupTables(out List<Place> placeList, out List<CheckIn> checkIns)
         {
-            DateTime current = DateTime.Now - new TimeSpan(48, 0, 0);
+            DateTime current = DateTime.UtcNow - new TimeSpan(48, 0, 0);
             placeList = GetPlaceList();
             checkIns = new List<CheckIn>();
 

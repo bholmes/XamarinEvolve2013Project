@@ -81,6 +81,7 @@
     <Compile Include="UserList.cs" />
     <Compile Include="UserResponse.cs" />
     <Compile Include="WebserviceAvatarAccess.cs" />
+    <Compile Include="WebserviceCheckInAccess.cs" />
     <Compile Include="WebserviceUserAccess.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

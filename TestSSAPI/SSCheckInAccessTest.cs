@@ -38,6 +38,9 @@ namespace TestSSAPI
                     CheckInUser(client, users[0], places[0]);
                     places[0].Id = GetCheckInLastPlace(client, places[0]);
 
+                    CheckInUser(client, users[0], places[0]);
+                    places[0].Id = GetCheckInLastPlace(client, places[0]);
+
 
 
                     CheckInUser(client, users[1], places[4]);
