@@ -4,6 +4,8 @@ using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 using System.Drawing;
 using XamarinEvolveSSLibrary;
+using MonoTouch.AddressBook;
+using MonoTouch.AddressBookUI;
 
 namespace XamarinEvolveIOS
 {
@@ -133,6 +135,7 @@ namespace XamarinEvolveIOS
 		ProfileViewController _controller;
 		UIButton _logoutButton;
 		UIButton _deleteButton;
+		UIButton _addContactButton;
 
 		public void HideButtons (bool hide)
 		{
@@ -169,17 +172,18 @@ namespace XamarinEvolveIOS
 
 		public override UIView GetViewForFooter (UITableView tableView, int section)
 		{
+
 			if (section == 2 )
 			{
+				float tableMargin = UIDevice.CurrentDevice.UserInterfaceIdiom == 
+					UIUserInterfaceIdiom.Phone ?  9 : 45;
+				float tableWidth = tableView.Bounds.Width;
+				float contentWidth = tableWidth - (tableMargin * 2.0f);
+				float tableCenter = tableWidth /2.0f;
+
 				if (_controller is LocalProfileViewController && this.UserProfile.IsLocalUser && !this.UserProfile.IsAnonymousUser)
 				{
-					float tableMargin = UIDevice.CurrentDevice.UserInterfaceIdiom == 
-						UIUserInterfaceIdiom.Phone ?  9 : 45;
-					float tableWidth = tableView.Bounds.Width;
-					float contentWidth = tableWidth - (tableMargin * 2.0f);
 					float buttonWidth = (contentWidth / 2.0f) - 3;
-
-					float tableCenter = tableWidth /2.0f;
 
 					_logoutButton = UIButton.FromType (UIButtonType.RoundedRect);
 					_logoutButton.SetTitle ("Logout", UIControlState.Normal);
@@ -207,9 +211,82 @@ namespace XamarinEvolveIOS
 
 					return newView;
 				}
+				else
+				{
+					if (!this.UserProfile.IsLocalUser)
+					{
+						float buttonWidth = contentWidth;
+						
+						_addContactButton = UIButton.FromType (UIButtonType.RoundedRect);
+						_addContactButton.SetTitle ("Add Contact", UIControlState.Normal);
+						_addContactButton.Frame = new RectangleF (tableMargin, 15, buttonWidth, 44);
+						_addContactButton.AutoresizingMask  = UIViewAutoresizing.FlexibleBottomMargin | 
+							UIViewAutoresizing.FlexibleRightMargin |
+								UIViewAutoresizing.FlexibleWidth;
+						_addContactButton.TouchUpInside += OnAddContact;;
+						_addContactButton.Hidden = _controller.HideTheDamnButtons;
+						
+						UIView newView = new UIView (new RectangleF (0, 0, tableWidth, 44));
+						newView.AutoresizingMask = UIViewAutoresizing.All;
+						newView.Add (_addContactButton);
+						
+						return newView;
+					}
+				}
 			}
 
 			return null;
+		}
+
+		void OnAddContact (object sender, EventArgs e)
+		{
+			ABNewPersonViewController abController = new ABNewPersonViewController ();
+
+			ABPerson person = new ABPerson ();
+			string firstName = string.Empty;
+			string lastName = string.Empty;
+			if (!string.IsNullOrEmpty (UserProfile.FullName))
+			{
+				string [] names = UserProfile.FullName.Split ();
+
+				if (names.Length > 0)
+					firstName = names[0];
+
+				if (names.Length > 1)
+					lastName = UserProfile.FullName.Substring (firstName.Length);
+			}
+
+			person.FirstName = firstName;
+			person.LastName = lastName;
+
+			if (!string.IsNullOrEmpty (UserProfile.Company))
+			{
+				person.Organization = UserProfile.Company;
+			}
+
+			if (!string.IsNullOrEmpty (UserProfile.Phone))
+			{
+				ABMutableMultiValue<string> phones = new ABMutableStringMultiValue();
+				phones.Add(UserProfile.Phone, ABPersonPhoneLabel.Main);
+				person.SetPhones(phones);
+			}
+
+			if (!string.IsNullOrEmpty (UserProfile.Email))
+			{
+				ABMutableMultiValue<string> emails = new ABMutableStringMultiValue();
+				emails.Add(UserProfile.Email, null);
+				person.SetEmails(emails);
+			}
+
+			// Get any image from cache
+
+			abController.DisplayedPerson  = person;
+
+			abController.NewPersonComplete += delegate {
+				_controller.NavigationController.PopViewControllerAnimated (true);
+			};
+
+			_controller.NavigationController.PushViewController (abController, true);
 		}
 
 		void OnDeleteUser (object sender, EventArgs e)
