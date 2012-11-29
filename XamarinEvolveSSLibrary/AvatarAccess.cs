@@ -12,7 +12,7 @@ namespace XamarinEvolveSSLibrary
             // This is messing up my tests.
             try
             {
-                _defaultImage = File.ReadAllBytes("blankavatar.jpg");
+                _defaultImage = File.ReadAllBytes("Images/blankavatar.jpg");
             }// Going to ignore it
             catch (Exception) {}
 		}
@@ -74,7 +74,7 @@ namespace XamarinEvolveSSLibrary
 			return _defaultImage;
 		}
 
-		abstract public void PostNewAvatar (byte [] data);
+		abstract protected void PostNewAvatar (byte [] data);
 		
 		public void PostNewAvatar (byte [] data, Action<PostNewAvatarResult> onComplete)
 		{
@@ -82,6 +82,9 @@ namespace XamarinEvolveSSLibrary
 				try
 				{
 					PostNewAvatar (data);
+
+					Engine.Instance.ImageCache.TouchUser (
+						Engine.Instance.UserAccess.GetCurrentUser ());
 					
 					if (onComplete != null)
 					{

@@ -124,7 +124,7 @@ namespace XamarinEvolveIOS
 
 		public void RefreshImageFromData ()
 		{
-			byte [] data = Engine.Instance.AvatarAccess.GetAvararForUser 
+			byte [] data = Engine.Instance.ImageCache.FindOrLoad 
 				(_userProfile, 80, (avatarResult) => {
 					if (avatarResult.Exceptin == null && avatarResult.Data != null)
 					this.BeginInvokeOnMainThread (delegate {

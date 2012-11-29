@@ -81,5 +81,6 @@
     <Compile Include="PlacesRequest.cs" />
     <Compile Include="PlacesRequestResponse.cs" />
     <Compile Include="WebserviceCheckInAccess.cs" />
+    <Compile Include="ImageCache.cs" />
   </ItemGroup>
 </Project>

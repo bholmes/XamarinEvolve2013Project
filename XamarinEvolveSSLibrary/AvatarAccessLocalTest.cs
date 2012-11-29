@@ -31,7 +31,7 @@ namespace XamarinEvolveSSLibrary
 			return null;
 		}
 
-		override public void PostNewAvatar (byte [] data)
+		override protected void PostNewAvatar (byte [] data)
 		{
 			Debug.SimulateNetworkWait ();
 			

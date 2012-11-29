@@ -18,6 +18,7 @@ namespace XamarinEvolveSSLibrary
 		public AvatarAccess AvatarAccess {get; private set;}
 		public GoogleAPI.PlaceLocator PlaceLocator {get; private set;}
 		public CheckInAccess CheckInAccess {get; private set;}
+		public ImageCache ImageCache {get;set;}
 
 		public Engine ()
 		{
@@ -38,6 +39,7 @@ namespace XamarinEvolveSSLibrary
 			}
 
 			PlaceLocator = new XamarinEvolveSSLibrary.GoogleAPI.PlaceLocator ();
+			ImageCache = new XamarinEvolveSSLibrary.ImageCache ();
 		}
 	}
 }

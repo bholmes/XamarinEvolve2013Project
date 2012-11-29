@@ -229,7 +229,7 @@ namespace XamarinEvolveIOS
 				cell.ImageView.Layer.MasksToBounds = true;
 				cell.ImageView.Layer.CornerRadius = 5.0f;
 				
-				byte [] data = Engine.Instance.AvatarAccess.GetAvararForUser 
+				byte [] data = Engine.Instance.ImageCache.FindOrLoad  
 					(user, 50, (avatarResult) => {
 						if (avatarResult.Exceptin == null && avatarResult.Data != null)
 							this.BeginInvokeOnMainThread (delegate {

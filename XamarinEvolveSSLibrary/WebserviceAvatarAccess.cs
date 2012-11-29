@@ -38,7 +38,7 @@ namespace XamarinEvolveSSLibrary
 			return null;
 		}
 
-		public override void PostNewAvatar (byte[] data)
+		protected override void PostNewAvatar (byte[] data)
 		{
 			User currentUser = Engine.Instance.UserAccess.GetCurrentUser ();
 
