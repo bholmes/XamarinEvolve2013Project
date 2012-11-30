@@ -34,6 +34,7 @@ namespace XamarinEvolveIOS
 	public class AvatarSelectorView : UIView
 	{
 		UIImageView _imageView = null;
+		UILabel _tipLabel = null;
 		UIScrollView _scrollView = null;
 		UIButton _selectNewPhoto;
 		UIButton _applyChanges;
@@ -48,7 +49,14 @@ namespace XamarinEvolveIOS
 			this.AutoresizingMask = UIViewAutoresizing.All;
 			this.MultipleTouchEnabled = true;
 
-			RectangleF scrollRect = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);;
+			_tipLabel = new UILabel (new RectangleF (this.Frame.GetMidX () - 150, 10, 300, 40));
+			_tipLabel.BackgroundColor = UIColor.Clear;
+			_tipLabel.TextColor = UIColor.LightTextColor;
+			_tipLabel.Text = "Move and Scale";
+			_tipLabel.Font = UIFont.BoldSystemFontOfSize (30);
+			_tipLabel.TextAlignment = UITextAlignment.Center;
+
+			RectangleF scrollRect = new RectangleF (this.Frame.GetMidX () - 100, 70, _windowWidth, _windowWidth);;
 
 			_scrollView = new UIScrollView (scrollRect);
 			_scrollView.ClipsToBounds = true;
@@ -84,6 +92,7 @@ namespace XamarinEvolveIOS
 			_selectNewPhoto.TouchUpInside += ChangePhotoTap;
 
 			this.Add (_selectNewPhoto);
+			this.Add (_tipLabel);
 		}
 
 		private UIButton AddNewCustomButton ()
@@ -123,7 +132,8 @@ namespace XamarinEvolveIOS
 		{
 			base.LayoutSubviews ();
 
-			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);
+			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 70, _windowWidth, _windowWidth);
+			_tipLabel.Frame = new RectangleF (this.Frame.GetMidX () - 150, 10, 300, 40);
 
 			SetScrollZoomInfo (_scrollView.Frame, false);
 		}
