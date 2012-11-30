@@ -56,7 +56,7 @@ namespace XamarinEvolveIOS
 			_tipLabel.Font = UIFont.BoldSystemFontOfSize (30);
 			_tipLabel.TextAlignment = UITextAlignment.Center;
 
-			RectangleF scrollRect = new RectangleF (this.Frame.GetMidX () - 100, 70, _windowWidth, _windowWidth);;
+			RectangleF scrollRect = new RectangleF (this.Frame.GetMidX () - 100, 60, _windowWidth, _windowWidth);;
 
 			_scrollView = new UIScrollView (scrollRect);
 			_scrollView.ClipsToBounds = true;
@@ -132,7 +132,7 @@ namespace XamarinEvolveIOS
 		{
 			base.LayoutSubviews ();
 
-			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 70, _windowWidth, _windowWidth);
+			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 60, _windowWidth, _windowWidth);
 			_tipLabel.Frame = new RectangleF (this.Frame.GetMidX () - 150, 10, 300, 40);
 
 			SetScrollZoomInfo (_scrollView.Frame, false);
@@ -242,7 +242,7 @@ namespace XamarinEvolveIOS
 			_imageView.Image = image;
 			_scrollView.ContentSize = image.Size;
 			
-			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 40, _windowWidth, _windowWidth);
+			_scrollView.Frame = new RectangleF (this.Frame.GetMidX () - 100, 60, _windowWidth, _windowWidth);
 
 			SetScrollZoomInfo (_scrollView.Frame, true);
 		}
