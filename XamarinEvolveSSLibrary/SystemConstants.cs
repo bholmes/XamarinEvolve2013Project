@@ -79,7 +79,6 @@ namespace XamarinEvolveSSLibrary
                 return RunLocalSS ?
                     @"D:\Bill\Code\XamarinEvolve2013Project\XamarinEvolveSS" :
                     @"E:\web\mobillho\Evolve2013\";
-
             }
         }
 

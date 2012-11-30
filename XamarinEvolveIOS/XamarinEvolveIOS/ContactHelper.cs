@@ -24,7 +24,10 @@ namespace XamarinEvolveIOS
 				StartOnAddContactAction (navigationController, user);
 			else
 			{
-				CheckForExistingAndContinue (navigationController, user);
+				new Func<int> (delegate {
+					CheckForExistingAndContinue (navigationController, user, true);
+					return 0;
+				}).BeginInvoke (null,null);
 			}
 		}
 
@@ -41,7 +44,7 @@ namespace XamarinEvolveIOS
 					else 
 					{
 						_canAccessAddress = true;
-						CheckForExistingAndContinue (navigationController, user);
+						CheckForExistingAndContinue (navigationController, user, false);
 					}
 				});
 				
@@ -57,7 +60,8 @@ namespace XamarinEvolveIOS
 				OnAddContactCompleted ();
 		}
 
-		private void CheckForExistingAndContinue (UINavigationController navigationController, User user)
+		private void CheckForExistingAndContinue (UINavigationController navigationController, 
+		                                          User user, bool mainThreadRequired)
 		{
 			KeyValuePair <string, string> namePair = GetFirstAndLastName (user);
 
@@ -71,12 +75,26 @@ namespace XamarinEvolveIOS
 				if (contact.FirstName == firstName &&
 				    contact.LastName == lastName)
 				{
-					AskShouldAddDuplicateAndContinue (navigationController, user);
+					if (!mainThreadRequired)
+						AskShouldAddDuplicateAndContinue (navigationController, user);
+					else
+					{
+						navigationController.BeginInvokeOnMainThread (delegate {
+							AskShouldAddDuplicateAndContinue (navigationController, user);
+						});
+					}
 					return;
 				}
 			}
 
-			ShowAddContactController (navigationController, user);
+			if (!mainThreadRequired)
+				ShowAddContactController (navigationController, user);
+			else
+			{
+				navigationController.BeginInvokeOnMainThread (delegate {
+					ShowAddContactController (navigationController, user);
+				});
+			}
 		}
 
 		private bool AskShouldAddDuplicateAndContinue (UINavigationController navigationController, User user)

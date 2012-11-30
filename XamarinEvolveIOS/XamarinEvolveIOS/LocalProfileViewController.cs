@@ -130,7 +130,7 @@ namespace XamarinEvolveIOS
 
 			if (busy)
 			{
-				BusyView.BringSubviewToFront (BusyView);
+				this.View.BringSubviewToFront (BusyView);
 				BusyView.Busy = true;
 			}
 			else
