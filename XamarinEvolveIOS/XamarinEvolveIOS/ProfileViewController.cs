@@ -252,8 +252,7 @@ namespace XamarinEvolveIOS
 			};
 
 			// Make sure the busy view is on top
-			_controller.BusyView.RemoveFromSuperview ();
-			_controller.View.Add (_controller.BusyView);
+			_controller.View.BringSubviewToFront(_controller.BusyView);
 
 			_controller.BusyView.Busy = true;
 

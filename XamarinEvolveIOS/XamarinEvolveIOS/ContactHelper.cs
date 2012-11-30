@@ -68,7 +68,7 @@ namespace XamarinEvolveIOS
 
 			foreach (Contact contact in book)
 			{
-				if (contact.FirstName == firstName ||
+				if (contact.FirstName == firstName &&
 				    contact.LastName == lastName)
 				{
 					AskShouldAddDuplicateAndContinue (navigationController, user);
