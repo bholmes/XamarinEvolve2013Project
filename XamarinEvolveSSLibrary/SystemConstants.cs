@@ -68,7 +68,7 @@ namespace XamarinEvolveSSLibrary
             {
                 return RunLocalMySql ?
                     "NLZy0qB6zHWute4CTQwf" :
-                    "s30tz40c5WGM7tiK5vv3";
+                    "uqx0VL0QeunPslIJqIIA";
             }
         }
 
@@ -83,7 +83,7 @@ namespace XamarinEvolveSSLibrary
         }
 
         public static uint MaxAvatarSize { get { return 200; } }
-		public static string GoogleAPIKey { get {return "AIzaSyCLphEJioicKAXQOE3NQ5gGnmPkdxaBs6o";}}
+        public static string GoogleAPIKey { get { return "AIzaSyC2FVgOHY3s7xGWZ52F_gL1aXUub9gC01c"; } }
 
 		static Place _defaultPlace = new Place 
 		{
