@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using XamarinEvolveSSLibrary;
+using Android.Graphics;
 
 namespace XamarinEvolveAndroid
 {
@@ -62,9 +63,19 @@ namespace XamarinEvolveAndroid
 			
 			public override View GetView (int position, View convertView, ViewGroup parent)
 			{
-				var view = _context.LayoutInflater.Inflate(Android.Resource.Layout.SimpleListItem1, null);
+				var view = _context.LayoutInflater.Inflate(Resource.Layout.ImageAndSubtitleItem, null);
 				
-				view.FindViewById<TextView>(Android.Resource.Id.Text1).Text = Users[position].FullName;
+				view.FindViewById<TextView>(Resource.Id.Text1).Text = Users[position].FullName;
+				view.FindViewById<TextView>(Resource.Id.Text2).Text = Users[position].City;
+
+				var avatar = view.FindViewById<ImageView>(Resource.Id.Icon);
+
+				Engine.Instance.AvatarAccess.GetAvararForUser (Users[position], 48, (result) => {
+					_context.RunOnUiThread ( delegate {
+						avatar.SetImageBitmap (
+							BitmapFactory.DecodeByteArray (result.Data, 0, result.Data.Length));
+					});
+				});
 				
 				return view;
 			}		

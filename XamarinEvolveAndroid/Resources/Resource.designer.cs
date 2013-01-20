@@ -32,6 +32,26 @@ namespace XamarinEvolveAndroid
 			}
 		}
 		
+		public partial class Color
+		{
+			
+			// aapt resource value: 0x7f050001
+			public const int black = 2131034113;
+			
+			// aapt resource value: 0x7f050002
+			public const int lightgrey = 2131034114;
+			
+			// aapt resource value: 0x7f050000
+			public const int transparent = 2131034112;
+			
+			// aapt resource value: 0x7f050003
+			public const int white = 2131034115;
+			
+			private Color()
+			{
+			}
+		}
+		
 		public partial class Drawable
 		{
 			
@@ -43,20 +63,48 @@ namespace XamarinEvolveAndroid
 			}
 		}
 		
+		public partial class Id
+		{
+			
+			// aapt resource value: 0x7f060000
+			public const int Icon = 2131099648;
+			
+			// aapt resource value: 0x7f060001
+			public const int Text1 = 2131099649;
+			
+			// aapt resource value: 0x7f060002
+			public const int Text2 = 2131099650;
+			
+			private Id()
+			{
+			}
+		}
+		
+		public partial class Layout
+		{
+			
+			// aapt resource value: 0x7f030000
+			public const int ImageAndSubtitleItem = 2130903040;
+			
+			private Layout()
+			{
+			}
+		}
+		
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f030002
-			public const int Attendees = 2130903042;
+			// aapt resource value: 0x7f040002
+			public const int Attendees = 2130968578;
 			
-			// aapt resource value: 0x7f030003
-			public const int Loading = 2130903043;
+			// aapt resource value: 0x7f040003
+			public const int Loading = 2130968579;
 			
-			// aapt resource value: 0x7f030001
-			public const int app_name = 2130903041;
+			// aapt resource value: 0x7f040001
+			public const int app_name = 2130968577;
 			
-			// aapt resource value: 0x7f030000
-			public const int library_name = 2130903040;
+			// aapt resource value: 0x7f040000
+			public const int library_name = 2130968576;
 			
 			private String()
 			{
