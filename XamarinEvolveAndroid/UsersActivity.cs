@@ -70,12 +70,26 @@ namespace XamarinEvolveAndroid
 
 				var avatar = view.FindViewById<ImageView>(Resource.Id.Icon);
 
-				Engine.Instance.AvatarAccess.GetAvararForUser (Users[position], 48, (result) => {
+				Engine.Instance.AvatarAccess.GetAvararForUser (Users[position], avatar.Width, (result) => {
 					_context.RunOnUiThread ( delegate {
 						avatar.SetImageBitmap (
 							BitmapFactory.DecodeByteArray (result.Data, 0, result.Data.Length));
 					});
 				});
+
+				using (var stream = _context.Resources.OpenRawResource (Resource.Drawable.blankavatar))
+				{
+					byte [] buff;
+
+					using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+					{
+						stream.CopyTo(ms);
+						buff = ms.ToArray();
+					}
+
+					avatar.SetImageBitmap (
+						BitmapFactory.DecodeByteArray (buff, 0, buff.Length));
+				}
 				
 				return view;
 			}		
