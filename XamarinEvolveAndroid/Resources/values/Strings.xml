@@ -2,5 +2,6 @@
 <resources>
 	<string name="app_name">Xamarin Evolve</string>
 	<string name="Attendees">Attendees</string>
+	<string name="EvolveontheWeb">Evolve on the Web</string>
 	<string name="Loading">Loading</string>
 </resources>

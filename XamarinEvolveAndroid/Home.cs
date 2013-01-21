@@ -21,7 +21,9 @@ namespace XamarinEvolveAndroid
 			this.Title = "Xamarin Evolve 2013";
 			this.Title = this.GetString (Resource.String.app_name);
 			
-			items = new string []{this.GetString (Resource.String.Attendees)};
+			items = new string []{this.GetString (Resource.String.Attendees),
+				this.GetString (Resource.String.EvolveontheWeb)
+			};
 			
 			this.ListAdapter = new ArrayAdapter<String> (this, Android.Resource.Layout.SimpleListItem1, items);
 		}
@@ -33,6 +35,13 @@ namespace XamarinEvolveAndroid
 			if (this.GetString (Resource.String.Attendees) == t)
 			{
 				var activity = new Intent(this, typeof(UsersActivity));
+				this.StartActivity(activity);
+				return;
+			}
+
+			if (this.GetString (Resource.String.EvolveontheWeb) == t)
+			{
+				var activity = new Intent(this, typeof(EvolveOnTheWebActivity));
 				this.StartActivity(activity);
 				return;
 			}
