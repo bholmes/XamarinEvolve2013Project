@@ -1,7 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Xamarin Evolve</string>
 	<string name="Attendees">Attendees</string>
 	<string name="EvolveontheWeb">Evolve on the Web</string>
 	<string name="Loading">Loading</string>
+	<string name="Profile">Profile</string>
+	<string name="company">company</string>
+	<string name="title">title</string>
+	<string name="email">e-mail</string>
+	<string name="phone">phone</string>
 </resources>

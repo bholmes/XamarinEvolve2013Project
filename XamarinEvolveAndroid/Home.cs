@@ -18,7 +18,6 @@ namespace XamarinEvolveAndroid
 		protected override void OnCreate(Bundle bundle)
 		{
 			base.OnCreate(bundle);
-			this.Title = "Xamarin Evolve 2013";
 			this.Title = this.GetString (Resource.String.app_name);
 			
 			items = new string []{this.GetString (Resource.String.Attendees),

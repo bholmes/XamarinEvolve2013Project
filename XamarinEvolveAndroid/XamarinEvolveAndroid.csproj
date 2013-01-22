@@ -50,6 +50,7 @@
     <Compile Include="Home.cs" />
     <Compile Include="UsersActivity.cs" />
     <Compile Include="EvolveOnTheWebActivity.cs" />
+    <Compile Include="UserDetailActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -63,6 +64,7 @@
     <AndroidResource Include="Resources\values\Colors.xml" />
     <AndroidResource Include="Resources\drawable\blankavatar.jpg" />
     <AndroidResource Include="Resources\layout\EvolveOnTheWebLayout.axml" />
+    <AndroidResource Include="Resources\layout\UserDetailLayout.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

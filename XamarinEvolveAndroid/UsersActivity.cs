@@ -29,6 +29,25 @@ namespace XamarinEvolveAndroid
 			ListAdapter = _usersAdapter = new UsersAdapter (this);
 		}
 
+		protected override void OnListItemClick(Android.Widget.ListView l, Android.Views.View v, int position, long id)
+		{
+			var intent = new Intent(this, typeof(UserDetailActivity));
+
+			intent.PutExtra ("USER_NAME", _usersAdapter[position].UserName);
+
+			intent.PutExtra ("USER_FULL_NAME", _usersAdapter[position].FullName);
+			intent.PutExtra ("USER_CITY", _usersAdapter[position].City);
+
+			intent.PutExtra ("USER_COMPANY", _usersAdapter[position].Company);
+			intent.PutExtra ("USER_TITLE", _usersAdapter[position].Title);
+
+			intent.PutExtra ("USER_EMAIL", _usersAdapter[position].Email);
+			intent.PutExtra ("USER_PHONE", _usersAdapter[position].Phone);
+
+			this.StartActivity(intent);
+			return;
+		}
+
 		private class UsersAdapter : BaseAdapter<User>
 		{
 			readonly Activity _context;
